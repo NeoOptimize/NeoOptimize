@@ -3,11 +3,16 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
+  "main": "electron/main.js",
+  "description": "NeoOptimize - Windows optimization UI",
+  "author": "Sigit Profesional IT <gxmood@gmail.com>",
   "scripts": {
     "dev": "npx vite",
     "build": "npx vite build",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "preview": "npx vite preview"
+    "preview": "npx vite preview",
+    "electron:dev": "electron .",
+    "package:win": "electron-builder --win nsis"
   },
   "dependencies": {
     "react": "^18.3.1",
@@ -30,6 +35,39 @@
     "vite": "^5.2.0",
     "tailwindcss": "3.4.17",
     "autoprefixer": "latest",
-    "postcss": "latest"
-  }
+    "postcss": "latest",
+    "electron": "^26.0.0",
+    "electron-builder": "^24.7.0"
+  },
+
+  "build": {
+    "appId": "com.neooptimize.app",
+    "productName": "NeoOptimize",
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "buildResources": "build"
+    },
+    "win": {
+      "target": ["nsis"],
+      "icon": "asset/icon.png"
+    }
+    ,
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "NeoOptimize",
+        "repo": "NeoOptimize"
+      }
+    ],
+    "sign": {
+      "#note": "Provide a code signing certificate at build time.\nUse environment variables or place a PFX at build/certs/cert.p12 and set password in secret.",
+      "certificateFile": "build/certs/cert.p12",
+      "certificatePasswordEnv": "CERT_PASSWORD"
+    }
+  },
+  "optionalDependencies": {}
 }
