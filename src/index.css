@@ -1,0 +1,167 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+:root {
+  /* Matrix Deep Green Palette */
+  --bg-primary: #000800;
+  --bg-secondary: #000d00;
+  --bg-tertiary: #001200;
+  --border-color: #1a3300;
+  --text-primary: #c8ffc8;
+  --text-secondary: #00cc33;
+  --text-muted: #2d6b2d;
+  --accent-primary: #00ff41;
+  --accent-glow: rgba(0, 255, 65, 0.25);
+  /* ANSI Colors */
+  --ansi-green: #00ff41;
+  --ansi-yellow: #f5c518;
+  --ansi-red: #ff4444;
+  --ansi-blue: #5599ff;
+  --ansi-cyan: #00cccc;
+  --ansi-magenta: #cc44ff;
+  --status-warning: var(--ansi-yellow);
+  --status-error: var(--ansi-red);
+  --status-info: var(--ansi-blue);
+  --scanline-color: rgba(0, 20, 0, 0.7);
+  --terminal-output-bg: #000400;
+}
+[data-theme='light'] {
+  --bg-primary: #f5f0e8;
+  --bg-secondary: #ede8dc;
+  --bg-tertiary: #e0d8c8;
+  --border-color: #c8c0b0;
+  --text-primary: #1a1a1a;
+  --text-secondary: #2d7a2d;
+  --text-muted: #8a8070;
+  --accent-primary: #1a5c1a;
+  --accent-glow: rgba(26, 92, 26, 0.1);
+  --status-warning: #b45309;
+  --status-error: #dc2626;
+  --status-info: #2563eb;
+  --scanline-color: rgba(0, 0, 0, 0.04);
+  --terminal-output-bg: var(--bg-tertiary);
+}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  overflow-x: hidden;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+/* Scanline Overlay */
+.scanlines {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 200%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    var(--scanline-color) 2px,
+    var(--scanline-color) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.22;
+  animation: scanline-scroll 8s linear infinite;
+}
+@keyframes scanline-scroll {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(50%); }
+}
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-primary);
+}
+/* Terminal Glow */
+.text-glow {
+  text-shadow:
+    0 0 4px #00ff41,
+    0 0 12px #00ff41,
+    0 0 30px #00ff41,
+    0 0 60px rgba(0, 255, 65, 0.4),
+    0 0 100px rgba(0, 255, 65, 0.15);
+}
+.border-glow {
+  box-shadow:
+    0 0 8px rgba(0, 255, 65, 0.4),
+    0 0 20px rgba(0, 255, 65, 0.2),
+    inset 0 0 8px rgba(0, 255, 65, 0.1);
+}
+/* Matrix green glow for accent text */
+.matrix-glow {
+  text-shadow:
+    0 0 4px #00ff41,
+    0 0 12px #00ff41,
+    0 0 30px rgba(0, 255, 65, 0.6),
+    0 0 60px rgba(0, 255, 65, 0.3);
+}
+/* Blinking Cursor */
+.cursor-blink {
+  animation: blink 0.8s step-end infinite;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+/* Theme flicker on switch */
+@keyframes flicker {
+  0%   { opacity: 1; }
+  10%  { opacity: 0.1; }
+  20%  { opacity: 0.9; }
+  30%  { opacity: 0.2; }
+  40%  { opacity: 1; }
+  50%  { opacity: 0.3; }
+  60%  { opacity: 1; }
+  100% { opacity: 1; }
+}
+.theme-flicker {
+  animation: flicker 0.35s ease-in-out;
+}
+/* Status dot pulse */
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 #00ff41, 0 0 8px #00ff41; }
+  50%       { opacity: 0.7; box-shadow: 0 0 0 4px transparent, 0 0 16px rgba(0,255,65,0.4); }
+}
+.status-dot {
+  animation: status-pulse 2s ease-in-out infinite;
+}
+/* Progress Scan Animation */
+@keyframes progress-scan {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 200% 0%; }
+}
+.animate-progress-scan {
+  background: linear-gradient(90deg, 
+    var(--accent-primary) 0%, 
+    var(--bg-primary) 50%, 
+    var(--accent-primary) 100%
+  );
+  background-size: 200% 100%;
+  animation: progress-scan 2s linear infinite;
+}
