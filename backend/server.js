@@ -17,6 +17,11 @@ const PORT = process.env.PORT || 3322;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const APP_ROOT = process.env.APP_ROOT ? path.resolve(process.env.APP_ROOT) : path.resolve(__dirname, '..');
+const APP_ASSET_ROOT = process.env.APP_ASSET_ROOT ? path.resolve(process.env.APP_ASSET_ROOT) : APP_ROOT;
+const APP_DATA_ROOT = process.env.APP_DATA_ROOT ? path.resolve(process.env.APP_DATA_ROOT) : APP_ROOT;
+const DATA_CONFIG_DIR = path.join(APP_DATA_ROOT, 'config');
+const DATA_BACKEND_DIR = path.join(APP_DATA_ROOT, 'backend');
+const ASSET_CONFIG_DIR = path.join(APP_ASSET_ROOT, 'config');
 const engines = { advance: createAdvanceCleaner(), santurbo: createSanTurbo() };
 const engineBuffers = {};
 const appLogs = [];
@@ -26,10 +31,10 @@ const schedulerTasks = [
   { id: 'daily-clean', cron: '0 3 * * *', desc: 'Daily quick clean', user: 'system', status: 'active', lastRun: null, nextRun: 'pending' },
   { id: 'weekly-report', cron: '0 4 * * 0', desc: 'Weekly report generation', user: 'system', status: 'active', lastRun: null, nextRun: 'pending' }
 ];
-const KICOMAV_ROOT = path.join(APP_ROOT, 'kicomav-master');
+const KICOMAV_ROOT = path.join(APP_ASSET_ROOT, 'kicomav-master');
 const KICOMAV_MODULE = 'kicomav.k2';
-const CLAMAV_RUNTIME_ROOT = path.join(APP_ROOT, 'vendor', 'clamav-runtime');
-const CLAMAV_SOURCE_ROOT = path.join(APP_ROOT, 'clamav-1.5.1');
+const CLAMAV_RUNTIME_ROOT = path.join(APP_ASSET_ROOT, 'vendor', 'clamav-runtime');
+const CLAMAV_SOURCE_ROOT = path.join(APP_ASSET_ROOT, 'clamav-1.5.1');
 const CLAMAV_ROOT = fs.existsSync(path.join(CLAMAV_RUNTIME_ROOT, 'clamscan.exe'))
   ? CLAMAV_RUNTIME_ROOT
   : CLAMAV_SOURCE_ROOT;
@@ -299,12 +304,12 @@ const securityEngineInfo = () => {
 };
 
 const normalizeScanTarget = (rawTarget) => {
-  const fallback = process.env.USERPROFILE || APP_ROOT;
+  const fallback = process.env.USERPROFILE || APP_DATA_ROOT;
   const raw = String(rawTarget || '').trim();
   const resolved = raw ? path.resolve(raw) : path.resolve(fallback);
   if (fs.existsSync(resolved)) return resolved;
   if (fs.existsSync(fallback)) return path.resolve(fallback);
-  return APP_ROOT;
+  return APP_DATA_ROOT;
 };
 
 const kicomavPlans = (target) => ([
@@ -403,11 +408,13 @@ const stopSecurityProgress = () => {
   securityProgressTimer = null;
 };
 
-const localConfigFile = path.join(APP_ROOT, 'config', 'config.txt');
+const localConfigFile = path.join(DATA_CONFIG_DIR, 'config.txt');
+const assetConfigFile = path.join(ASSET_CONFIG_DIR, 'config.txt');
 const scriptConfigFile = 'C:/Users/Hello World/Documents/Script/config.txt';
-const localCleanerSpecFile = path.join(APP_ROOT, 'config', 'advance cleaner engine.txt');
+const localCleanerSpecFile = path.join(DATA_CONFIG_DIR, 'advance cleaner engine.txt');
+const assetCleanerSpecFile = path.join(ASSET_CONFIG_DIR, 'advance cleaner engine.txt');
 const scriptCleanerSpecFile = 'C:/Users/Hello World/Documents/Script/advance cleaner engine.txt';
-const securityConfigFile = path.join(APP_ROOT, 'config', 'security.json');
+const securityConfigFile = path.join(DATA_CONFIG_DIR, 'security.json');
 
 const defaultSecuritySettings = { preferredEngine: 'auto', clamscanPath: '' };
 const loadSecuritySettings = () => {
@@ -453,19 +460,29 @@ const ensureSeedFile = (localPath, sourcePath) => {
 };
 
 const ensureLocalConfigFiles = () => {
-  if (!process.env.CONFIG_PATH) ensureSeedFile(localConfigFile, scriptConfigFile);
-  if (!process.env.CLEANER_SPEC_PATH) ensureSeedFile(localCleanerSpecFile, scriptCleanerSpecFile);
+  if (!process.env.CONFIG_PATH) {
+    ensureSeedFile(localConfigFile, fs.existsSync(assetConfigFile) ? assetConfigFile : scriptConfigFile);
+  }
+  if (!process.env.CLEANER_SPEC_PATH) {
+    ensureSeedFile(localCleanerSpecFile, fs.existsSync(assetCleanerSpecFile) ? assetCleanerSpecFile : scriptCleanerSpecFile);
+  }
 };
 
 const configPath = () => {
-  return process.env.CONFIG_PATH || (fs.existsSync(localConfigFile) ? localConfigFile : scriptConfigFile);
+  if (process.env.CONFIG_PATH) return process.env.CONFIG_PATH;
+  if (fs.existsSync(localConfigFile)) return localConfigFile;
+  if (fs.existsSync(assetConfigFile)) return assetConfigFile;
+  return scriptConfigFile;
 };
 const cleanerSpecPath = () => {
-  return process.env.CLEANER_SPEC_PATH || (fs.existsSync(localCleanerSpecFile) ? localCleanerSpecFile : scriptCleanerSpecFile);
+  if (process.env.CLEANER_SPEC_PATH) return process.env.CLEANER_SPEC_PATH;
+  if (fs.existsSync(localCleanerSpecFile)) return localCleanerSpecFile;
+  if (fs.existsSync(assetCleanerSpecFile)) return assetCleanerSpecFile;
+  return scriptCleanerSpecFile;
 };
 const pathAllowed = (p) => {
   const abs = path.resolve(p);
-  const roots = [path.resolve(path.join(APP_ROOT, 'config')), path.resolve('C:/Users/Hello World/Documents/Script')];
+  const roots = [path.resolve(DATA_CONFIG_DIR), path.resolve(ASSET_CONFIG_DIR), path.resolve('C:/Users/Hello World/Documents/Script')];
   return roots.some((r) => abs.startsWith(r));
 };
 
@@ -1039,9 +1056,9 @@ app.post('/api/security/scan', (req, res) => {
       ? (() => {
         const bin = clamavBinaryPath();
         const dir = bin ? path.dirname(bin) : CLAMAV_ROOT;
-        return fs.existsSync(dir) ? dir : APP_ROOT;
+        return fs.existsSync(dir) ? dir : APP_ASSET_ROOT;
       })()
-      : (fs.existsSync(KICOMAV_ROOT) ? KICOMAV_ROOT : APP_ROOT);
+      : (fs.existsSync(KICOMAV_ROOT) ? KICOMAV_ROOT : APP_ASSET_ROOT);
 
     const proc = spawn(plan.cmd, plan.args, {
       cwd: scanCwd,
@@ -1159,7 +1176,7 @@ app.post('/api/actions/execute', (req, res) => {
 
 app.post('/api/report/generate', (req, res) => {
   const engineName = String(req.body?.engine || 'advance');
-  const reportDir = path.join(APP_ROOT, 'backend', 'reports');
+  const reportDir = path.join(DATA_BACKEND_DIR, 'reports');
   if (!fs.existsSync(reportDir)) fs.mkdirSync(reportDir, { recursive: true });
 
   const pad = (n) => String(n).padStart(2, '0');

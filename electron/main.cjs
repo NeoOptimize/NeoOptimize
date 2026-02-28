@@ -37,29 +37,55 @@ function setUpdateState(patch) {
   broadcastUpdateState();
 }
 
+function resolveAppPaths() {
+  const devRoot = path.join(__dirname, '..');
+  const appRoot = app.getAppPath();
+  const assetRoot = app.isPackaged ? process.resourcesPath : devRoot;
+  const dataRoot = app.getPath('userData');
+  const spawnCwd = app.isPackaged ? process.resourcesPath : devRoot;
+  const serverPath = path.join(appRoot, 'backend', 'server.js');
+  return { appRoot, assetRoot, dataRoot, spawnCwd, serverPath };
+}
+
 async function startBackendServer() {
   if (process.env.NEOOPTIMIZE_NO_BACKEND === '1') return;
   if (backendProcess || backendStartedInProcess) return;
-  const rootDir = path.join(__dirname, '..');
-  process.env.APP_ROOT = rootDir;
-  const serverPath = path.join(rootDir, 'backend', 'server.js');
+  const appPaths = resolveAppPaths();
+  process.env.APP_ROOT = appPaths.appRoot;
+  process.env.APP_ASSET_ROOT = appPaths.assetRoot;
+  process.env.APP_DATA_ROOT = appPaths.dataRoot;
   process.env.PORT = process.env.PORT || '3322';
 
-  // Prefer in-process backend for packaged build to avoid extra visible process.
-  if (app.isPackaged) {
-    try {
-      await import(pathToFileURL(serverPath).href);
-      backendStartedInProcess = true;
-      return;
-    } catch (err) {
-      console.error('[backend] in-process start failed:', err);
-    }
+  try {
+    // Prefer in-process backend to avoid extra visible process and spawn ENOENT on portable runtimes.
+    await import(pathToFileURL(appPaths.serverPath).href);
+    backendStartedInProcess = true;
+    return;
+  } catch (err) {
+    console.error('[backend] in-process start failed:', err);
   }
 
-  backendProcess = spawn(process.execPath, [serverPath], {
-    cwd: rootDir,
-    windowsHide: true,
-    env: { ...process.env, PORT: process.env.PORT || '3322', APP_ROOT: rootDir }
+  try {
+    backendProcess = spawn(process.execPath, [appPaths.serverPath], {
+      cwd: appPaths.spawnCwd,
+      windowsHide: true,
+      env: {
+        ...process.env,
+        PORT: process.env.PORT || '3322',
+        APP_ROOT: appPaths.appRoot,
+        APP_ASSET_ROOT: appPaths.assetRoot,
+        APP_DATA_ROOT: appPaths.dataRoot
+      }
+    });
+  } catch (err) {
+    backendProcess = null;
+    console.error('[backend] spawn failed:', err);
+    return;
+  }
+
+  backendProcess.on('error', (err) => {
+    console.error('[backend] process error:', err);
+    backendProcess = null;
   });
   backendProcess.stdout.on('data', (d) => console.log(`[backend] ${String(d).trim()}`));
   backendProcess.stderr.on('data', (d) => console.error(`[backend] ${String(d).trim()}`));
@@ -203,7 +229,8 @@ function createAppMenu() {
 // IPC handlers
 ipcMain.handle('cleaner:run', async (event, action) => {
   try {
-    const scriptsDir = path.join(__dirname, '..', 'scripts', 'windows');
+    const { assetRoot } = resolveAppPaths();
+    const scriptsDir = path.join(assetRoot, 'scripts', 'windows');
     let script = '';
     switch (action) {
       case 'temp':

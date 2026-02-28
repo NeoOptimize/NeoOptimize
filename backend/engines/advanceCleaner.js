@@ -12,10 +12,14 @@ const DEFAULT_MAX_FILE_SIZE_MB = 1024;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const APP_ROOT = process.env.APP_ROOT ? path.resolve(process.env.APP_ROOT) : path.resolve(__dirname, '..', '..');
+const APP_ASSET_ROOT = process.env.APP_ASSET_ROOT ? path.resolve(process.env.APP_ASSET_ROOT) : APP_ROOT;
+const APP_DATA_ROOT = process.env.APP_DATA_ROOT ? path.resolve(process.env.APP_DATA_ROOT) : APP_ROOT;
 
 function resolveSpecPath() {
-  const local = path.join(APP_ROOT, 'config', 'advance cleaner engine.txt');
+  const local = path.join(APP_DATA_ROOT, 'config', 'advance cleaner engine.txt');
   if (fs.existsSync(local)) return local;
+  const bundled = path.join(APP_ASSET_ROOT, 'config', 'advance cleaner engine.txt');
+  if (fs.existsSync(bundled)) return bundled;
   return 'C:/Users/Hello World/Documents/Script/advance cleaner engine.txt';
 }
 
@@ -571,7 +575,7 @@ async function scanRegistry(opts = {}) {
   }
 
   function backupDir() {
-    return safeJoin(APP_ROOT, 'backend', 'backups');
+    return safeJoin(APP_DATA_ROOT, 'backend', 'backups');
   }
 
   function ensureBackupDir() {
