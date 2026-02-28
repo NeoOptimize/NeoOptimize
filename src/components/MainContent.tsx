@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { useSystemStats } from '../hooks/SystemStatsContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DashboardPage } from './pages/DashboardPage';
 import { ProcessesPage } from './pages/ProcessesPage';
@@ -8,67 +9,9 @@ import { ConfigPage } from './pages/ConfigPage';
 import { LogsPage } from './pages/LogsPage';
 import { SecurityPage } from './pages/SecurityPage';
 import { SchedulerPage } from './pages/SchedulerPage';
+import { AboutPage } from './pages/AboutPage';
 // ─── Types ───────────────────────────────────────────────────────────────────
 type LogLevel = 'ok' | 'warn' | 'error' | 'info';
-interface LogEntry {
-  id: number;
-  time: string;
-  level: LogLevel;
-  message: string;
-}
-const initialLogs: LogEntry[] = [
-{
-  id: 1,
-  time: '04:22:31',
-  level: 'info',
-  message: 'neooptimize daemon started — PID 1337'
-},
-{
-  id: 2,
-  time: '04:22:38',
-  level: 'ok',
-  message: 'Loaded config: /etc/neooptimize/system.conf'
-},
-{
-  id: 3,
-  time: '04:22:41',
-  level: 'error',
-  message: 'Disk optimization failed — retrying in 30s'
-},
-{
-  id: 4,
-  time: '04:22:58',
-  level: 'ok',
-  message: 'Network latency reduced → 12ms'
-},
-{
-  id: 5,
-  time: '04:23:05',
-  level: 'warn',
-  message: 'Memory threshold at 67% — monitoring'
-}];
-
-const newLogPool: Omit<LogEntry, 'id' | 'time'>[] = [
-{
-  level: 'ok',
-  message: 'Heartbeat check passed — all nodes responsive'
-},
-{
-  level: 'warn',
-  message: 'CPU spike detected on node-03 — throttling'
-},
-{
-  level: 'ok',
-  message: 'Index rebuilt — query time −18%'
-},
-{
-  level: 'error',
-  message: 'Connection pool exhausted — scaling up'
-},
-{
-  level: 'info',
-  message: 'Backup snapshot initiated'
-}];
 
 const levelStyle: Record<
   LogLevel,
@@ -101,36 +44,30 @@ const levelStyle: Record<
 };
 // ─── Log Sidebar ──────────────────────────────────────────────────────────────
 function LogSidebar() {
-  const [logs, setLogs] = useState<LogEntry[]>(initialLogs);
-  const [nextId, setNextId] = useState(initialLogs.length + 1);
+  const { logs, clearLogs } = useSystemStats();
   const [filter, setFilter] = useState<LogLevel | 'all'>('all');
   const logRef = useRef<HTMLDivElement>(null);
-  const nextIdRef = useRef(nextId);
-  nextIdRef.current = nextId;
-  useEffect(() => {
-    const id = setInterval(() => {
-      const entry = newLogPool[Math.floor(Math.random() * newLogPool.length)];
-      const now = new Date();
-      const time = now.toLocaleTimeString('en-US', {
-        hour12: false
-      });
-      setLogs((prev) => [
-      ...prev.slice(-50),
-      {
-        id: nextIdRef.current,
-        time,
-        ...entry
-      }]
-      );
-      setNextId((n) => n + 1);
-    }, 3200);
-    return () => clearInterval(id);
-  }, []);
+
   useEffect(() => {
     if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight;
   }, [logs]);
-  const filtered =
-  filter === 'all' ? logs : logs.filter((l) => l.level === filter);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement).tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+      if (e.key.toLowerCase() === 'c') clearLogs();
+      if (e.key.toLowerCase() === 'f') {
+        const order: Array<LogLevel | 'all'> = ['all', 'ok', 'warn', 'error', 'info'];
+        const idx = order.indexOf(filter);
+        setFilter(order[(idx + 1) % order.length]);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [clearLogs, filter]);
+
+  const filtered = filter === 'all' ? logs : logs.filter((l) => l.level === filter);
   const counts = {
     all: logs.length,
     ok: logs.filter((l) => l.level === 'ok').length,
@@ -368,6 +305,7 @@ export function MainContent({ activeSection }: MainContentProps) {
           {activeSection === 6 && <LogsPage />}
           {activeSection === 7 && <SecurityPage />}
           {activeSection === 8 && <SchedulerPage />}
+          {activeSection === 9 && <AboutPage />}
         </div>
       </div>
 

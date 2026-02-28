@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Search, HelpCircle, CornerDownLeft } from 'lucide-react';
+import { useSystemStats } from '../hooks/SystemStatsContext';
+import { apiFetch } from '../lib/api';
 interface MenuItem {
   id: number;
   label: string;
@@ -54,6 +56,12 @@ const menuItems: MenuItem[] = [
   label: 'scheduler',
   path: '/cron',
   desc: 'Task Scheduler'
+},
+{
+  id: 9,
+  label: 'about',
+  path: '/about',
+  desc: 'Developer & Build'
 }];
 
 interface FileTreeNavProps {
@@ -64,31 +72,34 @@ export function FileTreeNav({
   activeSection,
   onSectionChange
 }: FileTreeNavProps) {
-  const [loadAvg, setLoadAvg] = useState([0.42, 0.38, 0.31]);
-  const [tasks, setTasks] = useState(247);
-  // Keyboard nav: 1-8 to select menu items
+  const { loadAvg, tasks, uptime, kernel } = useSystemStats();
+  const [configPreview, setConfigPreview] = useState<string | null>(null);
+  // Keyboard nav: 1-9 to select menu items
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       const tag = (e.target as HTMLElement).tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA') return;
       const n = parseInt(e.key);
-      if (n >= 1 && n <= 8) onSectionChange(n);
+      if (n >= 1 && n <= 9) onSectionChange(n);
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [onSectionChange]);
-  // Simulate system stats updates
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setLoadAvg((prev) =>
-      prev.map((v) => Math.max(0.1, v + (Math.random() - 0.5) * 0.1))
-      );
-      setTasks((prev) =>
-      Math.max(200, prev + Math.floor((Math.random() - 0.5) * 5))
-      );
-    }, 2000);
-    return () => clearInterval(interval);
-  }, []);
+    useEffect(() => {
+      let mounted = true;
+      if (activeSection === 5) {
+        apiFetch('/api/config').then((r) => r.json()).then((j) => {
+          if (!mounted) return;
+          if (j.ok) {
+            // show first 400 chars
+            setConfigPreview(j.content.slice(0, 400));
+          } else setConfigPreview('Failed to load: ' + String(j.error));
+        }).catch((e) => { if (mounted) setConfigPreview(String(e)); });
+      } else {
+        setConfigPreview(null);
+      }
+      return () => { mounted = false; };
+    }, [activeSection]);
   return (
     <nav
       className="w-64 fixed left-0 top-14 bottom-0 hidden md:flex flex-col font-mono text-xs"
@@ -180,6 +191,16 @@ export function FileTreeNav({
         </div>
       </div>
 
+      {/* Config preview when Config menu active */}
+      {activeSection === 5 && (
+        <div className="p-3 border-t" style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--bg-tertiary)' }}>
+          <div className="text-xs font-bold mb-2" style={{ color: 'var(--ansi-blue)' }}>Loaded config (config.txt)</div>
+          <div className="text-[11px] font-mono max-h-44 overflow-y-auto p-2" style={{ backgroundColor: 'var(--terminal-output-bg)', color: 'var(--text-muted)', border: '1px solid var(--border-color)' }}>
+            {configPreview ?? 'Loading...'}
+          </div>
+        </div>
+      )}
+
       {/* System Status Block */}
       <div
         className="p-4 space-y-2"
@@ -201,7 +222,7 @@ export function FileTreeNav({
               color: 'var(--text-muted)'
             }}>
 
-            5.15.0-generic
+            {kernel}
           </span>
         </div>
         <div className="flex justify-between">
@@ -217,7 +238,7 @@ export function FileTreeNav({
               color: 'var(--text-muted)'
             }}>
 
-            04:22:11
+            {uptime}
           </span>
         </div>
         <div className="flex justify-between">
@@ -263,6 +284,7 @@ export function FileTreeNav({
         }}>
 
         <div className="flex flex-wrap gap-3 mb-2">
+          <span>[1-9] jump</span>
           <span>[↑↓] navigate</span>
           <span>[Enter] select</span>
           <span>[q] quit</span>

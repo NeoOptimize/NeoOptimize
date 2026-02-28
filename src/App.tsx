@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ThemeProvider } from './hooks/useThemeContext';
 import { TerminalHeader } from './components/TerminalHeader';
 import { FileTreeNav } from './components/FileTreeNav';

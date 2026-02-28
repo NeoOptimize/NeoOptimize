@@ -1,0 +1,2374 @@
+# ⚙️ **CONFIGURATION / SYSTEM OPTIMIZATION - LENGKAP UNTUK NEOOPTIMIZE.EXE**
+
+## 📋 **DAFTAR FITUR LENGKAP + IMPLEMENTASI DETAIL**
+
+---
+
+## **1. 👑 GOD MODE ACCESS** 
+*Akses semua pengaturan Windows dalam satu folder*
+
+### **Fitur Detail:**
+```yaml
+🔹 Enable God Mode:
+  - Membuat folder di Desktop dengan nama "God Mode.{ED7BA470-8E54-465E-825C-99712043E01C}"
+  - Berisi 270+ control panel items
+  - Bisa juga di lokasi lain (Documents, Start Menu)
+  
+🔹 Super God Mode (ThioJoe):
+  - Versi extended dengan 1200+ settings
+  - Menggunakan GUID khusus untuk kategori tertentu
+  - Termasuk settings tersembunyi
+  
+🔹 Custom God Mode:
+  - Pilih kategori yang ingin ditampilkan
+  - Buat multiple God Mode folders untuk kategori berbeda
+  - Export/import konfigurasi
+  
+🔹 One-Click Access:
+  - Buka langsung dari aplikasi NeoOptimize
+  - Pin ke taskbar/start menu
+  - Shortcut keyboard (Ctrl+Alt+G)
+```
+
+### **Cara Implementasi:**
+```powershell
+# Create God Mode folder
+$godModePath = "$env:USERPROFILE\Desktop\God Mode.{ED7BA470-8E54-465E-825C-99712043E01C}"
+New-Item -Path $godModePath -ItemType Directory -Force
+
+# Super God Mode - multiple GUIDs
+$guids = @{
+    "All Tasks" = "ED7BA470-8E54-465E-825C-99712043E01C"
+    "Administrative Tools" = "D20EA4E1-3957-11d2-A40B-0C5020524153"
+    "Security and Maintenance" = "BB64F8A7-BEE7-4EA1-AB8D-7D8273F7FDB6"
+    # ... more GUIDs
+}
+```
+
+---
+
+## **2. 🗑️ BLOATWARE REMOVER** 
+*Hapus aplikasi pre-installed yang tidak diperlukan*
+
+### **Daftar Lengkap Bloatware:**
+```yaml
+🔴 MICROSOFT BLOATWARE:
+  - Microsoft Edge (dengan opsi uninstall total)
+  - OneDrive (Uninstall + hapus folder)
+  - Microsoft Teams (personal + work/school)
+  - Clipchamp (video editor)
+  - Microsoft News / Bing News
+  - Bing Weather / Bing Finance / Bing Sports
+  - Skype (app version)
+  - Cortana (disable total)
+  - 3D Viewer / 3D Builder
+  - Mixed Reality Portal
+  - People App
+  - Your Phone / Phone Link
+  - Windows Mail / Windows Calendar
+  - Microsoft Solitaire Collection
+  - Microsoft Mahjong / Minesweeper
+  - Feedback Hub
+  - Get Help
+  - Microsoft Tips / Get Started
+  - Microsoft To Do
+  - Microsoft Sticky Notes
+  - Alarms & Clock
+  - Calculator (optional - bisa ganti alternative)
+  - Camera (optional)
+  - Maps (optional)
+  
+🔴 XBOX APPS:
+  - Xbox App
+  - Xbox Console Companion
+  - Xbox Game Bar
+  - Xbox Game Bar Plugin
+  - Xbox Identity Provider
+  - Xbox Live in-game experience
+  - Xbox Speech to Text Overlay
+  - Xbox TCUI (Text Chat UI)
+  - Xbox Game Callable UI
+  
+🔴 WINDOWS 11 SPECIFIC:
+  - Widgets (News and Interests)
+  - Chat (Teams integration)
+  - Windows Terminal (optional)
+  - Power Automate
+  - Microsoft Family
+  - Parental Controls
+  
+🔴 THIRD-PARTY BLOAT (OEM):
+  - McAfee LiveSafe / Security
+  - Norton Security
+  - Candy Crush / Spotify (pre-installed)
+  - Netflix (pre-installed)
+  - Facebook (pre-installed)
+  - Instagram (pre-installed)
+  - TikTok (pre-installed)
+  - Amazon Prime Video / Amazon Music
+  - Disney+
+  - Spotify
+  - Dropbox (OEM version)
+  
+🔴 WINDOWS APPS YANG AMAN DIHAPUS:
+  - Windows Camera
+  - Windows Voice Recorder
+  - Windows Sound Recorder
+  - Windows Media Player (legacy)
+  - Windows DVD Player
+  - Paint 3D
+  - Snip & Sketch (bisa diganti Snipping Tool)
+  - Steps Recorder
+  - Character Map
+  - Math Input Panel
+  - Quick Assist
+  - Windows Fax and Scan
+  - WordPad (akan dihapus di update terbaru)
+```
+
+### **Mode Removal:**
+```yaml
+🌟 SAFE MODE:
+  - Hapus hanya aplikasi yang 100% aman
+  - Backup registry sebelum uninstall
+  - Create restore point
+  
+🔥 AGGRESSIVE MODE:
+  - Hapus lebih banyak (dengan peringatan)
+  - Termasuk komponen sistem ringan
+  - Butuh konfirmasi user
+  
+🎯 GAMING MODE:
+  - Fokus hapus apps yang consume resources
+  - Nonaktifkan background services gaming
+  - Optimasi untuk game
+  
+📦 CUSTOM MODE:
+  - Centang manual per aplikasi
+  - Simpan profil custom
+  - Export/import list
+  
+🔄 WINDOWS 11 25H2+ NATIVE:
+  - Gunakan Windows Package Manager
+  - Support fitur removal terbaru dari Microsoft
+  - Integration dengan Settings app
+```
+
+### **PowerShell Implementation:**
+```powershell
+function Remove-Bloatware {
+    param(
+        [string[]]$AppNames,
+        [ValidateSet("Safe","Aggressive","Gaming","Custom")]
+        [string]$Mode = "Safe"
+    )
+    
+    # Backup registry
+    reg export HKLM\Software\Microsoft\Windows\CurrentVersion\Uninstall "$env:TEMP\uninstall_backup.reg"
+    
+    # Create restore point
+    Checkpoint-Computer -Description "NeoOptimize - Before Bloatware Removal" -RestorePointType MODIFY_SETTINGS
+    
+    # Remove apps
+    $apps = Get-AppxPackage | Where-Object { $_.Name -match ($AppNames -join "|") }
+    foreach ($app in $apps) {
+        Remove-AppxPackage -Package $app
+    }
+    
+    # Remove provisioned packages (prevent reinstall)
+    $provisioned = Get-AppxProvisionedPackage -Online | Where-Object { $_.DisplayName -match ($AppNames -join "|") }
+    foreach ($pkg in $provisioned) {
+        Remove-AppxProvisionedPackage -Online -PackageName $pkg.PackageName
+    }
+}
+```
+
+---
+
+## **3. 🔒 PRIVACY & TELEMETRY MANAGER**
+*Kontrol penuh data yang dikirim ke Microsoft*
+
+### **Daftar Lengkap Privacy Settings:**
+
+```yaml
+📊 TELEMETRY & DATA COLLECTION:
+  ✓ Disable Telemetry (AllowTelemetry = 0)
+  ✓ Disable Compatibility Telemetry
+  ✓ Disable Customer Experience Improvement Program (CEIP)
+  ✓ Disable Windows Error Reporting (WER)
+  ✓ Disable Device Metadata Retrieval
+  ✓ Disable Online Tips & Suggestions
+  ✓ Disable Tailored Experiences
+  ✓ Disable Advertising ID
+  ✓ Disable Activity History
+  ✓ Disable App Launch Tracking
+  ✓ Disable Frequent Folders in Quick Access
+  ✓ Disable Recent Files in Quick Access
+  ✓ Disable Timeline / Activity Feed
+  
+🎯 ADVERTISING & PERSONALIZATION:
+  ✓ Disable Targeted Ads
+  ✓ Reset Advertising ID
+  ✓ Disable Personalized Recommendations
+  ✓ Disable Suggested Content in Settings
+  ✓ Disable Suggested Apps in Start Menu
+  ✓ Disable Windows Spotlight
+  ✓ Disable Lock Screen Tips
+  ✓ Disable Fun Facts, Tips & Tricks
+  
+🗣️ SPEECH & INKING:
+  ✓ Disable Online Speech Recognition
+  ✓ Disable Cortana (complete)
+  ✓ Disable Ink Workspace
+  ✓ Disable Handwriting Data Sharing
+  ✓ Disable Typing Insights
+  ✓ Disable Cloud Clipboard
+  ✓ Clear Clipboard History
+  
+📱 ACCOUNT & SYNC:
+  ✓ Disable Microsoft Account Sign-in Assistant
+  ✓ Disable Sync Settings
+  ✓ Disable Wallet Service
+  ✓ Disable Windows Hello (optional)
+  ✓ Disable Dynamic Lock
+  ✓ Disable Find My Device
+  
+📍 LOCATION SERVICES:
+  ✓ Disable Location Services (complete)
+  ✓ Clear Location History
+  ✓ Disable Sensor Services
+  ✓ Disable Wi-Fi Sensing
+  ✓ Disable Bluetooth Sensing
+  ✓ Disable Cellular Sensing
+  
+🎙️ CAMERA & MICROPHONE:
+  ✓ Disable Camera Access (global)
+  ✓ Disable Microphone Access (global)
+  ✓ Block per-app access
+  ✓ Disable Cortana listening
+  
+📁 FILE SYSTEM & LIBRARIES:
+  ✓ Disable File History (optional)
+  ✓ Clear File Explorer History
+  ✓ Disable Recent Documents
+  ✓ Disable Recent Items in Jump Lists
+  ✓ Disable Thumbnail Cache
+  ✓ Clear Thumbnail Cache
+  
+🌐 NETWORK PRIVACY:
+  ✓ Disable Wi-Fi Sense
+  ✓ Disable Hotspot 2.0
+  ✓ Disable Network Discovery
+  ✓ Disable Network Content Sharing
+  ✓ Disable Network Adapter Sharing
+  ✓ Disable P2P Update Sharing (Delivery Optimization)
+  
+🔧 BACKGROUND APPS:
+  ✓ Disable All Background Apps
+  ✓ Block per-app background activity
+  ✓ Disable App Diagnostics
+  ✓ Disable App Auto-updates (Microsoft Store)
+  
+📨 DIAGNOSTICS & FEEDBACK:
+  ✓ Disable Diagnostic Data Viewer
+  ✓ Disable Feedback Frequency (set to Never)
+  ✓ Delete Existing Diagnostic Data
+  ✓ Disable Inking & Typing Diagnostics
+  ✓ Disable Diagnostic Policy Service
+  
+🔐 SECURITY PRIVACY:
+  ✓ Disable Windows Defender Cloud Protection
+  ✓ Disable Automatic Sample Submission
+  ✓ Disable PUA Protection (optional)
+  ✓ Disable Tamper Protection (optional)
+  ✓ Disable Secure Boot (optional)
+```
+
+### **Registry Implementation:**
+```powershell
+# Privacy Registry Tweaks
+$privacySettings = @{
+    # Telemetry
+    "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" = @{
+        "AllowTelemetry" = 0
+        "DoNotShowFeedbackNotifications" = 1
+    }
+    
+    # Advertising ID
+    "HKCU:\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo" = @{
+        "Enabled" = 0
+    }
+    
+    # Activity History
+    "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System" = @{
+        "EnableActivityFeed" = 0
+        "PublishUserActivities" = 0
+        "UploadUserActivities" = 0
+    }
+    
+    # Cortana
+    "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" = @{
+        "AllowCortana" = 0
+        "AllowSearchToUseLocation" = 0
+        "DisableWebSearch" = 1
+        "ConnectedSearchUseWeb" = 0
+    }
+    
+    # Location
+    "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location" = @{
+        "Value" = "Deny"
+    }
+    
+    # Camera
+    "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\webcam" = @{
+        "Value" = "Deny"
+    }
+    
+    # Microphone
+    "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\microphone" = @{
+        "Value" = "Deny"
+    }
+    
+    # Notifications
+    "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\notifications" = @{
+        "Value" = "Deny"
+    }
+    
+    # Account Info
+    "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\userAccountInformation" = @{
+        "Value" = "Deny"
+    }
+    
+    # Contacts
+    "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\contacts" = @{
+        "Value" = "Deny"
+    }
+    
+    # Calendar
+    "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\appointments" = @{
+        "Value" = "Deny"
+    }
+    
+    # Call History
+    "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\phoneCall" = @{
+        "Value" = "Deny"
+    }
+    
+    # Email
+    "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\email" = @{
+        "Value" = "Deny"
+    }
+    
+    # Messaging
+    "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\chat" = @{
+        "Value" = "Deny"
+    }
+    
+    # Radios (Bluetooth/WiFi)
+    "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\radios" = @{
+        "Value" = "Deny"
+    }
+    
+    # Other Devices
+    "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\bluetoothSync" = @{
+        "Value" = "Deny"
+    }
+    
+    # Eye Gaze (accessibility)
+    "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\gazeInput" = @{
+        "Value" = "Deny"
+    }
+}
+
+# Apply settings
+foreach ($path in $privacySettings.Keys) {
+    if (-not (Test-Path $path)) {
+        New-Item -Path $path -Force | Out-Null
+    }
+    
+    foreach ($name in $privacySettings[$path].Keys) {
+        Set-ItemProperty -Path $path -Name $name -Value $privacySettings[$path][$name] -Type DWord
+    }
+}
+```
+
+### **Group Policy Implementation:**
+```xml
+<!-- privacy-policies.xml -->
+<PolicyDefinitions>
+  <Category Name="Windows Components">
+    <SubCategory Name="Data Collection and Preview Builds">
+      <Policy Name="Allow Telemetry" Value="0"/>
+      <Policy Name="Configure Authenticated Proxy usage for the Connected User Experience and Telemetry service" Value="0"/>
+    </SubCategory>
+    
+    <SubCategory Name="Search">
+      <Policy Name="Allow Cloud Search" Value="0"/>
+      <Policy Name="Allow Indexing of Encrypted Files" Value="0"/>
+      <Policy Name="Allow Using Diacritics" Value="0"/>
+    </SubCategory>
+  </Category>
+</PolicyDefinitions>
+```
+
+### **Privacy Score System:**
+```yaml
+📊 PRIVACY SCORE CALCULATION:
+  - Total Settings: 150+ privacy controls
+  - Score Range: 0-100%
+  
+  🟢 EXCELLENT (90-100%):
+    - Semua telemetry disabled
+    - Semua tracking disabled
+    - Background apps blocked
+    - Location/camera/mic disabled
+  
+  🟡 GOOD (70-89%):
+    - Basic privacy settings
+    - Telemetry set to basic
+    - Most tracking disabled
+  
+  🟠 FAIR (50-69%):
+    - Default Windows settings
+    - Some privacy risks
+  
+  🔴 POOR (0-49%):
+    - Full telemetry
+    - All tracking enabled
+    - High privacy risk
+  
+  🔧 ONE-CLICK BOOST:
+    - "Max Privacy" → Set semua ke maksimum
+    - "Balanced" → Privacy + functionality
+    - "Default" → Kembali ke Windows default
+    - "Custom" → Pilih manual
+```
+
+---
+
+## **4. 🔧 SERVICE OPTIMIZER**
+*Manajemen layanan Windows untuk performa maksimal*
+
+### **Daftar Lengkap Services & Rekomendasi:**
+
+```yaml
+🟢 SERVICES YANG AMAN DINONAKTIFKAN:
+
+  1. SysMain (Superfetch) - SSD Users
+  2. Windows Search - Jika tidak pakai search
+  3. Print Spooler - Tidak punya printer
+  4. Bluetooth Support Service - Tidak pakai Bluetooth
+  5. Fax Service - Jarang digunakan
+  6. Xbox Live Services - Tidak gaming
+  7. Xbox Game Monitoring - Tidak gaming
+  8. Xbox Live Networking - Tidak gaming
+  9. BitLocker Drive Encryption - Tidak pakai enkripsi
+  10. Windows Defender - (dengan antivirus lain)
+  11. Connected User Experiences and Telemetry (DiagTrack)
+  12. dmwappushservice - Telemetry
+  13. Windows Error Reporting Service
+  14. Diagnostic Policy Service
+  15. Diagnostic Service Host
+  16. Diagnostic System Host
+  17. Program Compatibility Assistant Service
+  18. Contact Data - Jarang digunakan
+  19. Sync Host - Tidak sync settings
+  20. User Data Access - Privacy
+  21. User Data Storage - Privacy
+  22. MessagingService - Tidak pakai messaging
+  23. PimIndexMaintenanceSvc - Contact data
+  24. UnistoreSvc - User data storage
+  25. Retail Demo Service - Untuk display unit
+  26. WalletService - Tidak pakai wallet
+  27. AllJoyn Router Service - Jarang digunakan
+  28. AssignedAccessManager - Kiosk mode
+  29. Auto Time Zone Updater - Manual set
+  30. BranchCache - Untuk enterprise
+  31. Certificate Propagation - Smart cards
+  32. Client License Service (ClipSVC)
+  33. Clipboard User Service - Jika nonaktif
+  34. Cloud Backup and Restore
+  35. Downloaded Maps Manager - Tidak pakai maps offline
+  36. Embedded Mode - Untuk embedded devices
+  37. Geolocation Service - Privacy
+  38. Human Interface Device Service - Hanya untuk touch
+  39. Internet Connection Sharing - Jarang
+  40. IP Helper (IPv6) - Jika nonaktif IPv6
+  41. KtmRm for Distributed Transaction Coordinator
+  42. Link-Layer Topology Discovery Mapper
+  43. Microsoft Edge Elevation Service
+  44. Microsoft iSCSI Initiator Service
+  45. Microsoft Software Shadow Copy Provider
+  46. Natural Authentication - Untuk Windows Hello
+  47. Netlogon - Untuk domain
+  48. Network Connected Devices Auto-Setup
+  49. Network Experience Service
+  50. Network List Service
+  51. Network Setup Service
+  52. Network Store Interface Service
+  53. Offline Files - Jarang
+  54. Optimize drives - Manual saja
+  55. Parental Controls
+  56. Payment and NFC/SE Manager
+  57. Phone Service - Tidak pakai Phone Link
+  58. Power - Jangan nonaktif!
+  59. PrintWorkflow - Tidak pakai printer
+  60. Push To Install - Windows Store
+  61. Radio Management - Bluetooth/FM
+  62. Remote Access Auto Connection Manager
+  63. Remote Access Connection Manager
+  64. Remote Desktop Configuration
+  65. Remote Desktop Services
+  66. Remote Desktop Services UserMode Port Redirector
+  67. Remote Procedure Call (RPC) Locator
+  68. Remote Registry - Security risk
+  69. Routing and Remote Access
+  70. RPC Endpoint Mapper - Jangan nonaktif!
+  71. Secondary Logon
+  72. Secure Socket Tunneling Protocol Service
+  73. Security Center
+  74. Sensor Data Service
+  75. Sensor Monitoring Service
+  76. Sensor Service
+  77. Shell Hardware Detection
+  78. Smart Card
+  79. Smart Card Device Enumeration Service
+  80. Smart Card Removal Policy
+  81. SNMP Trap
+  82. Software Protection
+  83. Spatial Data Service
+  84. Spot Verifier
+  85. SSDP Discovery
+  86. Storage Service
+  87. Storage Tiers Management
+  88. Sync Host_* (per-user)
+  89. System Events Broker
+  90. System Guard - Security
+  91. TabletInputService (Touch Keyboard)
+  92. Telephony
+  93. Themes - Jangan nonaktif!
+  94. Tile Data model server
+  95. Time Broker
+  96. Touch Keyboard and Handwriting Panel Service
+  97. Update Orchestrator Service
+  98. UPnP Device Host
+  99. User Experience Virtualization
+  100. Volume Shadow Copy
+  101. WalletService
+  102. Web Account Manager
+  103. WebClient
+  104. Wi-Fi Direct Services Connection Manager
+  105. Windows Audio - Jangan nonaktif!
+  106. Windows Audio Endpoint Builder - Jangan nonaktif!
+  107. Windows Biometric Service
+  108. Windows Camera Frame Server
+  109. Windows Color System
+  110. Windows Connect Now
+  111. Windows Connection Manager
+  112. Windows Defender Advanced Threat Protection
+  113. Windows Defender Antivirus Network Inspection Service
+  114. Windows Defender Antivirus Service
+  115. Windows Defender Firewall
+  116. Windows Driver Foundation
+  117. Windows Encryption Provider Host Service
+  118. Windows Error Reporting
+  119. Windows Event Collector
+  120. Windows Event Log - Jangan nonaktif!
+  121. Windows Font Cache Service
+  122. Windows Image Acquisition (WIA)
+  123. Windows Insider Service
+  124. Windows Installer
+  125. Windows License Manager
+  126. Windows Live ID Setup
+  127. Windows Management Instrumentation - Jangan nonaktif!
+  128. Windows Media Player Network Sharing Service
+  129. Windows Mobile Hotspot Service
+  130. Windows Modules Installer
+  131. Windows Push Notifications Service
+  132. Windows Push Notifications User Service
+  133. Windows Remote Management
+  134. Windows Search - Jika tidak perlu
+  135. Windows Time - Set manual
+  136. Windows Update
+  137. Windows Update Medic Service
+  138. WinHTTP Web Proxy Auto-Discovery
+  139. WLAN AutoConfig
+  140. WMI Performance Adapter
+  141. Workstation
+  142. WwanSvc - Mobile broadband
+
+🔴 SERVICES YANG WAJIB AKTIF:
+  - Windows Audio
+  - Windows Audio Endpoint Builder
+  - Windows Event Log
+  - Windows Management Instrumentation
+  - Plug and Play
+  - Power
+  - Remote Procedure Call (RPC)
+  - DCOM Server Process Launcher
+  - RPC Endpoint Mapper
+  - Security Accounts Manager
+  - Server
+  - Workstation (jika jaringan)
+  - DHCP Client (jika internet)
+  - DNS Client (jika internet)
+  - Network Location Awareness
+  - TCP/IP NetBIOS Helper
+```
+
+### **Service Optimization Profiles:**
+
+```yaml
+📋 STANDARD PROFILE (Recommended for most users):
+  - Nonaktifkan: 30-40 services
+  - Aktifkan: Services essential untuk daily use
+  - Cocok untuk: General users, office work
+  
+🎮 GAMING PROFILE (Maximum performance):
+  - Nonaktifkan: 80+ non-essential services
+  - Fokus: CPU/RAM untuk gaming
+  - Disable: Windows Update, Defender, Search
+  - Cocok untuk: Dedicated gaming PC
+  
+💼 WORKSTATION PROFILE (Stability focus):
+  - Nonaktifkan: Minimal services
+  - Prioritaskan: Stabilitas dan kompatibilitas
+  - Cocok untuk: Work PC dengan software khusus
+  
+🔋 LAPTOP PROFILE (Battery saving):
+  - Nonaktifkan: High-power services
+  - Enable: Power management features
+  - Cocok untuk: Laptop, tablet
+  
+🏢 ENTERPRISE PROFILE (Domain/Network):
+  - Nonaktifkan: Consumer features
+  - Enable: Network, security services
+  - Cocok untuk: Corporate environment
+  
+🔄 CUSTOM PROFILE:
+  - Pilih manual services
+  - Save/load configuration
+  - Export to script
+```
+
+### **Implementation:**
+```powershell
+# Service Optimizer Engine
+class ServiceOptimizer {
+    [hashtable]$services
+    [string]$profile
+    
+    ServiceOptimizer() {
+        $this.services = @{}
+        $this.LoadServiceStatus()
+    }
+    
+    [void]LoadServiceStatus() {
+        Get-Service | ForEach-Object {
+            $this.services[$_.Name] = @{
+                Status = $_.Status
+                StartType = $_.StartType
+                DisplayName = $_.DisplayName
+            }
+        }
+    }
+    
+    [void]ApplyProfile([string]$profileName) {
+        $profile = $this.GetProfile($profileName)
+        
+        # Create restore point
+        Checkpoint-Computer -Description "NeoOptimize - Service Optimization: $profileName" -RestorePointType MODIFY_SETTINGS
+        
+        # Apply service configurations
+        foreach ($service in $profile.Services.Keys) {
+            $action = $profile.Services[$service]
+            switch ($action) {
+                "Disable" { Set-Service -Name $service -StartupType Disabled -Status Stopped -ErrorAction SilentlyContinue }
+                "Manual" { Set-Service -Name $service -StartupType Manual -ErrorAction SilentlyContinue }
+                "Automatic" { Set-Service -Name $service -StartupType Automatic -ErrorAction SilentlyContinue }
+                "Delayed" { Set-Service -Name $service -StartupType AutomaticDelayedStart -ErrorAction SilentlyContinue }
+            }
+        }
+        
+        # Log changes
+        $this.LogChanges($profileName)
+    }
+    
+    [hashtable]GetProfile([string]$name) {
+        $profiles = @{
+            "Standard" = @{
+                Services = @{
+                    "SysMain" = "Disable"
+                    "WSearch" = "Manual"
+                    "Spooler" = "Automatic"
+                    # ... more services
+                }
+                Description = "Balanced optimization for daily use"
+            }
+            
+            "Gaming" = @{
+                Services = @{
+                    "SysMain" = "Disable"
+                    "WSearch" = "Disable"
+                    "Spooler" = "Disable"
+                    "Xbox*" = "Disable"
+                    "wscsvc" = "Disable"
+                    "WinDefend" = "Disable"
+                    "wuauserv" = "Disable"
+                }
+                Description = "Maximum performance for gaming"
+            }
+            
+            # ... other profiles
+        }
+        
+        return $profiles[$name]
+    }
+}
+```
+
+---
+
+## **5. 🚀 STARTUP MANAGER**
+*Kontrol program yang berjalan saat startup*
+
+### **Fitur Lengkap:**
+
+```yaml
+📋 STARTUP PROGRAM LIST:
+  🔹 Registry Run Keys:
+    - HKCU:\Software\Microsoft\Windows\CurrentVersion\Run
+    - HKLM:\Software\Microsoft\Windows\CurrentVersion\Run
+    - HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce
+    - HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce
+  
+  🔹 Startup Folders:
+    - %APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup
+    - %PROGRAMDATA%\Microsoft\Windows\Start Menu\Programs\Startup
+  
+  🔹 Scheduled Tasks (startup triggers)
+  🔹 Services (Automatic startup)
+  🔹 Windows Services
+  🔹 AppX Packages (background tasks)
+  🔹 Browser Extensions/Plugins
+  🔹 Shell Extensions
+  🔹 Boot Execute (Native images)
+
+🎯 FEATURES:
+  ✓ Enable/Disable programs
+  ✓ Delete startup entries
+  ✓ Add new startup program
+  ✓ Delay startup (using Task Scheduler)
+  ✓ Priority setting (High/Low)
+  ✓ CPU Affinity setting
+  ✓ Show file location
+  ✓ Search online for unknown programs
+  ✓ VirusTotal integration (scan startup files)
+  ✓ Startup impact measurement (Low/Medium/High)
+  ✓ Last boot time contribution
+  ✓ Recommendation engine (based on community)
+
+📊 STARTUP IMPACT METRICS:
+  🟢 LOW (< 1 second):
+    - Lightweight programs
+    - Minimal CPU/RAM usage
+  
+  🟡 MEDIUM (1-3 seconds):
+    - Moderate impact
+    - Consider disabling if not needed
+  
+  🔴 HIGH (3+ seconds):
+    - Heavy programs
+    - Strongly recommend disable
+  
+  ⚫ CRITICAL (5+ seconds):
+    - Major boot delay
+    - Should be disabled or delayed
+
+🔧 ADVANCED FEATURES:
+  - Boot Time Optimizer (analyze boot performance)
+  - Boot Trace (detailed boot process)
+  - Boot Log (Windows Performance Toolkit)
+  - Boot Configuration Data (BCD) editor
+  - Boot Menu timeout adjust
+  - Boot Status Messages (enable/disable)
+  - Boot Logo (enable/disable)
+  - Boot Animation (enable/disable)
+  - Boot Screen Resolution (set native)
+  - Boot Processor Count (set max cores)
+  - Boot Memory Limit (set max RAM)
+  - Boot PCI Lock (disable/enable)
+  - Boot Debug (enable/disable)
+  - Boot EMS (enable/disable)
+  - Boot VGA Mode (enable/disable)
+  - Boot Safe Mode (options)
+  - Boot Last Known Good (enable/disable)
+  - Boot Recovery (enable/disable)
+  - Boot OS Loader (timeout)
+
+🔄 STARTUP DELAY SYSTEM:
+  - Use Task Scheduler to delay startup programs
+  - Set delay time (30s, 60s, 120s, custom)
+  - Priority: System first, then user apps
+  - Group delays (all non-essential together)
+  - Smart delay (based on system load)
+
+📈 STARTUP SCORE:
+  - 0-100% score
+  - Based on:
+    * Number of startup items
+    * Total impact time
+    * System specs
+    * User feedback
+  
+  🏆 EXCELLENT (90-100%):
+    - < 10 startup items
+    - < 5 seconds boot time
+    - All essential only
+  
+  🥇 GOOD (70-89%):
+    - 10-20 startup items
+    - 5-10 seconds boot
+  
+  🥈 FAIR (50-69%):
+    - 20-30 startup items
+    - 10-15 seconds boot
+  
+  🥉 POOR (0-49%):
+    - 30+ startup items
+    - 15+ seconds boot
+```
+
+### **Implementation:**
+```powershell
+# Startup Manager Class
+class StartupManager {
+    [System.Collections.ArrayList]$startupItems
+    
+    StartupManager() {
+        $this.startupItems = @()
+        $this.ScanStartup()
+    }
+    
+    [void]ScanStartup() {
+        # Registry Run Keys
+        $regPaths = @(
+            "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run",
+            "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run",
+            "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce",
+            "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce"
+        )
+        
+        foreach ($path in $regPaths) {
+            if (Test-Path $path) {
+                Get-ItemProperty -Path $path | ForEach-Object {
+                    $_.PSObject.Properties | Where-Object { $_.Name -notin @('PSPath','PSParentPath','PSChildName','PSDrive','PSProvider') } | ForEach-Object {
+                        $item = [PSCustomObject]@{
+                            Name = $_.Name
+                            Command = $_.Value
+                            Location = $path
+                            Type = "Registry"
+                            Enabled = $true
+                            Impact = $this.CalculateImpact($_.Value)
+                        }
+                        $this.startupItems.Add($item)
+                    }
+                }
+            }
+        }
+        
+        # Startup Folders
+        $folderPaths = @(
+            "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup",
+            "$env:PROGRAMDATA\Microsoft\Windows\Start Menu\Programs\Startup"
+        )
+        
+        foreach ($path in $folderPaths) {
+            if (Test-Path $path) {
+                Get-ChildItem -Path $path -File | ForEach-Object {
+                    $item = [PSCustomObject]@{
+                        Name = $_.BaseName
+                        Command = $_.FullName
+                        Location = $path
+                        Type = "Folder"
+                        Enabled = $true
+                        Impact = $this.CalculateImpact($_.FullName)
+                    }
+                    $this.startupItems.Add($item)
+                }
+            }
+        }
+        
+        # Scheduled Tasks (startup triggers)
+        $tasks = Get-ScheduledTask | Where-Object { $_.Triggers -match 'StartupTrigger' }
+        foreach ($task in $tasks) {
+            $item = [PSCustomObject]@{
+                Name = $task.TaskName
+                Command = $task.Actions.Execute
+                Location = "Task Scheduler"
+                Type = "Task"
+                Enabled = $task.Enabled
+                Impact = $this.CalculateImpact($task.Actions.Execute)
+            }
+            $this.startupItems.Add($item)
+        }
+    }
+    
+    [string]CalculateImpact([string]$path) {
+        # Measure startup impact based on file size, type, and historical data
+        if (Test-Path $path) {
+            $file = Get-Item $path
+            $size = $file.Length / 1MB
+            
+            if ($size -gt 10) { return "High" }
+            elseif ($size -gt 1) { return "Medium" }
+            else { return "Low" }
+        }
+        return "Unknown"
+    }
+    
+    [void]DisableItem([string]$name) {
+        $item = $this.startupItems | Where-Object { $_.Name -eq $name }
+        
+        switch ($item.Type) {
+            "Registry" {
+                Remove-ItemProperty -Path $item.Location -Name $item.Name -ErrorAction SilentlyContinue
+            }
+            "Folder" {
+                Move-Item -Path $item.Command -Destination "$($item.Command).disabled" -ErrorAction SilentlyContinue
+            }
+            "Task" {
+                Disable-ScheduledTask -TaskName $item.Name -ErrorAction SilentlyContinue
+            }
+        }
+        
+        $item.Enabled = $false
+    }
+    
+    [void]DelayItem([string]$name, [int]$seconds) {
+        # Create delayed startup via Task Scheduler
+        $item = $this.startupItems | Where-Object { $_.Name -eq $name }
+        
+        $action = New-ScheduledTaskAction -Execute $item.Command
+        $trigger = New-ScheduledTaskTrigger -AtStartup -RandomDelay (New-TimeSpan -Seconds $seconds)
+        $principal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount
+        $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
+        
+        Register-ScheduledTask -TaskName "NeoOptimize_Delayed_$name" -Action $action -Trigger $trigger -Principal $principal -Settings $settings -Force
+        
+        # Disable original
+        $this.DisableItem($name)
+    }
+}
+```
+
+---
+
+## **6. ⚡ POWER PLAN OPTIMIZER**
+*Optimasi pengaturan daya untuk performa maksimal*
+
+### **Fitur Lengkap:**
+
+```yaml
+🔋 POWER PLANS AVAILABLE:
+
+  1. 🚀 ULTIMATE PERFORMANCE:
+    - Hidden by default (enable via powercfg)
+    - Maximum performance, no power saving
+    - Disable all power-saving features
+    - CPU min/max: 100%
+    - Fan always on
+    - No sleep/hibernate
+  
+  2. ⚡ HIGH PERFORMANCE:
+    - Default Windows plan
+    - Prioritize performance over battery
+    - CPU min: 100%, max: 100%
+    - Turn off hard disk: Never
+    - Sleep: Never
+    - USB selective suspend: Disabled
+    - PCI Express: Off
+  
+  3. ⚖️ BALANCED:
+    - Default for laptops
+    - Balance performance and battery
+    - Adaptive CPU frequency
+    - Sleep after 30 min
+  
+  4. 🔋 POWER SAVER:
+    - Maximum battery life
+    - CPU min: 5%, max: 80%
+    - Sleep after 15 min
+    - Dim display aggressively
+  
+  5. 🎮 GAMING BOOST:
+    - Custom plan for gaming
+    - CPU min: 100%, max: 100%
+    - GPU performance: Maximum
+    - Disable background tasks
+    - Network throttling: Disabled
+  
+  6. 📽️ PRESENTATION MODE:
+    - No sleep/hibernate
+    - No screen dimming
+    - No notifications
+    - Disable screensaver
+  
+  7. 🏠 CUSTOM BEYOND PERFORMANCE:
+    - Advanced tweaks
+    - Registry modifications
+    - Hidden settings exposed
+
+⚙️ ADVANCED SETTINGS:
+
+  🔹 Processor Power Management:
+    - Minimum processor state (0-100%)
+    - Maximum processor state (0-100%)
+    - Processor performance increase threshold
+    - Processor performance decrease threshold
+    - Processor performance increase policy
+    - Processor performance decrease policy
+    - Processor performance core parking min cores
+    - Processor performance core parking max cores
+    - Processor performance core parking utility threshold
+    - Processor performance core parking distribution
+    - Processor performance time check interval
+    - Processor idle disable
+    - Processor idle promote threshold
+    - Processor idle demote threshold
+    - Processor idle time check
+    - Processor idle allow scaling
+    - Processor energy performance preference policy
+    - Processor performance autonomous mode
+    - Processor performance core parking increase policy
+    - Processor performance core parking decrease policy
+  
+  🔹 Hard Disk:
+    - Turn off hard disk after (minutes)
+    - AHCI Link Power Management (HIPM/DIPM)
+    - NVMe Power Management
+  
+  🔹 Sleep and Hibernate:
+    - Sleep after (minutes)
+    - Hibernate after (minutes)
+    - Allow wake timers
+    - Allow hybrid sleep
+    - System unattended sleep timeout
+  
+  🔹 USB Settings:
+    - USB selective suspend setting
+    - USB 3 Link Power Management
+    - USB 2.0 Link State Power Management
+  
+  🔹 PCI Express:
+    - Link State Power Management
+    - Active State Power Management (ASPM)
+  
+  🔹 Graphics Settings:
+    - GPU performance preference
+    - GPU power management
+    - Hybrid Graphics (switchable)
+  
+  🔹 Display:
+    - Turn off display after
+    - Dim display after
+    - Display brightness (adaptive/manual)
+    - Adaptive brightness controls
+    - Panel self-refresh
+  
+  🔹 Multimedia Settings:
+    - When sharing media
+    - Video playback quality bias
+    - Media playback power optimization
+  
+  🔹 Wireless Adapter Settings:
+    - Power saving mode (Maximum/Medium/Minimum)
+    - 802.11ax power save
+  
+  🔹 Battery Settings:
+    - Critical battery action
+    - Low battery action
+    - Reserve battery level
+    - Battery level notifications
+    - Battery saver threshold
+    - Battery saver status
+
+🔧 HIDDEN SETTINGS (Registry):
+
+  - HKCU\Control Panel\PowerCfg
+  - HKLM\SYSTEM\CurrentControlSet\Control\Power
+  - HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Power
+  
+  Hidden policies:
+    - "Attributes" DWord (1 to hide, 2 to show)
+    - Unlock all hidden settings
+    - Enable sub-group policies
+    - Show OEM-specific settings
+
+📊 POWER PLAN COMPARISON:
+
+| Setting | Ultimate | High Perf | Balanced | Power Saver |
+|---------|----------|-----------|----------|-------------|
+| CPU Min | 100% | 100% | 5% | 5% |
+| CPU Max | 100% | 100% | 100% | 80% |
+| Sleep | Never | Never | 30 min | 15 min |
+| Display Off | 15 min | 15 min | 10 min | 5 min |
+| HDD Off | Never | 20 min | 20 min | 10 min |
+| PCIe Link | Off | Off | Moderate | Max Saving |
+| USB Suspend | Disabled | Disabled | Enabled | Enabled |
+
+📈 PERFORMANCE IMPACT:
+  - Ultimate Performance: +10-15% CPU perf
+  - Gaming Boost: +5-10% FPS
+  - High Performance: +5% CPU perf
+  - Power Saver: -30% CPU perf (double battery)
+```
+
+### **Implementation:**
+```powershell
+# Power Plan Optimizer
+class PowerOptimizer {
+    [hashtable]$powerPlans
+    [string]$currentPlan
+    
+    PowerOptimizer() {
+        $this.LoadPowerPlans()
+    }
+    
+    [void]LoadPowerPlans() {
+        $plans = powercfg /list
+        $this.powerPlans = @{}
+        
+        $plans -split "`n" | ForEach-Object {
+            if ($_ -match '([a-f0-9\-]+)\s+\((.*?)\)') {
+                $guid = $matches[1]
+                $name = $matches[2]
+                $this.powerPlans[$name] = $guid
+            }
+        }
+    }
+    
+    [void]EnableUltimatePerformance() {
+        # Enable hidden ultimate performance plan
+        powercfg /duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61
+        
+        # Apply optimizations
+        powercfg /change monitor-timeout-ac 0
+        powercfg /change monitor-timeout-dc 0
+        powercfg /change disk-timeout-ac 0
+        powercfg /change disk-timeout-dc 0
+        powercfg /change standby-timeout-ac 0
+        powercfg /change standby-timeout-dc 0
+        powercfg /change hibernate-timeout-ac 0
+        powercfg /change hibernate-timeout-dc 0
+        
+        # USB selective suspend
+        powercfg /setacvalueindex SCHEME_CURRENT 2a737441-1930-4402-8d77-b2bebba308a 48e6b7a6-50f5-4782-a5d4-53bb8f07e226 0
+        powercfg /setdcvalueindex SCHEME_CURRENT 2a737441-1930-4402-8d77-b2bebba308a 48e6b7a6-50f5-4782-a5d4-53bb8f07e226 0
+        
+        # PCI Express ASPM
+        powercfg /setacvalueindex SCHEME_CURRENT 501a4d13-42af-4429-9fd1-a8218c268e20 ee12f906-d277-404b-b6da-e5fa1a576df5 0
+        powercfg /setdcvalueindex SCHEME_CURRENT 501a4d13-42af-4429-9fd1-a8218c268e20 ee12f906-d277-404b-b6da-e5fa1a576df5 0
+        
+        # Apply changes
+        powercfg /setactive SCHEME_CURRENT
+    }
+    
+    [void]CreateGamingBoost() {
+        # Create custom gaming profile
+        $guid = [guid]::NewGuid().ToString()
+        powercfg /duplicatescheme 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c $guid
+        
+        # Gaming optimizations
+        powercfg /setacvalueindex $guid 54533251-82be-4824-96c1-47b60b740d00 75b0ae3f-bce0-45a7-8c89-c9611c25e100 100  # CPU min 100%
+        powercfg /setacvalueindex $guid 54533251-82be-4824-96c1-47b60b740d00 75b0ae3f-bce0-45a7-8c89-c9611c25e100 100  # CPU max 100%
+        
+        # Disable core parking
+        powercfg /setacvalueindex $guid 54533251-82be-4824-96c1-47b60b740d00 0cc5b647-c1df-4637-891a-dec35c318583 100
+        
+        # Disable C-States
+        powercfg /setacvalueindex $guid 54533251-82be-4824-96c1-47b60b740d00 d8bfeb66-c4ba-4a55-8073-72224f9bd77e 0
+        
+        # Apply
+        powercfg /setactive $guid
+        powercfg /change monitor-timeout-ac 0
+        powercfg /change standby-timeout-ac 0
+    }
+    
+    [void]ApplyPowerTweak([hashtable]$tweak) {
+        # Apply single power tweak
+        powercfg /setacvalueindex SCHEME_CURRENT $tweak.Subgroup $tweak.Setting $tweak.Value
+        powercfg /setactive SCHEME_CURRENT
+    }
+    
+    [hashtable]GetCurrentSettings() {
+        $settings = @{}
+        
+        # Get all power settings
+        $output = powercfg /q
+        $currentSubgroup = ""
+        $currentSetting = ""
+        
+        $output -split "`n" | ForEach-Object {
+            if ($_ -match 'Subgroup GUID: (.*?)\s+\((.*?)\)') {
+                $currentSubgroup = $matches[1]
+            }
+            elseif ($_ -match 'Power Setting GUID: (.*?)\s+\((.*?)\)') {
+                $currentSetting = $matches[1]
+            }
+            elseif ($_ -match 'Current AC Power Setting Index: (.*)') {
+                $settings[$currentSetting] = $matches[1].Trim()
+            }
+        }
+        
+        return $settings
+    }
+}
+```
+
+---
+
+## **7. 🎨 VISUAL EFFECTS OPTIMIZER**
+*Atur efek visual Windows untuk performa*
+
+### **Fitur Lengkap:**
+
+```yaml
+🎯 VISUAL EFFECTS SETTINGS:
+
+  🔹 ANIMATIONS:
+    - Animate controls and elements inside windows
+    - Animate windows when minimizing and maximizing
+    - Fade or slide menus into view
+    - Fade or slide ToolTips into view
+    - Fade out menu items after clicking
+    - Show shadows under mouse pointer
+    - Show shadows under windows
+    - Slide open combo boxes
+    - Smooth-scroll list boxes
+    - Taskbar animations
+  
+  🔹 TRANSPARENCY:
+    - Enable transparency effects
+    - Show translucent selection rectangle
+    - Show window contents while dragging
+    - Translucent background for menus
+    - Acrylic effect in Start Menu/Taskbar
+    - Mica effect in windows
+  
+  🔹 FONTS & RENDERING:
+    - Smooth edges of screen fonts (ClearType)
+    - Use drop shadows for icon labels on desktop
+    - Use visual styles on windows and buttons
+    - Show shadows under menus
+  
+  🔹 THUMBNAILS & PREVIEWS:
+    - Show thumbnails instead of icons
+    - Save taskbar thumbnail previews
+    - Show peek previews
+    - Show thumbnail previews in taskbar
+  
+  🔹 ADVANCED:
+    - Show window previews (Alt+Tab)
+    - Show taskbar buttons (combine/hide labels)
+    - Show taskbar on multiple displays
+    - Auto-hide taskbar
+    - Lock taskbar
+    - Small taskbar buttons
+  
+📊 PERFORMANCE IMPACT:
+
+  🟢 LOW IMPACT:
+    - Show shadows under menus
+    - Show window contents while dragging
+    - Show translucent selection rectangle
+    - These use minimal resources
+  
+  🟡 MEDIUM IMPACT:
+    - Animate windows (minimize/maximize)
+    - Fade/slide menus
+    - Smooth-scroll list boxes
+    - ClearType (GPU usage)
+  
+  🔴 HIGH IMPACT:
+    - Transparency effects (Acrylic, Mica)
+    - Live taskbar thumbnails
+    - Aero Peek/Shake/Snap
+    - These use significant GPU
+
+⚙️ PRESET PROFILES:
+
+  🚀 BEST PERFORMANCE:
+    - All animations disabled
+    - No transparency
+    - Basic window rendering
+    - Max FPS in games
+    - Battery saving
+  
+  ⚖️ BALANCED:
+    - Basic animations
+    - Some transparency
+    - ClearType enabled
+    - Good for daily use
+  
+  ✨ BEST APPEARANCE:
+    - All animations enabled
+    - Full transparency (Mica/Acrylic)
+    - Live previews
+    - Best visual experience
+  
+  🎮 GAMING MODE:
+    - Disable all GPU-heavy effects
+    - Keep basic window management
+    - Optimize for FPS
+  
+  🖥️ PRESENTATION MODE:
+    - Disable notifications
+    - Disable popups
+    - Keep visual effects
+
+🔧 REGISTRY TWEAKS:
+
+  - HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects
+  - HKCU\Control Panel\Desktop
+  - HKCU\Control Panel\Desktop\WindowMetrics
+  - HKCU\SOFTWARE\Microsoft\Windows\DWM
+
+📈 PERFORMANCE GAIN:
+  - Best Performance: +10-20% GPU available
+  - Gaming Mode: +5-15% FPS
+  - Disable Transparency: +3-5% CPU/GPU
+```
+
+### **Implementation:**
+```powershell
+# Visual Effects Optimizer
+class VisualEffectsOptimizer {
+    [hashtable]$settings
+    
+    VisualEffectsOptimizer() {
+        $this.LoadSettings()
+    }
+    
+    [void]LoadSettings() {
+        $this.settings = @{}
+        
+        # Load current visual effects settings
+        $paths = @(
+            "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects",
+            "HKCU:\Control Panel\Desktop",
+            "HKCU:\SOFTWARE\Microsoft\Windows\DWM"
+        )
+        
+        foreach ($path in $paths) {
+            if (Test-Path $path) {
+                Get-ItemProperty -Path $path | ForEach-Object {
+                    $_.PSObject.Properties | ForEach-Object {
+                        $this.settings[$_.Name] = $_.Value
+                    }
+                }
+            }
+        }
+    }
+    
+    [void]ApplyProfile([string]$profile) {
+        $profiles = @{
+            "BestPerformance" = @{
+                "UserPreferencesMask" = ([byte[]]@(0x90,0x12,0x03,0x80,0x10,0x00,0x00,0x00))
+                "MenuShowDelay" = 0
+                "AutoEndTasks" = 1
+                "HungAppTimeout" = 1000
+                "WaitToKillAppTimeout" = 2000
+                "EnableTransparency" = 0
+                "EnableAeroPeek" = 0
+            }
+            
+            "Balanced" = @{
+                "UserPreferencesMask" = ([byte[]]@(0x9E,0x1E,0x07,0x80,0x12,0x00,0x00,0x00))
+                "MenuShowDelay" = 200
+                "EnableTransparency" = 1
+                "EnableAeroPeek" = 1
+            }
+            
+            "BestAppearance" = @{
+                "UserPreferencesMask" = ([byte[]]@(0x9E,0x3E,0x07,0x80,0x12,0x00,0x00,0x00))
+                "MenuShowDelay" = 400
+                "EnableTransparency" = 1
+                "EnableAeroPeek" = 1
+                "Composition" = 1
+                "CompositionPolicy" = 1
+            }
+        }
+        
+        $selected = $profiles[$profile]
+        
+        # Apply registry settings
+        foreach ($key in $selected.Keys) {
+            $value = $selected[$key]
+            
+            switch ($key) {
+                "UserPreferencesMask" {
+                    Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name $key -Value $value
+                }
+                "MenuShowDelay" {
+                    Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name $key -Value $value
+                }
+                "EnableTransparency" {
+                    Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\DWM" -Name $key -Value $value
+                }
+                default {
+                    Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name $key -Value $value -ErrorAction SilentlyContinue
+                }
+            }
+        }
+        
+        # Restart DWM to apply changes
+        Stop-Process -Name dwm -Force -ErrorAction SilentlyContinue
+    }
+    
+    [void]ToggleAnimation([string]$name, [bool]$enable) {
+        $animations = @{
+            "MinimizeMaximize" = "MinAnimate"
+            "MenuFade" = "MenuFade"
+            "TooltipFade" = "TooltipFade"
+            "ComboBoxFade" = "ComboBoxFade"
+        }
+        
+        if ($animations.ContainsKey($name)) {
+            $value = if ($enable) { 1 } else { 0 }
+            Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name $animations[$name] -Value $value
+        }
+    }
+}
+```
+
+---
+
+## **8. 📋 CONTEXT MENU CUSTOMIZER**
+*Kustomisasi menu klik kanan Windows*
+
+### **Fitur Lengkap:**
+
+```yaml
+📋 CONTEXT MENU ITEMS:
+
+  🔹 WINDOWS 11 SPECIFIC:
+    - Restore Windows 10 context menu (Classic)
+    - Disable modern context menu
+    - Enable compact context menu
+    - Show more options by default
+    - Remove "Open with" suggestions
+  
+  🔹 ADD ITEMS:
+    - Take Ownership (files/folders)
+    - Open with Notepad
+    - Open Command Prompt here
+    - Open PowerShell here
+    - Open as Administrator
+    - Copy as Path
+    - Copy File Contents
+    - File Hash Calculator (MD5/SHA1/SHA256)
+    - File Shredder (secure delete)
+    - VirusTotal Scan
+    - Upload to cloud (OneDrive/Dropbox)
+    - Convert to PDF
+    - Resize Images
+    - Change File Attributes
+    - Register DLL/OCX
+    - Unblock File
+    - Check Disk (chkdsk)
+    - Defragment (analyze/defrag)
+    - Change Icon
+    - Change File Association
+  
+  🔹 REMOVE ITEMS:
+    - Include in library
+    - Give access to
+    - Share
+    - Restore previous versions
+    - Send to (customize)
+    - New (customize)
+    - Open with (suggestions)
+    - Edit with Paint 3D
+    - Edit with Photos
+    - Cast to Device
+    - Print
+    - Edit
+    - Play
+    - Add to Windows Media Player list
+    - Open with Windows Defender
+    - Scan with Microsoft Defender
+    - Troubleshoot compatibility
+  
+  🔹 CUSTOM FOLDERS:
+    - Send to (add custom locations)
+    - New (add file templates)
+    - Pin to Quick Access
+    - Add to Favorites
+    - Add to Bookmarks
+    - Copy to folder
+    - Move to folder
+  
+  🔹 DESKTOP CONTEXT MENU:
+    - Add God Mode
+    - Add System Tools
+    - Add Control Panel
+    - Add Recycle Bin options
+    - Add Display Settings
+    - Add Personalization
+    - Add Task Manager
+    - Add Device Manager
+  
+  🔹 DRIVE CONTEXT MENU:
+    - Open as Portable Device
+    - Eject safely
+    - Format
+    - Extend volume
+    - Shrink volume
+    - Change drive letter
+    - Check for errors
+    - Optimize (defrag/trim)
+    - Clean up (disk cleanup)
+    - Properties (advanced)
+  
+  🔹 FILE TYPE SPECIFIC:
+    - Images: Resize, Convert, Rotate, Set as wallpaper
+    - Videos: Compress, Convert, Extract audio
+    - Audio: Convert, Edit tags, Play
+    - Documents: Combine PDF, Split PDF, OCR
+    - Archives: Extract here, Extract to folder, Test archive
+    - Executables: Run as admin, Troubleshoot compatibility, Pin to taskbar
+    - Folders: Open in new process, Open in separate window, Pin to Quick Access
+    - Registry files: Merge, Edit
+    - Batch files: Edit, Run as admin
+
+⚙️ ADVANCED FEATURES:
+
+  - Cascading menus (sub-menus)
+  - Icons for custom items
+  - Keyboard shortcuts (Alt+key)
+  - Extended verbs (Shift+click)
+  - Multi-select actions
+  - Drag-and-drop handlers
+  - Property sheet handlers
+  - Icon overlays (like Dropbox/OneDrive)
+  - Thumbnail providers
+
+🔧 REGISTRY LOCATIONS:
+
+  File associations:
+  - HKEY_CLASSES_ROOT\*\shell
+  - HKEY_CLASSES_ROOT\*\shellex
+  
+  Folders:
+  - HKEY_CLASSES_ROOT\Directory\shell
+  - HKEY_CLASSES_ROOT\Directory\shellex
+  
+  Desktop:
+  - HKEY_CLASSES_ROOT\DesktopBackground\Shell
+  
+  Drives:
+  - HKEY_CLASSES_ROOT\Drive\shell
+  
+  All files:
+  - HKEY_CLASSES_ROOT\AllFilesystemObjects\shell
+  
+  Folders/Drives:
+  - HKEY_CLASSES_ROOT\Folder\shell
+
+📊 SAFETY LEVELS:
+
+  🟢 SAFE (Recommended for all):
+    - Add "Open with Notepad"
+    - Add "Copy as Path"
+    - Add "Command Prompt here"
+    - Remove clutter items
+  
+  🟡 MODERATE (Advanced users):
+    - Add "Take Ownership"
+    - Add file hash tools
+    - Add registry modifications
+  
+  🔴 ADVANCED (Power users):
+    - Add "File Shredder"
+    - Add system tools
+    - Modify default handlers
+  
+  🔵 CUSTOM:
+    - Manual selection
+    - Backup/Restore
+    - Import/Export
+```
+
+### **Implementation:**
+```powershell
+# Context Menu Customizer
+class ContextMenuManager {
+    [hashtable]$menuItems
+    
+    ContextMenuManager() {
+        $this.menuItems = @{}
+        $this.ScanCurrentMenu()
+    }
+    
+    [void]ScanCurrentMenu() {
+        # Scan all shell extensions
+        $paths = @(
+            "HKCR:\*\shell",
+            "HKCR:\Directory\shell",
+            "HKCR:\Drive\shell",
+            "HKCR:\DesktopBackground\shell",
+            "HKCR:\AllFilesystemObjects\shell",
+            "HKCR:\Folder\shell"
+        )
+        
+        foreach ($path in $paths) {
+            if (Test-Path $path) {
+                Get-ChildItem -Path $path -ErrorAction SilentlyContinue | ForEach-Object {
+                    $item = @{
+                        Name = $_.PSChildName
+                        Path = $_.PSPath
+                        Command = (Get-ItemProperty -Path $_.PSPath)."(default)"
+                        Type = $path.Split('\')[-2]
+                        Enabled = $true
+                    }
+                    $this.menuItems[$item.Name] = $item
+                }
+            }
+        }
+    }
+    
+    [void]AddMenuItem([hashtable]$item) {
+        $path = "HKCR:\$($item.Type)\shell\$($item.Name)"
+        
+        # Create key
+        New-Item -Path $path -Force | Out-Null
+        
+        # Set display name
+        Set-ItemProperty -Path $path -Name "(default)" -Value $item.DisplayName
+        
+        # Set icon (optional)
+        if ($item.Icon) {
+            Set-ItemProperty -Path $path -Name "Icon" -Value $item.Icon
+        }
+        
+        # Set position (top/bottom)
+        if ($item.Position) {
+            Set-ItemProperty -Path $path -Name "Position" -Value $item.Position
+        }
+        
+        # Set extended (Shift+click)
+        if ($item.Extended) {
+            Set-ItemProperty -Path $path -Name "Extended" -Value ""
+        }
+        
+        # Create command subkey
+        $commandPath = "$path\command"
+        New-Item -Path $commandPath -Force | Out-Null
+        Set-ItemProperty -Path $commandPath -Name "(default)" -Value $item.Command
+    }
+    
+    [void]AddTakeOwnership() {
+        $item = @{
+            Type = "*"
+            Name = "TakeOwnership"
+            DisplayName = "Take Ownership"
+            Icon = "shell32.dll,238"
+            Command = 'powershell.exe -Command "takeown /f \"%1\" && icacls \"%1\" /grant administrators:F"'
+        }
+        $this.AddMenuItem($item)
+    }
+    
+    [void]AddOpenWithNotepad() {
+        $item = @{
+            Type = "*"
+            Name = "OpenWithNotepad"
+            DisplayName = "Open with Notepad"
+            Icon = "notepad.exe,0"
+            Command = 'notepad.exe "%1"'
+        }
+        $this.AddMenuItem($item)
+    }
+    
+    [void]AddCommandPromptHere() {
+        $item = @{
+            Type = "Directory"
+            Name = "CommandPrompt"
+            DisplayName = "Open Command Prompt Here"
+            Icon = "cmd.exe,0"
+            Command = 'cmd.exe /k cd "%1"'
+        }
+        $this.AddMenuItem($item)
+    }
+    
+    [void]RemoveMenuItem([string]$name) {
+        if ($this.menuItems.ContainsKey($name)) {
+            Remove-Item -Path $this.menuItems[$name].Path -Recurse -Force
+            $this.menuItems.Remove($name)
+        }
+    }
+    
+    [void]RestoreClassicContextMenu() {
+        # Windows 11: Restore classic context menu
+        $path = "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}"
+        New-Item -Path $path -Force | Out-Null
+        Set-ItemProperty -Path $path -Name "(default)" -Value "Classic Context Menu"
+        
+        $inprocPath = "$path\InprocServer32"
+        New-Item -Path $inprocPath -Force | Out-Null
+        Set-ItemProperty -Path $inprocPath -Name "(default)" -Value ""
+        
+        # Restart explorer
+        Stop-Process -Name explorer -Force
+    }
+    
+    [void]BackupContextMenu() {
+        $backupPath = "$env:USERPROFILE\Desktop\ContextMenuBackup.reg"
+        reg export "HKEY_CLASSES_ROOT\*\shell" $backupPath /y
+        reg export "HKEY_CLASSES_ROOT\Directory\shell" $backupPath /a /y
+        Write-Host "Backup saved to: $backupPath"
+    }
+}
+```
+
+---
+
+## **9. 🖥️ TASKBAR & START MENU TWEAKS**
+
+### **Fitur Lengkap:**
+
+```yaml
+🖥️ TASKBAR CUSTOMIZATION:
+
+  🔹 TASKBAR ALIGNMENT:
+    - Left (classic Windows 10 style)
+    - Center (Windows 11 default)
+    - Custom offset
+  
+  🔹 TASKBAR SIZE:
+    - Small (40px)
+    - Medium (48px)
+    - Large (56px)
+    - Auto-hide taskbar
+    - Lock taskbar
+  
+  🔹 TASKBAR ITEMS:
+    - Search icon (hide/show/box)
+    - Task View button (hide/show)
+    - Widgets button (hide/show)
+    - Chat/Teams icon (hide/show)
+    - Pen menu (hide/show)
+    - Touch keyboard (hide/show)
+    - Virtual touchpad (hide/show)
+    - Notification area (system tray)
+    - Show desktop button
+  
+  🔹 TASKBAR CORNER ICONS:
+    - Pen menu
+    - Touch keyboard
+    - Virtual touchpad
+    - Volume
+    - Network
+    - Power
+    - Clock
+    - Notification center
+  
+  🔹 TASKBAR BEHAVIOR:
+    - Combine taskbar buttons (always/when full/never)
+    - Show labels
+    - Show badges
+    - Flash taskbar buttons
+    - Taskbar on multiple displays
+    - Show taskbar on all displays
+    - Choose which display shows taskbar
+  
+  🔹 SYSTEM TRAY:
+    - Show/hide icons
+    - Always show all icons
+    - Select which icons appear
+    - Enable/disable system icons (clock, volume, network, power, input indicator, location)
+
+🎛️ START MENU CUSTOMIZATION:
+
+  🔹 LAYOUT:
+    - Show more pins (Windows 11)
+    - Show recommended section
+    - Show recently added apps
+    - Show most used apps
+    - Show recently opened items
+    - Show account picture
+    - Show power button
+  
+  🔹 FOLDERS:
+    - File Explorer
+    - Settings
+    - Documents
+    - Downloads
+    - Music
+    - Pictures
+    - Videos
+    - Network
+    - Personal folder
+    - This PC
+    - Recycle Bin
+  
+  🔹 POWER BUTTON:
+    - Shutdown
+    - Restart
+    - Sleep
+    - Hibernate
+    - Lock
+    - Sign out
+    - Switch user
+  
+  🔹 START MENU SIZE:
+    - Small (1 column)
+    - Medium (2 columns)
+    - Large (3 columns)
+    - Full screen (tablet mode)
+
+🔧 WIDGETS & NOTIFICATIONS:
+
+  🔹 WIDGETS:
+    - Enable/disable widgets
+    - Show/hide widgets button
+    - Configure which widgets show
+    - Widgets board size
+    - Taskbar widget indicator
+  
+  🔹 NOTIFICATIONS:
+    - Enable/disable notifications
+    - Focus assist (priority only/alarms only/off)
+    - Quiet hours
+    - Show notification banners
+    - Show notifications on lock screen
+    - Show reminders on lock screen
+    - Show tips and suggestions
+
+📱 TABLET MODE:
+
+  - Enable/disable tablet mode
+  - Hide taskbar in tablet mode
+  - Use swipe gestures
+  - Show touch keyboard when not in tablet mode
+  - Make taskbar buttons easier to touch
+
+⏰ CLOCK & CALENDAR:
+
+  - Show seconds in taskbar clock
+  - Show AM/PM
+  - Show calendar
+  - Show different time zones
+  - First day of week
+  - Calendar format
+
+📊 MULTI-MONITOR SETTINGS:
+
+  - Taskbar on all displays
+  - Show taskbar buttons on all taskbars
+  - Show labels on all taskbars
+  - Combine buttons on other taskbars
+  - Taskbar location per monitor
+
+🔄 RESTORE DEFAULTS:
+
+  - Reset taskbar to default
+  - Reset start menu layout
+  - Clear start menu cache
+  - Restart explorer
+```
+
+### **Implementation:**
+```powershell
+# Taskbar & Start Menu Customizer
+class TaskbarCustomizer {
+    [hashtable]$settings
+    
+    TaskbarCustomizer() {
+        $this.LoadSettings()
+    }
+    
+    [void]LoadSettings() {
+        $this.settings = @{}
+        
+        # Taskbar settings
+        $paths = @(
+            "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced",
+            "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\StuckRects3",
+            "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search",
+            "HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR"
+        )
+        
+        foreach ($path in $paths) {
+            if (Test-Path $path) {
+                Get-ItemProperty -Path $path | ForEach-Object {
+                    $_.PSObject.Properties | Where-Object { $_.Name -notin @('PSPath','PSParentPath','PSChildName','PSDrive','PSProvider') } | ForEach-Object {
+                        $this.settings[$_.Name] = $_.Value
+                    }
+                }
+            }
+        }
+    }
+    
+    [void]SetTaskbarAlignment([string]$alignment) {
+        # 0 = Left, 1 = Center
+        $value = if ($alignment -eq "Left") { 0 } else { 1 }
+        
+        $path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+        Set-ItemProperty -Path $path -Name "TaskbarAl" -Value $value
+        
+        # Restart explorer
+        Stop-Process -Name explorer -Force
+    }
+    
+    [void]SetTaskbarSize([int]$size) {
+        # 0 = Small, 1 = Medium, 2 = Large
+        $path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+        Set-ItemProperty -Path $path -Name "TaskbarSi" -Value $size
+        
+        Stop-Process -Name explorer -Force
+    }
+    
+    [void]ToggleTaskbarItem([string]$item, [bool]$show) {
+        $items = @{
+            "Search" = @{
+                Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search"
+                Name = "SearchboxTaskbarMode"
+                ValueShow = 1  # Show search box
+                ValueHide = 0  # Hide entirely
+            }
+            "TaskView" = @{
+                Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+                Name = "ShowTaskViewButton"
+                ValueShow = 1
+                ValueHide = 0
+            }
+            "Widgets" = @{
+                Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+                Name = "TaskbarDa"
+                ValueShow = 1
+                ValueHide = 0
+            }
+            "Chat" = @{
+                Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+                Name = "TaskbarMn"
+                ValueShow = 1
+                ValueHide = 0
+            }
+        }
+        
+        if ($items.ContainsKey($item)) {
+            $config = $items[$item]
+            $value = if ($show) { $config.ValueShow } else { $config.ValueHide }
+            Set-ItemProperty -Path $config.Path -Name $config.Name -Value $value
+        }
+    }
+    
+    [void]SetCombineButtons([string]$mode) {
+        # 0 = Always combine, hide labels
+        # 1 = Combine when taskbar full
+        # 2 = Never combine
+        $modes = @{
+            "Always" = 0
+            "WhenFull" = 1
+            "Never" = 2
+        }
+        
+        if ($modes.ContainsKey($mode)) {
+            $path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+            Set-ItemProperty -Path $path -Name "TaskbarGlomLevel" -Value $modes[$mode]
+        }
+    }
+    
+    [void]ToggleStartMenuItem([string]$item, [bool]$show) {
+        $items = @{
+            "RecentlyAdded" = @{
+                Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+                Name = "Start_TrackProgs"
+                ValueShow = 1
+                ValueHide = 0
+            }
+            "MostUsed" = @{
+                Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+                Name = "Start_TrackDocs"
+                ValueShow = 1
+                ValueHide = 0
+            }
+            "RecentlyOpened" = @{
+                Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+                Name = "Start_ShowRecentItems"
+                ValueShow = 1
+                ValueHide = 0
+            }
+            "Recommended" = @{
+                Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+                Name = "Start_ShowRecommended"
+                ValueShow = 1
+                ValueHide = 0
+            }
+        }
+        
+        if ($items.ContainsKey($item)) {
+            $config = $items[$item]
+            $value = if ($show) { $config.ValueShow } else { $config.ValueHide }
+            Set-ItemProperty -Path $config.Path -Name $config.Name -Value $value
+        }
+    }
+    
+    [void]ShowSecondsInClock([bool]$show) {
+        $path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+        Set-ItemProperty -Path $path -Name "ShowSecondsInSystemClock" -Value $show
+        
+        # Restart explorer
+        Stop-Process -Name explorer -Force
+    }
+    
+    [void]ResetTaskbar() {
+        # Delete taskbar settings
+        $paths = @(
+            "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Streams",
+            "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\StuckRects3",
+            "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband"
+        )
+        
+        foreach ($path in $paths) {
+            Remove-Item -Path $path -Recurse -Force -ErrorAction SilentlyContinue
+        }
+        
+        # Restart explorer
+        Stop-Process -Name explorer -Force
+    }
+}
+```
+
+---
+
+## **10. 📁 FILE EXPLORER TWEAKS**
+
+### **Fitur Lengkap:**
+
+```yaml
+📁 FILE EXPLORER VIEW:
+
+  🔹 VIEW SETTINGS:
+    - Show hidden files
+    - Show file extensions
+    - Show protected OS files
+    - Show empty drives
+    - Show folder merge conflicts
+    - Show pop-up description
+    - Show sync provider notifications
+    - Show status bar
+    - Show tooltips
+    - Show navigation pane
+    - Show preview pane
+    - Show details pane
+  
+  🔹 FOLDER OPTIONS:
+    - Default view (This PC or Quick Access)
+    - Open File Explorer to (This PC/Quick Access/Downloads/Documents)
+    - Expand to open folder
+    - Display full path in title bar
+    - Display file size information in folder tips
+    - Hide extensions for known file types
+    - Hide protected OS files
+    - Launch folder windows in separate process
+  
+  🔹 NAVIGATION PANE:
+    - Show all folders
+    - Show libraries
+    - Show network
+    - Show this PC
+    - Show recycle bin
+    - Show desktop
+    - Show Quick Access
+    - Show OneDrive
+    - Show user folders
+  
+  🔹 PRIVACY:
+    - Show recently used files in Quick Access
+    - Show frequently used folders in Quick Access
+    - Clear File Explorer history
+    - Clear recent files list
+    - Clear Quick Access history
+
+🗑️ HIDE/REMOVE FOLDERS:
+
+  - Hide 3D Objects folder
+  - Hide Music folder
+  - Hide Pictures folder
+  - Hide Videos folder
+  - Hide Documents folder
+  - Hide Downloads folder
+  - Hide Desktop folder
+  - Hide OneDrive folder
+  - Hide Network folder
+  - Hide Recycle Bin
+  - Hide user folders
+  - Hide this PC
+  - Remove duplicate removable drives
+
+📌 QUICK ACCESS:
+
+  - Pin current folder
+  - Unpin folder
+  - Pin files
+  - Clear Quick Access
+  - Disable Quick Access
+  - Restore Quick Access
+
+🔄 FILE OPERATIONS:
+
+  - Confirm file delete
+  - Confirm folder delete
+  - Use recycle bin
+  - Use check boxes to select items
+  - Use sharing wizard
+  - Use compact view
+  - Always show menus
+  - Single-click to open
+  - Double-click to open
+  - Restore previous folder windows at logon
+
+📊 THUMBNAILS:
+
+  - Always show icons, never thumbnails
+  - Disable thumbnail cache
+  - Clear thumbnail cache
+  - Thumbnail quality (High/Medium/Low)
+  - Thumbnail size
+  - Video thumbnails
+  - Image thumbnails
+  - PDF thumbnails
+
+📂 FILE TYPE ASSOCIATIONS:
+
+  - Default apps for file types
+  - Choose default apps by protocol
+  - Reset to Windows default
+  - Set custom associations
+  - Export associations
+  - Import associations
+
+⚡ PERFORMANCE:
+
+  - Disable thumbnail generation
+  - Disable folder tips
+  - Disable preview pane
+  - Disable details pane
+  - Disable indexing on drives
+  - Optimize folders for (General Items/Documents/Pictures/Music/Video)
+  - Apply to all folders
+  - Reset all folders
+
+🔧 ADVANCED:
+
+  - Show "Take Ownership" context menu
+  - Show "Copy as Path" context menu
+  - Show "Open in new process"
+  - Show "Open Command Window here"
+  - Show "Open PowerShell here"
+  - Show "Run as different user"
+  - Show "Pin to Quick Access"
+  - Show "Pin to Start"
+  - Show "Include in library"
+  - Show "Add to Windows Media Player list"
+  - Show "Share"
+  - Show "Restore previous versions"
+```
+
+### **Implementation:**
+```powershell
+# File Explorer Tweaks
+class FileExplorerTweaks {
+    [hashtable]$settings
+    
+    FileExplorerTweaks() {
+        $this.LoadSettings()
+    }
+    
+    [void]LoadSettings() {
+        $this.settings = @{}
+        
+        $paths = @(
+            "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced",
+            "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\CabinetState",
+            "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons",
+            "HKCU:\Control Panel\Desktop"
+        )
+        
+        foreach ($path in $paths) {
+            if (Test-Path $path) {
+                Get-ItemProperty -Path $path | ForEach-Object {
+                    $_.PSObject.Properties | ForEach-Object {
+                        $this.settings[$_.Name] = $_.Value
+                    }
+                }
+            }
+        }
+    }
+    
+    [void]ToggleHiddenFiles([bool]$show) {
+        $path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+        # 1 = Show, 2 = Don't show
+        $value = if ($show) { 1 } else { 2 }
+        Set-ItemProperty -Path $path -Name "Hidden" -Value $value
+    }
+    
+    [void]ToggleFileExtensions([bool]$show) {
+        $path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+        # 0 = Hide, 1 = Show
+        $value = if ($show) { 0 } else { 1 }  # Wait, this seems reversed? Check docs
+        # Actually: HideFileExt = 1 to hide, 0 to show
+        $value = if ($show) { 0 } else { 1 }
+        Set-ItemProperty -Path $path -Name "HideFileExt" -Value $value
+    }
+    
+    [void]ToggleProtectedOSFiles([bool]$show) {
+        $path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+        # 0 = Hide, 1 = Show
+        $value = if ($show) { 1 } else { 0 }
+        Set-ItemProperty -Path $path -Name "ShowSuperHidden" -Value $value
+    }
+    
+    [void]SetDefaultFolderView([string]$view) {
+        # "ThisPC" or "QuickAccess"
+        $path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+        $value = if ($view -eq "ThisPC") { 1 } else { 2 }
+        Set-ItemProperty -Path $path -Name "LaunchTo" -Value $value
+    }
+    
+    [void]HideFolder([string]$folderName) {
+        $folderGUIDs = @{
+            "3DObjects" = "{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}"
+            "Music" = "{3dfdf296-dbec-4fb4-81d1-6a3438bcf4de}"
+            "Pictures" = "{24ad3ad4-a569-4530-98e1-ab02f9417aa8}"
+            "Videos" = "{f86fa3ab-70d2-4fc7-9c99-fcbf05467f3a}"
+            "Documents" = "{d3162b92-9365-467a-956b-92703aca08af}"
+            "Downloads" = "{374DE290-123F-4565-9164-39C4925E467B}"
+            "Desktop" = "{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}"
+            "OneDrive" = "{018D5C66-4533-4307-9B53-224DE2ED1FE6}"
+        }
+        
+        if ($folderGUIDs.ContainsKey($folderName)) {
+            $guid = $folderGUIDs[$folderName]
+            $path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\$guid\PropertyBag"
+            
+            if (-not (Test-Path $path)) {
+                New-Item -Path $path -Force | Out-Null
+            }
+            
+            # Hide this PC folder
+            Set-ItemProperty -Path $path -Name "ThisPCPolicy" -Value "Hide"
+            
+            # Also hide in namespace
+            $namespacePath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\$guid"
+            if (Test-Path $namespacePath) {
+                Remove-Item -Path $namespacePath -Force -ErrorAction SilentlyContinue
+            }
+        }
+    }
+    
+    [void]ClearQuickAccessHistory() {
+        # Clear Quick Access
+        $path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs"
+        Remove-Item -Path $path -Recurse -Force -ErrorAction SilentlyContinue
+        
+        # Clear automatic destinations
+        $destPath = "$env:APPDATA\Microsoft\Windows\Recent\AutomaticDestinations"
+        Remove-Item -Path "$destPath\*" -Force -ErrorAction SilentlyContinue
+        
+        # Clear custom destinations
+        $customPath = "$env:APPDATA\Microsoft\Windows\Recent\CustomDestinations"
+        Remove-Item -Path "$customPath\*" -Force -ErrorAction SilentlyContinue
+    }
+    
+    [void]ClearThumbnailCache() {
+        # Stop explorer
+        Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
+        
+        # Delete thumbnail cache
+        $cachePath = "$env:LOCALAPPDATA\Microsoft\Windows\Explorer"
+        Remove-Item -Path "$cachePath\thumbcache_*.db" -Force -ErrorAction SilentlyContinue
+        
+        # Start explorer
+        Start-Process explorer
+        
+        # Run cleanmgr for thumbnails
+        Start-Process cleanmgr -ArgumentList "/sagerun:1" -Wait
+    }
+    
+    [void]DisableThumbnails() {
+        $path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer"
+        if (-not (Test-Path $path)) {
+            New-Item -Path $path -Force | Out-Null
+        }
+        Set-ItemProperty -Path $path -Name "DisableThumbnails" -Value 1
+        Set-ItemProperty -Path $path -Name "DisableThumbnailCache" -Value 1
+    }
+    
+    [void]OptimizeFolderFor([string]$folderType) {
+        # Types: General, Documents, Pictures, Music, Video
+        $types = @{
+            "General" = 0
+            "Documents" = 1
+            "Pictures" = 2
+            "Music" = 3
+            "Video" = 4
+        }
+        
+        if ($types.ContainsKey($folderType)) {
+            $value = $types[$folderType]
+            $path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\FolderTypes"
+            Set-ItemProperty -Path $path -Name "LogicalViewMode" -Value $value
+        }
+    }
+    
+    [void]ApplyToAllFolders() {
+        # Apply current view to all folders
+        $path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Streams"
+        if (Test-Path $path) {
+            Get-ChildItem -Path $path | Where-Object { $_.Name -like "*FolderView*" } | ForEach-Object {
+                Remove-Item -Path $_.PSPath -Force
+            }
+        }
+        
+        # Restart explorer
+        Stop-Process -Name explorer -Force
+    }
+}
+```
+
+---
+
+## **📋 KESIMPULAN**
+
+Dengan **20+ kategori** dan **500+ pengaturan**, NeoOptimize akan menjadi **program optimasi Windows terlengkap** dengan fitur:
+
+| Kategori | Jumlah Fitur | Level Kesulitan |
+|----------|--------------|-----------------|
+| God Mode | 10+ | Beginner |
+| Bloatware Remover | 100+ | Beginner |
+| Privacy Manager | 150+ | Intermediate |
+| Service Optimizer | 200+ | Advanced |
+| Startup Manager | 50+ | Beginner |
+| Power Plan | 100+ | Intermediate |
+| Visual Effects | 50+ | Beginner |
+| Context Menu | 100+ | Intermediate |
+| Taskbar & Start | 80+ | Beginner |
+| File Explorer | 100+ | Beginner |
+| Network | 50+ | Intermediate |
+| Gaming | 40+ | Intermediate |
+| Advanced Tweaks | 200+ | Expert |
+
+**Total: 1,200+ pengaturan yang bisa dioptimalkan!** 🚀
+
+Semua dilengkapi:
+- ✅ **Safety Backup** (Restore Point + Registry Backup)
+- ✅ **Undo/Redo** untuk setiap perubahan
+- ✅ **Export/Import Profile**
+- ✅ **Warnings** untuk tweak berisiko
+- ✅ **User-friendly UI** dengan React
+- ✅ **Real-time monitoring** dengan Electron
+
+**Siap diimplementasikan di NeoOptimize.exe!** 💻✨

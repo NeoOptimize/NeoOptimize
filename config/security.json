@@ -1,0 +1,5 @@
+{
+  "preferredEngine": "clamav",
+  "clamscanPath": "",
+  "clamDbDir": ""
+}

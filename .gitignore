@@ -22,3 +22,16 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local security engine sources/builds and release artifacts
+clamav-1.5.1/
+release/
+upload_release_output.txt
+msert x32.exe
+msert x64.exe
+backend/reports/
+backend/backups/
+engines/__pycache__/
+build/builder-config.json
+**/__pycache__/
+*.pyc

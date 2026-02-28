@@ -24,7 +24,6 @@ export function ThemeProvider({ children }: {children: React.ReactNode;}) {
       return 'dark';
     }
   });
-  const [flickering, setFlickering] = useState(false);
   const getSystemTheme = (): 'dark' | 'light' => {
     return window.matchMedia('(prefers-color-scheme: dark)').matches ?
     'dark' :

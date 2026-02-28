@@ -1,4 +1,3 @@
-import React from 'react';
 import { useTypingEffect } from '../hooks/useTypingEffect';
 interface TypingTextProps {
   text: string;
