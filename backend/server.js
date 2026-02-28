@@ -29,9 +29,10 @@ const schedulerTasks = [
 const KICOMAV_ROOT = path.join(APP_ROOT, 'kicomav-master');
 const KICOMAV_MODULE = 'kicomav.k2';
 const CLAMAV_RUNTIME_ROOT = path.join(APP_ROOT, 'vendor', 'clamav-runtime');
+const CLAMAV_SOURCE_ROOT = path.join(APP_ROOT, 'clamav-1.5.1');
 const CLAMAV_ROOT = fs.existsSync(path.join(CLAMAV_RUNTIME_ROOT, 'clamscan.exe'))
   ? CLAMAV_RUNTIME_ROOT
-  : path.join(APP_ROOT, 'clamav-1.5.1');
+  : CLAMAV_SOURCE_ROOT;
 const securityScan = {
   running: false,
   progress: 0,
@@ -118,31 +119,56 @@ const pushSecurityLog = (level, message, meta = {}) => {
 };
 
 const kicomavExists = () => fs.existsSync(path.join(KICOMAV_ROOT, 'kicomav', 'k2.py'));
+const rankClamavDist = (name) => {
+  const arch = String(process.arch || '').toLowerCase();
+  const n = String(name || '').toLowerCase();
+  if (arch === 'x64') {
+    if (n.includes('.x64')) return 0;
+    if (n.includes('.win32')) return 1;
+    if (n.includes('.arm64')) return 4;
+    return 3;
+  }
+  if (arch === 'arm64') {
+    if (n.includes('.arm64')) return 0;
+    if (n.includes('.x64')) return 2;
+    if (n.includes('.win32')) return 3;
+    return 4;
+  }
+  if (n.includes('.win32')) return 0;
+  if (n.includes('.x64')) return 2;
+  return 3;
+};
+const clamavRootCandidates = () => {
+  const candidates = [CLAMAV_SOURCE_ROOT, CLAMAV_RUNTIME_ROOT, CLAMAV_ROOT];
+  const seen = new Set();
+  return candidates.filter((root) => {
+    const p = String(root || '').trim();
+    if (!p || !fs.existsSync(p)) return false;
+    const key = process.platform === 'win32' ? p.toLowerCase() : p;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+};
 const detectClamavDistributionDirs = () => {
   try {
-    if (!fs.existsSync(CLAMAV_ROOT)) return [];
-    const dirs = fs.readdirSync(CLAMAV_ROOT, { withFileTypes: true })
-      .filter((d) => d.isDirectory() && /^clamav-.*\.win\./i.test(d.name))
-      .map((d) => ({ name: d.name, full: path.join(CLAMAV_ROOT, d.name) }));
-    const arch = String(process.arch || '').toLowerCase();
-    const rank = (name) => {
-      const n = String(name || '').toLowerCase();
-      if (arch === 'x64') {
-        if (n.includes('.x64')) return 0;
-        if (n.includes('.win32')) return 1;
-        if (n.includes('.arm64')) return 4;
-        return 3;
-      }
-      if (arch === 'arm64') {
-        if (n.includes('.arm64')) return 0;
-        if (n.includes('.x64')) return 2;
-        if (n.includes('.win32')) return 3;
-        return 4;
-      }
-      if (n.includes('.win32')) return 0;
-      return 3;
-    };
-    return dirs.sort((a, b) => rank(a.name) - rank(b.name)).map((x) => x.full);
+    const dirs = [];
+    clamavRootCandidates().forEach((root) => {
+      const entries = fs.readdirSync(root, { withFileTypes: true })
+        .filter((d) => d.isDirectory() && /^clamav-.*\.win\./i.test(d.name))
+        .map((d) => ({ name: d.name, full: path.join(root, d.name) }));
+      dirs.push(...entries);
+    });
+    const seen = new Set();
+    return dirs
+      .sort((a, b) => rankClamavDist(a.name) - rankClamavDist(b.name))
+      .filter((x) => {
+        const key = process.platform === 'win32' ? x.full.toLowerCase() : x.full;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .map((x) => x.full);
   } catch {
     return [];
   }
@@ -150,12 +176,14 @@ const detectClamavDistributionDirs = () => {
 const clamavCandidateBins = () => ([
   securitySettings.clamscanPath || '',
   process.env.CLAMSCAN_PATH || '',
+  ...detectClamavDistributionDirs().map((d) => path.join(d, 'clamscan.exe')),
+  path.join(CLAMAV_RUNTIME_ROOT, 'clamscan.exe'),
+  path.join(CLAMAV_SOURCE_ROOT, 'clamscan.exe'),
   path.join(CLAMAV_ROOT, 'clamscan.exe'),
   path.join(CLAMAV_ROOT, 'build', 'clamscan.exe'),
   path.join(CLAMAV_ROOT, 'build', 'Release', 'clamscan.exe'),
   path.join(CLAMAV_ROOT, 'build', 'Debug', 'clamscan.exe'),
-  path.join(CLAMAV_ROOT, 'win32', 'clamscan.exe'),
-  ...detectClamavDistributionDirs().map((d) => path.join(d, 'clamscan.exe'))
+  path.join(CLAMAV_ROOT, 'win32', 'clamscan.exe')
 ].filter(Boolean));
 const clamavBinaryPath = () => clamavCandidateBins().find((p) => fs.existsSync(p)) || '';
 const clamavDbFiles = (dir) => {
@@ -237,9 +265,12 @@ const clamavFreshclamPath = () => {
     candidates.push(path.join(path.dirname(dir), 'freshclam.exe'));
   }
   candidates.push(path.join(CLAMAV_ROOT, 'freshclam.exe'));
+  candidates.push(path.join(CLAMAV_RUNTIME_ROOT, 'freshclam.exe'));
+  candidates.push(path.join(CLAMAV_SOURCE_ROOT, 'freshclam.exe'));
   candidates.push(path.join(CLAMAV_ROOT, 'build', 'freshclam.exe'));
   candidates.push(path.join(CLAMAV_ROOT, 'build', 'Release', 'freshclam.exe'));
   candidates.push(path.join(CLAMAV_ROOT, 'build', 'Debug', 'freshclam.exe'));
+  detectClamavDistributionDirs().forEach((dir) => candidates.push(path.join(dir, 'freshclam.exe')));
   if (process.platform === 'win32') candidates.push('freshclam.exe');
   else candidates.push('freshclam');
   return candidates.find((p) => p && fs.existsSync(p)) || '';
