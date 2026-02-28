@@ -105,19 +105,19 @@ async function uploadAsset(token, uploadUrlTemplate, filePath) {
 function collectAssets(baseDir) {
   if (!fs.existsSync(baseDir)) return [];
   const out = [];
-  const allow = new Set(['.exe', '.yml', '.blockmap']);
-  const walk = (dir) => {
-    for (const item of fs.readdirSync(dir)) {
-      const p = path.join(dir, item);
-      const st = fs.statSync(p);
-      if (st.isDirectory()) walk(p);
-      else if (st.isFile()) {
-        const ext = path.extname(p).toLowerCase();
-        if (allow.has(ext)) out.push(path.resolve(p));
-      }
-    }
-  };
-  walk(baseDir);
+  const entries = fs.readdirSync(baseDir, { withFileTypes: true });
+  for (const entry of entries) {
+    if (!entry.isFile()) continue;
+    const name = entry.name;
+    const p = path.join(baseDir, name);
+    const lower = name.toLowerCase();
+    const include = (
+      lower === 'latest.yml'
+      || lower.endsWith('.blockmap')
+      || /^neooptimize(\s+setup)?\s+.*\.exe$/i.test(name)
+    );
+    if (include) out.push(path.resolve(p));
+  }
   return out.sort((a, b) => a.localeCompare(b));
 }
 
