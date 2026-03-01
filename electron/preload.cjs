@@ -2,7 +2,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 // Expose minimal API surface to the renderer
 contextBridge.exposeInMainWorld('neo', {
-  version: () => '0.0.1',
+  version: () => '1.0.0',
   runCleaner: (action) => ipcRenderer.invoke('cleaner:run', action),
   // generic exec (use carefully)
   execCmd: (cmd, args) => ipcRenderer.invoke('exec:run', { cmd, args }),
