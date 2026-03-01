@@ -147,6 +147,41 @@ const chunkString = (v, max = 220) => {
   if (s.length <= max) return s;
   return `${s.slice(0, Math.max(1, max - 3))}...`;
 };
+const windowsSuspendResumeScript = (pid, action) => {
+  const fn = action === 'resume' ? 'NtResumeProcess' : 'NtSuspendProcess';
+  return [
+    "$ErrorActionPreference='Stop'",
+    'Add-Type @\'',
+    'using System;',
+    'using System.Runtime.InteropServices;',
+    'public static class NeoProcCtrl {',
+    '  [DllImport("kernel32.dll", SetLastError=true)] public static extern IntPtr OpenProcess(uint access, bool inheritHandle, int processId);',
+    '  [DllImport("ntdll.dll")] public static extern int NtSuspendProcess(IntPtr processHandle);',
+    '  [DllImport("ntdll.dll")] public static extern int NtResumeProcess(IntPtr processHandle);',
+    '  [DllImport("kernel32.dll", SetLastError=true)] public static extern bool CloseHandle(IntPtr hObject);',
+    '}',
+    '\'@',
+    `$targetPid = ${Number(pid) || 0}`,
+    'if ($targetPid -le 0) { throw "invalid pid" }',
+    '$PROCESS_SUSPEND_RESUME = 0x0800',
+    '$PROCESS_QUERY_LIMITED_INFORMATION = 0x1000',
+    '$handle = [NeoProcCtrl]::OpenProcess($PROCESS_SUSPEND_RESUME -bor $PROCESS_QUERY_LIMITED_INFORMATION, $false, $targetPid)',
+    'if ($handle -eq [IntPtr]::Zero) { throw "OpenProcess failed for pid $targetPid" }',
+    `$rc = [NeoProcCtrl]::${fn}($handle)`,
+    '[void][NeoProcCtrl]::CloseHandle($handle)',
+    `if ($rc -ne 0) { throw "${fn} failed with code $rc" }`,
+    `Write-Output "${action} ok for pid $targetPid"`
+  ].join('\n');
+};
+const windowsSuspendResume = (pid, action, cb) => {
+  const script = windowsSuspendResumeScript(pid, action);
+  runExecFile(
+    'powershell.exe',
+    ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', script],
+    { maxBuffer: 1024 * 1024, timeout: 20000 },
+    cb
+  );
+};
 const hasInternetReachability = (host = 'database.clamav.net', timeoutMs = 1800) => new Promise((resolve) => {
   if (process.env.NEOOPTIMIZE_OFFLINE === '1') {
     resolve(false);
@@ -818,9 +853,9 @@ app.post('/api/processes/:pid/:action', (req, res) => {
   if (!pid || !['kill', 'pause', 'resume'].includes(action)) return res.status(400).send({ ok: false, error: 'invalid pid/action' });
   if (!checkToken(token, pid, action)) return res.status(403).send({ ok: false, error: 'invalid/expired token' });
   const run = action === 'pause'
-    ? (cb) => process.platform === 'win32' ? runExecFile('powershell', ['-NoProfile', '-Command', `Suspend-Process -Id ${pid} -ErrorAction Stop`], {}, cb) : runExecFile('kill', ['-STOP', String(pid)], {}, cb)
+    ? (cb) => process.platform === 'win32' ? windowsSuspendResume(pid, 'pause', cb) : runExecFile('kill', ['-STOP', String(pid)], {}, cb)
     : action === 'resume'
-      ? (cb) => process.platform === 'win32' ? runExecFile('powershell', ['-NoProfile', '-Command', `Resume-Process -Id ${pid} -ErrorAction Stop`], {}, cb) : runExecFile('kill', ['-CONT', String(pid)], {}, cb)
+      ? (cb) => process.platform === 'win32' ? windowsSuspendResume(pid, 'resume', cb) : runExecFile('kill', ['-CONT', String(pid)], {}, cb)
       : (cb) => process.platform === 'win32' ? runExecFile('taskkill', ['/PID', String(pid), '/T', '/F'], {}, cb) : runExecFile('kill', ['-TERM', String(pid)], {}, cb);
   run((err, stdout, stderr) => {
     if (err) return res.status(500).send({ ok: false, error: String(stderr || err.message || err) });

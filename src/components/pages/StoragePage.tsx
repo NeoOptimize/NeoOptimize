@@ -87,7 +87,22 @@ export function StoragePage() {
         setBusy(false);
         return;
       }
-      await engine.start({ mode, total: selectedProfile === 'aggressive-clean' ? 180 : 120, profile: selectedProfile, dryRun: dryRunMode });
+      let applyToken: string | undefined;
+      if (!dryRunMode) {
+        const tRes = await apiFetch('/api/clean/advance/apply-token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mode })
+        });
+        const t = await tRes.json();
+        if (!tRes.ok || !t?.ok || !t?.token) {
+          setMessage(`APPLY token failed: ${t?.error || 'unknown error'}`);
+          setError(`APPLY token failed: ${t?.error || 'unknown error'}`);
+          return;
+        }
+        applyToken = String(t.token);
+      }
+      await engine.start({ mode, total: selectedProfile === 'aggressive-clean' ? 180 : 120, profile: selectedProfile, dryRun: dryRunMode, applyToken });
       setMessage(`Cleaner started with profile ${selectedProfile} (${dryRunMode ? 'safe dry-run' : 'APPLY changes'})`);
       setError('');
     } catch (err: any) {
@@ -106,7 +121,26 @@ export function StoragePage() {
         setBusy(false);
         return;
       }
-      const r = await apiFetch(`/api/clean/advance/${type}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ total: 90, dryRun: dryRunMode }) });
+      let applyToken: string | undefined;
+      if (!dryRunMode) {
+        const tRes = await apiFetch('/api/clean/advance/apply-token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mode: 'registry' })
+        });
+        const t = await tRes.json();
+        if (!tRes.ok || !t?.ok || !t?.token) {
+          setMessage(`APPLY token failed: ${t?.error || 'unknown error'}`);
+          setError(`APPLY token failed: ${t?.error || 'unknown error'}`);
+          return;
+        }
+        applyToken = String(t.token);
+      }
+      const r = await apiFetch(`/api/clean/advance/${type}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ total: 90, dryRun: dryRunMode, applyToken })
+      });
       const j = await r.json();
       if (!r.ok || j?.ok === false) {
         setMessage(`${type} scan failed: ${j?.error || 'unknown error'}`);
