@@ -61,8 +61,21 @@ export function StoragePage() {
   }, [refreshResults]);
 
   useEffect(() => {
-    const iv = setInterval(() => refreshResults(true), engine.status.running ? 1200 : 3000);
-    return () => clearInterval(iv);
+    let mounted = true;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const refresh = async () => {
+      if (!mounted) return;
+      await refreshResults(true);
+      if (!mounted) return;
+      const hidden = typeof document !== 'undefined' && document.visibilityState === 'hidden';
+      const ms = hidden ? 12000 : (engine.status.running ? 2500 : 5000);
+      timer = setTimeout(refresh, ms);
+    };
+    refresh();
+    return () => {
+      mounted = false;
+      if (timer) clearTimeout(timer);
+    };
   }, [engine.status.running, refreshResults]);
 
   const startCleaner = async () => {

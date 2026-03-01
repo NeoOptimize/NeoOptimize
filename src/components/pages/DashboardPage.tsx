@@ -106,9 +106,20 @@ export function DashboardPage() {
   }, []);
 
   useEffect(() => {
-    refresh();
-    const iv = setInterval(refresh, 2500);
-    return () => clearInterval(iv);
+    let mounted = true;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const loop = async () => {
+      if (!mounted) return;
+      await refresh();
+      if (!mounted) return;
+      const hidden = typeof document !== 'undefined' && document.visibilityState === 'hidden';
+      timer = setTimeout(loop, hidden ? 12000 : 5000);
+    };
+    loop();
+    return () => {
+      mounted = false;
+      if (timer) clearTimeout(timer);
+    };
   }, [refresh]);
 
   const runCleaner = async () => {

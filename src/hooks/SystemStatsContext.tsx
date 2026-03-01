@@ -54,6 +54,17 @@ export function SystemStatsProvider({ children }: { children: React.ReactNode })
 
   useEffect(() => {
     let mounted = true;
+    let systemTimer: ReturnType<typeof setTimeout> | null = null;
+    let logTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const scheduleSystem = (ms: number) => {
+      if (systemTimer) clearTimeout(systemTimer);
+      systemTimer = setTimeout(refreshSystem, ms);
+    };
+    const scheduleLogs = (ms: number) => {
+      if (logTimer) clearTimeout(logTimer);
+      logTimer = setTimeout(refreshLogs, ms);
+    };
 
     const refreshSystem = async () => {
       try {
@@ -75,14 +86,17 @@ export function SystemStatsProvider({ children }: { children: React.ReactNode })
           setMetrics((prev) => ({ ...prev, net: Number(net.latencyMs || 0) }));
         }
       } catch {}
+      if (!mounted) return;
+      const hidden = typeof document !== 'undefined' && document.visibilityState === 'hidden';
+      scheduleSystem(hidden ? 12000 : 4000);
     };
 
     const refreshLogs = async () => {
       try {
-        const r = await apiFetch('/api/logs?limit=120');
+        const r = await apiFetch('/api/logs?limit=80');
         const j = await r.json();
         if (!mounted || !j?.ok) return;
-        const mapped = (j.logs || []).slice(-120).map((l: any, i: number) => ({
+        const mapped = (j.logs || []).slice(-80).map((l: any, i: number) => ({
           id: i + 1,
           time: l.time ? new Date(l.time).toLocaleTimeString('en-US', { hour12: false }) : '--:--:--',
           level: toLogLevel(l.level),
@@ -90,16 +104,17 @@ export function SystemStatsProvider({ children }: { children: React.ReactNode })
         }));
         setLogs(mapped);
       } catch {}
+      if (!mounted) return;
+      const hidden = typeof document !== 'undefined' && document.visibilityState === 'hidden';
+      scheduleLogs(hidden ? 15000 : 5000);
     };
 
     refreshSystem();
     refreshLogs();
-    const systemTimer = setInterval(refreshSystem, 2000);
-    const logTimer = setInterval(refreshLogs, 2000);
     return () => {
       mounted = false;
-      clearInterval(systemTimer);
-      clearInterval(logTimer);
+      if (systemTimer) clearTimeout(systemTimer);
+      if (logTimer) clearTimeout(logTimer);
     };
   }, []);
 

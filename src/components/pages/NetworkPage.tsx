@@ -22,6 +22,7 @@ export function NetworkPage() {
 
   useEffect(() => {
     let mounted = true;
+    let timer: ReturnType<typeof setTimeout> | null = null;
     const refresh = async () => {
       try {
         const [sRes, cRes] = await Promise.all([apiFetch('/api/network/stats'), apiFetch('/api/network/connections')]);
@@ -43,10 +44,15 @@ export function NetworkPage() {
       } finally {
         setLoading(false);
       }
+      if (!mounted) return;
+      const hidden = typeof document !== 'undefined' && document.visibilityState === 'hidden';
+      timer = setTimeout(refresh, hidden ? 12000 : 5000);
     };
     refresh();
-    const iv = setInterval(refresh, 2000);
-    return () => { mounted = false; clearInterval(iv); };
+    return () => {
+      mounted = false;
+      if (timer) clearTimeout(timer);
+    };
   }, []);
 
   const cards = useMemo(() => [

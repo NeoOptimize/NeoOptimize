@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
 import { useSystemStats } from '../hooks/SystemStatsContext';
-import { motion, AnimatePresence } from 'framer-motion';
 import { DashboardPage } from './pages/DashboardPage';
 import { ProcessesPage } from './pages/ProcessesPage';
 import { NetworkPage } from './pages/NetworkPage';
@@ -174,58 +173,45 @@ function LogSidebar() {
       </div>
 
       <div ref={logRef} className="flex-1 overflow-y-auto p-2 space-y-1">
-        <AnimatePresence initial={false}>
-          {filtered.map((log) => {
-            const s = levelStyle[log.level];
-            return (
-              <motion.div
-                key={log.id}
-                initial={{
-                  opacity: 0,
-                  y: 4
-                }}
-                animate={{
-                  opacity: 1,
-                  y: 0
-                }}
-                transition={{
-                  duration: 0.18
-                }}
-                className="flex items-start gap-1.5 leading-relaxed">
+        {filtered.map((log) => {
+          const s = levelStyle[log.level];
+          return (
+            <div
+              key={log.id}
+              className="flex items-start gap-1.5 leading-relaxed">
 
-                <span
-                  style={{
-                    color: 'var(--text-muted)',
-                    flexShrink: 0,
-                    fontSize: '9px'
-                  }}>
+              <span
+                style={{
+                  color: 'var(--text-muted)',
+                  flexShrink: 0,
+                  fontSize: '9px'
+                }}>
 
-                  {log.time}
-                </span>
-                <span
-                  className="text-[9px] font-bold px-1 shrink-0"
-                  style={{
-                    backgroundColor: s.color + '22',
-                    color: s.color,
-                    border: `1px solid ${s.color}44`
-                  }}>
+                {log.time}
+              </span>
+              <span
+                className="text-[9px] font-bold px-1 shrink-0"
+                style={{
+                  backgroundColor: s.color + '22',
+                  color: s.color,
+                  border: `1px solid ${s.color}44`
+                }}>
 
-                  {s.badge}
-                </span>
-                <span
-                  style={{
-                    color:
-                    log.level === 'error' ? s.color : 'var(--text-primary)',
-                    fontSize: '10px',
-                    lineHeight: 1.4
-                  }}>
+                {s.badge}
+              </span>
+              <span
+                style={{
+                  color:
+                  log.level === 'error' ? s.color : 'var(--text-primary)',
+                  fontSize: '10px',
+                  lineHeight: 1.4
+                }}>
 
-                  {log.message}
-                </span>
-              </motion.div>);
+                {log.message}
+              </span>
+            </div>);
 
-          })}
-        </AnimatePresence>
+        })}
         <div
           className="flex items-center gap-1 mt-1"
           style={{

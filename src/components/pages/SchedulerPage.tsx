@@ -47,10 +47,20 @@ export function SchedulerPage() {
 
   React.useEffect(() => {
     let mounted = true;
-    const refresh = async () => { if (!mounted) return; await load(true); };
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const refresh = async () => {
+      if (!mounted) return;
+      await load(true);
+      if (!mounted) return;
+      const hidden = typeof document !== 'undefined' && document.visibilityState === 'hidden';
+      timer = setTimeout(refresh, hidden ? 12000 : 6000);
+    };
     load(false);
-    const iv = setInterval(refresh, 3000);
-    return () => { mounted = false; clearInterval(iv); };
+    timer = setTimeout(refresh, 1000);
+    return () => {
+      mounted = false;
+      if (timer) clearTimeout(timer);
+    };
   }, [load]);
 
   const addJob = async () => {

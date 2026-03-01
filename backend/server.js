@@ -59,6 +59,42 @@ let clamavProbeCache = { key: '', at: 0, result: { runnable: false, version: nul
 
 let cpuSnap = null;
 let netSnap = null;
+const PROCESS_CACHE_MS = 3500;
+const OVERVIEW_CACHE_MS = 2000;
+const NETWORK_STATS_CACHE_MS = 3500;
+const NETWORK_CONN_CACHE_MS = 4500;
+const LOGS_CACHE_MS = 1000;
+const runtimeCache = {
+  processes: { at: 0, value: null, inflight: false, waiters: [] },
+  overview: { at: 0, value: null, inflight: false, waiters: [] },
+  networkStats: { at: 0, value: null, inflight: false, waiters: [] },
+  networkConnections: { at: 0, value: null, inflight: false, waiters: [] },
+  logs: { at: 0, value: null, key: '' }
+};
+
+const withCachedProducer = (bucket, ttlMs, producer, cb) => {
+  const now = Date.now();
+  if (bucket.value != null && now - Number(bucket.at || 0) < ttlMs) {
+    cb(null, bucket.value, true);
+    return;
+  }
+  bucket.waiters.push(cb);
+  if (bucket.inflight) return;
+  bucket.inflight = true;
+  producer((err, value) => {
+    bucket.inflight = false;
+    if (!err) {
+      bucket.value = value;
+      bucket.at = Date.now();
+    }
+    const waiters = bucket.waiters.splice(0);
+    waiters.forEach((fn) => {
+      try {
+        fn(err || null, value, false);
+      } catch {}
+    });
+  });
+};
 
 const pushLog = (level, message, meta = {}) => {
   appLogs.push({ time: new Date().toISOString(), level, message, meta });
@@ -497,22 +533,44 @@ const cpuPercent = () => {
   return total > 0 ? Number((((total - idle) / total) * 100).toFixed(1)) : 0;
 };
 
-const listProcesses = (cb) => {
-  if (process.platform === 'win32') {
-    runExec('tasklist /FO CSV /NH', { maxBuffer: 1024 * 1000 }, (err, stdout) => {
-      if (err) return cb(null, [{ pid: process.pid, name: 'node', command: 'node', status: 'running' }]);
-      const rows = String(stdout).trim().split(/\r?\n/).filter(Boolean).map((ln) => ln.split(/","/).map((s) => s.replace(/^"|"$/g, '')));
-      const procs = rows.map((c) => ({ pid: Number(c[1]), name: c[0], command: c[0], user: c[2], status: 'running', mem: c[4], memKB: parseMemKB(c[4]) })).filter((p) => p.pid > 0);
-      cb(null, procs);
+const listProcesses = (cb, options = {}) => {
+  const forceRefresh = Boolean(options.forceRefresh);
+  if (forceRefresh) runtimeCache.processes.at = 0;
+  withCachedProducer(runtimeCache.processes, PROCESS_CACHE_MS, (done) => {
+    if (process.platform === 'win32') {
+      runExec('tasklist /FO CSV /NH', { maxBuffer: 1024 * 1200 }, (err, stdout) => {
+        if (err) {
+          return done(null, [{ pid: process.pid, name: 'node', command: 'node', status: 'running', user: process.env.USERNAME || 'system' }]);
+        }
+        const rows = String(stdout)
+          .trim()
+          .split(/\r?\n/)
+          .filter(Boolean)
+          .map((ln) => ln.split(/","/).map((s) => s.replace(/^"|"$/g, '')));
+        const procs = rows
+          .map((c) => ({ pid: Number(c[1]), name: c[0], command: c[0], user: c[2], status: 'running', mem: c[4], memKB: parseMemKB(c[4]) }))
+          .filter((p) => p.pid > 0);
+        done(null, procs);
+      });
+      return;
+    }
+    runExec('ps -eo pid,user,comm,%cpu,%mem,state --no-headers | head -n 300', { maxBuffer: 1024 * 1000 }, (err, stdout) => {
+      if (err) {
+        return done(null, [{ pid: process.pid, name: 'node', command: 'node', status: 'running', user: process.env.USER || 'system' }]);
+      }
+      const procs = String(stdout)
+        .trim()
+        .split(/\r?\n/)
+        .filter(Boolean)
+        .map((ln) => {
+          const p = ln.trim().split(/\s+/, 6);
+          return { pid: Number(p[0]), user: p[1], name: p[2], command: p[2], cpu: Number(p[3]), memPercent: Number(p[4]), status: (p[5] || '').startsWith('R') ? 'running' : 'sleeping' };
+        })
+        .filter((p) => p.pid > 0);
+      done(null, procs);
     });
-    return;
-  }
-  runExec('ps -eo pid,user,comm,%cpu,%mem,state --no-headers | head -n 300', { maxBuffer: 1024 * 1000 }, (err, stdout) => {
-    if (err) return cb(null, [{ pid: process.pid, name: 'node', command: 'node', status: 'running' }]);
-    const procs = String(stdout).trim().split(/\r?\n/).filter(Boolean).map((ln) => {
-      const p = ln.trim().split(/\s+/, 6); return { pid: Number(p[0]), user: p[1], name: p[2], command: p[2], cpu: Number(p[3]), memPercent: Number(p[4]), status: (p[5] || '').startsWith('R') ? 'running' : 'sleeping' };
-    }).filter((p) => p.pid > 0);
-    cb(null, procs);
+  }, (err, data) => {
+    cb(err || null, Array.isArray(data) ? data : []);
   });
 };
 
@@ -603,10 +661,29 @@ app.get('/api/events/:engine', (req, res) => {
 });
 
 app.get('/api/system/overview', (req, res) => {
-  listProcesses((_, processes) => {
-    const total = os.totalmem(); const free = os.freemem();
-    return res.send({ ok: true, system: { hostname: os.hostname(), kernel: os.release(), platform: os.platform(), uptimeSec: os.uptime(), loadAvg: os.loadavg(), cpuPercent: cpuPercent(), memPercent: total > 0 ? Number((((total - free) / total) * 100).toFixed(1)) : 0, memory: { total, free, used: total - free } }, tasks: processes.length });
-  });
+  const forceRefresh = String(req.query.refresh || '').toLowerCase() === '1';
+  if (forceRefresh) runtimeCache.overview.at = 0;
+  withCachedProducer(runtimeCache.overview, OVERVIEW_CACHE_MS, (done) => {
+    listProcesses((_, processes) => {
+      const total = os.totalmem();
+      const free = os.freemem();
+      const payload = {
+        ok: true,
+        system: {
+          hostname: os.hostname(),
+          kernel: os.release(),
+          platform: os.platform(),
+          uptimeSec: os.uptime(),
+          loadAvg: os.loadavg(),
+          cpuPercent: cpuPercent(),
+          memPercent: total > 0 ? Number((((total - free) / total) * 100).toFixed(1)) : 0,
+          memory: { total, free, used: total - free }
+        },
+        tasks: processes.length
+      };
+      done(null, payload);
+    });
+  }, (_, payload) => res.send(payload || { ok: false, error: 'overview unavailable' }));
 });
 
 app.get('/api/clean/:engine/status', (req, res) => {
@@ -685,29 +762,66 @@ app.post('/api/processes/:pid/:action', (req, res) => {
 });
 
 app.get('/api/network/stats', (req, res) => {
-  const interfaces = Object.keys(os.networkInterfaces() || {}).map((name) => ({ name, addrs: (os.networkInterfaces()[name] || []).map((a) => ({ address: a.address, family: a.family, mac: a.mac, internal: a.internal })) }));
-  networkThroughput((throughput) => {
-    runExec(process.platform === 'win32' ? 'ping -n 1 -w 1000 8.8.8.8' : 'ping -c 1 -W 1 8.8.8.8', { maxBuffer: 1024 * 100 }, (e, out) => {
-      const txt = String(out || ''); const m = txt.match(/Average\s*=\s*(\d+)\s*ms/i) || txt.match(/time[=<]\s*(\d+)\s*ms/i);
-      const latencyMs = m ? Number(m[1]) : null;
-      runExec(process.platform === 'win32' ? 'powershell -NoProfile -Command "Get-DnsClientServerAddress -AddressFamily IPv4 | Where-Object {$_.ServerAddresses} | Select-Object -ExpandProperty ServerAddresses | Sort-Object -Unique | ConvertTo-Json -Compress"' : "cat /etc/resolv.conf | grep nameserver | awk '{print $2}'", { maxBuffer: 1024 * 200 }, (__, dnsOut) => {
-        const dnsResolvers = process.platform === 'win32' ? (() => { const p = parseJson(dnsOut, []); return Array.isArray(p) ? p : p ? [p] : []; })() : String(dnsOut || '').split(/\r?\n/).filter(Boolean);
-        return res.send({ ok: true, interfaces, throughput, latencyMs, packetsPerSec: Math.max(0, Math.round((throughput.rxKBs + throughput.txKBs) / 1.5)), dnsResolvers });
+  const forceRefresh = String(req.query.refresh || '').toLowerCase() === '1';
+  if (forceRefresh) runtimeCache.networkStats.at = 0;
+  withCachedProducer(runtimeCache.networkStats, NETWORK_STATS_CACHE_MS, (done) => {
+    const interfaces = Object.keys(os.networkInterfaces() || {}).map((name) => ({
+      name,
+      addrs: (os.networkInterfaces()[name] || []).map((a) => ({ address: a.address, family: a.family, mac: a.mac, internal: a.internal }))
+    }));
+    networkThroughput((throughput) => {
+      runExec(process.platform === 'win32' ? 'ping -n 1 -w 1000 8.8.8.8' : 'ping -c 1 -W 1 8.8.8.8', { maxBuffer: 1024 * 100 }, (_, out) => {
+        const txt = String(out || '');
+        const m = txt.match(/Average\s*=\s*(\d+)\s*ms/i) || txt.match(/time[=<]\s*(\d+)\s*ms/i);
+        const latencyMs = m ? Number(m[1]) : null;
+        runExec(
+          process.platform === 'win32'
+            ? 'powershell -NoProfile -Command "Get-DnsClientServerAddress -AddressFamily IPv4 | Where-Object {$_.ServerAddresses} | Select-Object -ExpandProperty ServerAddresses | Sort-Object -Unique | ConvertTo-Json -Compress"'
+            : "cat /etc/resolv.conf | grep nameserver | awk '{print $2}'",
+          { maxBuffer: 1024 * 200 },
+          (__, dnsOut) => {
+            const dnsResolvers = process.platform === 'win32'
+              ? (() => { const p = parseJson(dnsOut, []); return Array.isArray(p) ? p : p ? [p] : []; })()
+              : String(dnsOut || '').split(/\r?\n/).filter(Boolean);
+            done(null, {
+              ok: true,
+              interfaces,
+              throughput,
+              latencyMs,
+              packetsPerSec: Math.max(0, Math.round((throughput.rxKBs + throughput.txKBs) / 1.5)),
+              dnsResolvers
+            });
+          }
+        );
       });
     });
-  });
+  }, (_, payload) => res.send(payload || { ok: false, error: 'network stats unavailable' }));
 });
-app.get('/api/network/connections', (req, res) => networkConnections((connections) => res.send({ ok: true, connections })));
+app.get('/api/network/connections', (req, res) => {
+  const forceRefresh = String(req.query.refresh || '').toLowerCase() === '1';
+  if (forceRefresh) runtimeCache.networkConnections.at = 0;
+  withCachedProducer(runtimeCache.networkConnections, NETWORK_CONN_CACHE_MS, (done) => {
+    networkConnections((connections) => done(null, { ok: true, connections }));
+  }, (_, payload) => res.send(payload || { ok: false, connections: [] }));
+});
 
 app.get('/api/logs', (req, res) => {
   const level = String(req.query.level || '').toLowerCase();
   const search = String(req.query.search || '').toLowerCase();
   const limit = Math.min(1000, Math.max(20, Number(req.query.limit || 300)));
+  const key = `${level}|${search}|${limit}`;
+  const now = Date.now();
+  if (runtimeCache.logs.value && runtimeCache.logs.key === key && now - Number(runtimeCache.logs.at || 0) < LOGS_CACHE_MS) {
+    return res.send(runtimeCache.logs.value);
+  }
   const engineLogs = Object.keys(engineBuffers).flatMap((k) => (engineBuffers[k].logs || []).map((l) => ({ engine: k, ...l })));
-  let logs = engineLogs.concat(appLogs.map((l) => ({ engine: 'system', ...l }))).sort((a, b) => String(a.time).localeCompare(String(b.time)));
+  let logs = engineLogs.concat(appLogs.map((l) => ({ engine: 'system', ...l })));
+  logs = logs.sort((a, b) => String(a.time).localeCompare(String(b.time)));
   if (level) logs = logs.filter((l) => String(l.level || '').toLowerCase() === level);
   if (search) logs = logs.filter((l) => `${l.engine} ${l.message || ''}`.toLowerCase().includes(search));
-  return res.send({ ok: true, logs: logs.slice(-limit) });
+  const payload = { ok: true, logs: logs.slice(-limit) };
+  runtimeCache.logs = { at: now, key, value: payload };
+  return res.send(payload);
 });
 
 app.get('/api/security/status', (req, res) => {
@@ -1337,6 +1451,23 @@ app.get('/api/cleaner/spec/summary', (req, res) => {
   const p = req.query.path ? String(req.query.path) : cleanerSpecPath();
   try { const c = fs.readFileSync(p, 'utf-8'); const categories = c.split(/\r?\n/).filter((ln) => /^##\s+\*\*/.test(ln)).map((ln) => ln.replace(/^##\s+\*\*|\*\*$/g, '').trim()); return res.send({ ok: true, path: p, categories }); } catch (err) { return res.status(500).send({ ok: false, error: String(err) }); }
 });
+
+app.use((err, req, res, next) => {
+  const message = String(err?.message || err || 'unknown error');
+  pushLog('error', 'api unhandled exception', { path: req?.path || '-', message });
+  if (res.headersSent) return next(err);
+  return res.status(500).send({ ok: false, error: message });
+});
+
+if (!globalThis.__NEOOPTIMIZE_BACKEND_ERROR_HOOKS__) {
+  globalThis.__NEOOPTIMIZE_BACKEND_ERROR_HOOKS__ = true;
+  process.on('unhandledRejection', (reason) => {
+    pushLog('error', 'process unhandledRejection', { message: String(reason?.message || reason || 'unknown') });
+  });
+  process.on('uncaughtException', (error) => {
+    pushLog('error', 'process uncaughtException', { message: String(error?.message || error || 'unknown') });
+  });
+}
 
 ensureLocalConfigFiles();
 

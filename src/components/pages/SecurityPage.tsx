@@ -63,10 +63,22 @@ export function SecurityPage() {
   }, [settingsInitialized]);
 
   useEffect(() => {
-    refresh();
-    const iv = setInterval(refresh, 1500);
-    return () => clearInterval(iv);
-  }, [refresh]);
+    let mounted = true;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const loop = async () => {
+      if (!mounted) return;
+      await refresh();
+      if (!mounted) return;
+      const hidden = typeof document !== 'undefined' && document.visibilityState === 'hidden';
+      const ms = hidden ? 12000 : (scanning ? 2500 : 5000);
+      timer = setTimeout(loop, ms);
+    };
+    loop();
+    return () => {
+      mounted = false;
+      if (timer) clearTimeout(timer);
+    };
+  }, [refresh, scanning]);
 
   const runScan = async () => {
     try {
