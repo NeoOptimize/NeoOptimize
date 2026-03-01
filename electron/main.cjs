@@ -1,5 +1,6 @@
 const { app, BrowserWindow, ipcMain, Menu, dialog, shell } = require('electron');
 const path = require('path');
+const fs = require('fs');
 const { spawn } = require('child_process');
 const { pathToFileURL } = require('url');
 const { autoUpdater } = require('electron-updater');
@@ -65,6 +66,11 @@ async function startBackendServer() {
     console.error('[backend] in-process start failed:', err);
   }
 
+  if (!fs.existsSync(appPaths.serverPath)) {
+    console.error(`[backend] server.js not found: ${appPaths.serverPath}`);
+    return;
+  }
+
   try {
     backendProcess = spawn(process.execPath, [appPaths.serverPath], {
       cwd: appPaths.spawnCwd,
@@ -102,12 +108,23 @@ function stopBackendServer() {
 
 function runPowerShellScript(scriptPath, args = []) {
   return new Promise((resolve) => {
+    if (!scriptPath || !fs.existsSync(scriptPath)) {
+      resolve({ code: 127, out: '', err: `script not found: ${scriptPath}` });
+      return;
+    }
     const ps = spawn('powershell.exe', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', scriptPath, ...args], { windowsHide: true });
     let out = '';
     let err = '';
+    let settled = false;
+    const done = (payload) => {
+      if (settled) return;
+      settled = true;
+      resolve(payload);
+    };
     ps.stdout.on('data', (d) => (out += d.toString()));
     ps.stderr.on('data', (d) => (err += d.toString()));
-    ps.on('close', (code) => resolve({ code, out, err }));
+    ps.on('error', (spawnErr) => done({ code: 127, out, err: String(spawnErr?.message || spawnErr || err) }));
+    ps.on('close', (code) => done({ code, out, err }));
   });
 }
 
@@ -258,9 +275,16 @@ ipcMain.handle('exec:run', async (event, { cmd, args }) => {
       const proc = spawn(cmd, args || [], { windowsHide: true });
       let out = '';
       let err = '';
+      let settled = false;
+      const done = (payload) => {
+        if (settled) return;
+        settled = true;
+        resolve(payload);
+      };
       proc.stdout.on('data', (d) => (out += d.toString()));
       proc.stderr.on('data', (d) => (err += d.toString()));
-      proc.on('close', (code) => resolve({ code, out, err }));
+      proc.on('error', (spawnErr) => done({ code: 127, out, err: String(spawnErr?.message || spawnErr || err) }));
+      proc.on('close', (code) => done({ code, out, err }));
     } catch (e) {
       resolve({ error: String(e) });
     }

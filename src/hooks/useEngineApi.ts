@@ -42,13 +42,21 @@ export function useEngineApi(engine = 'advance') {
   }, [engine]);
 
   async function start(opts = {}) {
-    await apiFetch(`/api/clean/${engine}/start`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(opts) });
+    const r = await apiFetch(`/api/clean/${engine}/start`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(opts) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || (j && j.ok === false)) {
+      throw new Error(String(j?.error || `start failed (${r.status})`));
+    }
     const s = await (await apiFetch(`/api/clean/${engine}/status`)).json();
     setStatus((prev) => ({ ...prev, ...s }));
   }
 
   async function stop() {
-    await apiFetch(`/api/clean/${engine}/stop`, { method: 'POST' });
+    const r = await apiFetch(`/api/clean/${engine}/stop`, { method: 'POST' });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || (j && j.ok === false)) {
+      throw new Error(String(j?.error || `stop failed (${r.status})`));
+    }
     const s = await (await apiFetch(`/api/clean/${engine}/status`)).json();
     setStatus((prev) => ({ ...prev, ...s }));
   }

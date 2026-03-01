@@ -88,7 +88,7 @@ export function SystemStatsProvider({ children }: { children: React.ReactNode })
       } catch {}
       if (!mounted) return;
       const hidden = typeof document !== 'undefined' && document.visibilityState === 'hidden';
-      scheduleSystem(hidden ? 12000 : 4000);
+      scheduleSystem(hidden ? 16000 : 7000);
     };
 
     const refreshLogs = async () => {
@@ -106,7 +106,7 @@ export function SystemStatsProvider({ children }: { children: React.ReactNode })
       } catch {}
       if (!mounted) return;
       const hidden = typeof document !== 'undefined' && document.visibilityState === 'hidden';
-      scheduleLogs(hidden ? 15000 : 5000);
+      scheduleLogs(hidden ? 18000 : 7000);
     };
 
     refreshSystem();

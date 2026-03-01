@@ -64,8 +64,8 @@ const PRIVACY_REGISTRY_KEYS = [
   'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Applets\\Paint\\Recent File List'
 ];
 
-const DEFAULT_MAX_FILES = 10000;
-const DEFAULT_MAX_DEPTH = 8;
+const DEFAULT_MAX_FILES = 6000;
+const DEFAULT_MAX_DEPTH = 7;
 const LOG_LIMIT = 6000;
 const RESULT_LIMIT = 30000;
 const BACKUP_LIMIT = 500;
@@ -541,4 +541,3 @@ export function createNeoTurboCleaner() {
     restoreBackup
   };
 }
-

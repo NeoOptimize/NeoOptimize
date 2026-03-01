@@ -177,7 +177,7 @@ export function ConfigPage() {
 
       <div className="border p-4" style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--bg-secondary)' }}>
         <div className="flex items-center justify-between mb-2">
-          <div className="text-xs font-bold flex items-center gap-2" style={{ color: 'var(--ansi-cyan)' }}><FileText size={14} /> ADVANCE CLEANER ENGINE SPEC</div>
+          <div className="text-xs font-bold flex items-center gap-2" style={{ color: 'var(--ansi-cyan)' }}><FileText size={14} /> NEO TURBO CLEANER SPEC</div>
           <button onClick={loadCleanerSpec} className="px-2 py-1 text-[10px] border" style={{ borderColor: 'var(--ansi-cyan)', color: 'var(--ansi-cyan)' }}>RELOAD</button>
         </div>
         <div className="text-[11px] mb-2" style={{ color: 'var(--text-muted)' }}>Path: <span style={{ color: 'var(--ansi-cyan)' }}>{cleanerPath || 'n/a'}</span></div>

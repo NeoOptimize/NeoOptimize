@@ -26,7 +26,9 @@ const engines = { advance: createNeoTurboCleaner(), santurbo: createSanTurbo() }
 const engineBuffers = {};
 const appLogs = [];
 const processTokens = new Map();
+const applyTokens = new Map();
 const PROCESS_TTL_MS = 30000;
+const APPLY_TTL_MS = 120000;
 const schedulerTasks = [
   { id: 'daily-clean', cron: '0 3 * * *', desc: 'Daily quick clean', user: 'system', status: 'active', lastRun: null, nextRun: 'pending' },
   { id: 'weekly-report', cron: '0 4 * * 0', desc: 'Weekly report generation', user: 'system', status: 'active', lastRun: null, nextRun: 'pending' }
@@ -59,11 +61,11 @@ let clamavProbeCache = { key: '', at: 0, result: { runnable: false, version: nul
 
 let cpuSnap = null;
 let netSnap = null;
-const PROCESS_CACHE_MS = 3500;
-const OVERVIEW_CACHE_MS = 2000;
-const NETWORK_STATS_CACHE_MS = 3500;
-const NETWORK_CONN_CACHE_MS = 4500;
-const LOGS_CACHE_MS = 1000;
+const PROCESS_CACHE_MS = 6000;
+const OVERVIEW_CACHE_MS = 4000;
+const NETWORK_STATS_CACHE_MS = 10000;
+const NETWORK_CONN_CACHE_MS = 8000;
+const LOGS_CACHE_MS = 1500;
 const runtimeCache = {
   processes: { at: 0, value: null, inflight: false, waiters: [] },
   overview: { at: 0, value: null, inflight: false, waiters: [] },
@@ -644,6 +646,18 @@ const checkToken = (token, pid, action) => {
   processTokens.delete(token);
   return !!rec && rec.pid === pid && rec.action === action && rec.expiresAt >= Date.now();
 };
+const issueApplyToken = (engine, mode) => {
+  const now = Date.now();
+  for (const [k, v] of applyTokens.entries()) if (v.expiresAt < now) applyTokens.delete(k);
+  const token = `${engine}:${mode}:${now}:${Math.random().toString(36).slice(2, 12)}`;
+  applyTokens.set(token, { engine, mode, expiresAt: now + APPLY_TTL_MS });
+  return token;
+};
+const checkApplyToken = (token, engine, mode) => {
+  const rec = applyTokens.get(token);
+  applyTokens.delete(token);
+  return !!rec && rec.engine === engine && rec.mode === mode && rec.expiresAt >= Date.now();
+};
 
 const safeOn = (engine, eventName, handler) => {
   if (!engine || typeof engine.on !== 'function') return null;
@@ -706,10 +720,26 @@ app.post('/api/clean/:engine/start', (req, res) => {
   const e = engines[req.params.engine];
   if (!e) return res.status(404).send({ error: 'engine not found' });
   const opts = { ...(req.body || {}) };
+  if (!opts.mode) opts.mode = 'full';
   if (opts.dryRun == null) opts.dryRun = true;
+  if (opts.dryRun === false) {
+    const token = String(req.body?.applyToken || '');
+    if (!checkApplyToken(token, req.params.engine, String(opts.mode || 'full'))) {
+      return res.status(403).send({ ok: false, error: 'APPLY mode requires valid applyToken from /api/clean/:engine/apply-token' });
+    }
+  }
   const out = e.start(opts);
   pushLog('info', `engine ${req.params.engine} start`, { mode: opts.mode || 'full', dryRun: opts.dryRun !== false });
   return res.send({ ok: true, result: out });
+});
+app.post('/api/clean/:engine/apply-token', (req, res) => {
+  const e = engines[req.params.engine];
+  if (!e) return res.status(404).send({ ok: false, error: 'engine not found' });
+  const mode = String((req.body?.mode || 'full')).toLowerCase();
+  if (!['full', 'dump', 'registry'].includes(mode)) return res.status(400).send({ ok: false, error: 'invalid mode' });
+  const token = issueApplyToken(req.params.engine, mode);
+  pushLog('warn', `apply token issued for ${req.params.engine}`, { mode, expiresInMs: APPLY_TTL_MS });
+  return res.send({ ok: true, token, mode, expiresInMs: APPLY_TTL_MS });
 });
 app.post('/api/clean/:engine/stop', (req, res) => {
   const e = engines[req.params.engine]; if (!e) return res.status(404).send({ error: 'engine not found' }); const out = e.stop(); pushLog('warn', `engine ${req.params.engine} stop`); return res.send({ ok: true, result: out });
@@ -725,6 +755,12 @@ app.post('/api/clean/:engine/registry', (req, res) => {
   if (!e) return res.status(404).send({ error: 'engine not found' });
   const opts = { ...(req.body || {}), mode: 'registry' };
   if (opts.dryRun == null) opts.dryRun = true;
+  if (opts.dryRun === false) {
+    const token = String(req.body?.applyToken || '');
+    if (!checkApplyToken(token, req.params.engine, 'registry')) {
+      return res.status(403).send({ ok: false, error: 'APPLY mode requires valid applyToken from /api/clean/:engine/apply-token' });
+    }
+  }
   e.start(opts);
   pushLog('info', 'registry scan started', { dryRun: opts.dryRun !== false });
   return res.send({ ok: true });

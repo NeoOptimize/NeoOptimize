@@ -126,7 +126,21 @@ export function DashboardPage() {
     try {
       const dryRunMode = !applyChanges;
       if (!dryRunMode && !window.confirm(`APPLY mode will modify system state in ${mode} mode. Continue?`)) return;
-      await engine.start({ mode, total: mode === 'full' ? 140 : 90, dryRun: dryRunMode });
+      let applyToken: string | undefined;
+      if (!dryRunMode) {
+        const tRes = await apiFetch('/api/clean/advance/apply-token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mode })
+        });
+        const t = await tRes.json();
+        if (!tRes.ok || !t?.ok || !t?.token) {
+          setMessage(`APPLY token failed: ${t?.error || 'unknown error'}`);
+          return;
+        }
+        applyToken = String(t.token);
+      }
+      await engine.start({ mode, total: mode === 'full' ? 140 : 90, dryRun: dryRunMode, applyToken });
       setMessage(`Cleaner started in ${mode} mode (${dryRunMode ? 'safe dry-run' : 'APPLY changes'})`);
       setRefreshError('');
     } catch (err: any) {
