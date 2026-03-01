@@ -6,7 +6,7 @@ import path from 'path';
 import os from 'os';
 import { exec, execFile, spawn, spawnSync } from 'child_process';
 import { fileURLToPath } from 'url';
-import { createAdvanceCleaner } from './engines/advanceCleaner.js';
+import { createNeoTurboCleaner } from './engines/neoTurboCleaner.js';
 import { createSanTurbo } from './engines/sanTurbo.js';
 
 const app = express();
@@ -22,7 +22,7 @@ const APP_DATA_ROOT = process.env.APP_DATA_ROOT ? path.resolve(process.env.APP_D
 const DATA_CONFIG_DIR = path.join(APP_DATA_ROOT, 'config');
 const DATA_BACKEND_DIR = path.join(APP_DATA_ROOT, 'backend');
 const ASSET_CONFIG_DIR = path.join(APP_ASSET_ROOT, 'config');
-const engines = { advance: createAdvanceCleaner(), santurbo: createSanTurbo() };
+const engines = { advance: createNeoTurboCleaner(), santurbo: createSanTurbo() };
 const engineBuffers = {};
 const appLogs = [];
 const processTokens = new Map();
@@ -447,9 +447,12 @@ const stopSecurityProgress = () => {
 const localConfigFile = path.join(DATA_CONFIG_DIR, 'config.txt');
 const assetConfigFile = path.join(ASSET_CONFIG_DIR, 'config.txt');
 const scriptConfigFile = 'C:/Users/Hello World/Documents/Script/config.txt';
-const localCleanerSpecFile = path.join(DATA_CONFIG_DIR, 'advance cleaner engine.txt');
-const assetCleanerSpecFile = path.join(ASSET_CONFIG_DIR, 'advance cleaner engine.txt');
-const scriptCleanerSpecFile = 'C:/Users/Hello World/Documents/Script/advance cleaner engine.txt';
+const localCleanerSpecFile = path.join(DATA_CONFIG_DIR, 'neo turbo cleaner.txt');
+const assetCleanerSpecFile = path.join(ASSET_CONFIG_DIR, 'neo turbo cleaner.txt');
+const scriptCleanerSpecFile = 'C:/Users/Hello World/Documents/Script/neo turbo cleaner.txt';
+const legacyLocalCleanerSpecFile = path.join(DATA_CONFIG_DIR, 'advance cleaner engine.txt');
+const legacyAssetCleanerSpecFile = path.join(ASSET_CONFIG_DIR, 'advance cleaner engine.txt');
+const legacyScriptCleanerSpecFile = 'C:/Users/Hello World/Documents/Script/advance cleaner engine.txt';
 const securityConfigFile = path.join(DATA_CONFIG_DIR, 'security.json');
 
 const defaultSecuritySettings = { preferredEngine: 'auto', clamscanPath: '' };
@@ -500,7 +503,14 @@ const ensureLocalConfigFiles = () => {
     ensureSeedFile(localConfigFile, fs.existsSync(assetConfigFile) ? assetConfigFile : scriptConfigFile);
   }
   if (!process.env.CLEANER_SPEC_PATH) {
-    ensureSeedFile(localCleanerSpecFile, fs.existsSync(assetCleanerSpecFile) ? assetCleanerSpecFile : scriptCleanerSpecFile);
+    const source = fs.existsSync(assetCleanerSpecFile)
+      ? assetCleanerSpecFile
+      : fs.existsSync(scriptCleanerSpecFile)
+        ? scriptCleanerSpecFile
+        : fs.existsSync(legacyAssetCleanerSpecFile)
+          ? legacyAssetCleanerSpecFile
+          : legacyScriptCleanerSpecFile;
+    ensureSeedFile(localCleanerSpecFile, source);
   }
 };
 
@@ -514,7 +524,10 @@ const cleanerSpecPath = () => {
   if (process.env.CLEANER_SPEC_PATH) return process.env.CLEANER_SPEC_PATH;
   if (fs.existsSync(localCleanerSpecFile)) return localCleanerSpecFile;
   if (fs.existsSync(assetCleanerSpecFile)) return assetCleanerSpecFile;
-  return scriptCleanerSpecFile;
+  if (fs.existsSync(scriptCleanerSpecFile)) return scriptCleanerSpecFile;
+  if (fs.existsSync(legacyLocalCleanerSpecFile)) return legacyLocalCleanerSpecFile;
+  if (fs.existsSync(legacyAssetCleanerSpecFile)) return legacyAssetCleanerSpecFile;
+  return legacyScriptCleanerSpecFile;
 };
 const pathAllowed = (p) => {
   const abs = path.resolve(p);

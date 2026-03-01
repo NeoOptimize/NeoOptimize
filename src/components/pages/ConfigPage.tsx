@@ -129,7 +129,7 @@ export function ConfigPage() {
     <div className="space-y-4">
       <div className="text-xs flex items-center gap-2" style={{ color: 'var(--text-muted)' }}>
         <span style={{ color: 'var(--ansi-green)', fontWeight: 700 }}>$</span>
-        <span>nano config.txt && load advance cleaner engine.txt</span>
+        <span>nano config.txt && load neo turbo cleaner.txt</span>
         <span style={{ color: 'var(--ansi-cyan)' }}>{lastUpdated ? `updated ${lastUpdated}` : ''}</span>
       </div>
 
