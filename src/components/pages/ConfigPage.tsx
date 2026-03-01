@@ -122,7 +122,12 @@ export function ConfigPage() {
       window.open('https://github.com/NeoOptimize/NeoOptimize/releases', '_blank');
       return;
     }
-    await neo.openReleasesPage();
+    const out = await neo.openReleasesPage();
+    if (!out?.ok) {
+      setError(String(out?.error || 'Unable to open update link (offline?)'));
+      return;
+    }
+    setError('');
   };
 
   return (

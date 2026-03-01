@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain, Menu, dialog, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const dns = require('dns');
 const { spawn } = require('child_process');
 const { pathToFileURL } = require('url');
 const { autoUpdater } = require('electron-updater');
@@ -22,6 +23,19 @@ let updateState = {
   error: null,
   at: new Date().toISOString()
 };
+
+async function hasInternetConnectivity(timeoutMs = 1800) {
+  if (process.env.NEOOPTIMIZE_OFFLINE === '1') return false;
+  const lookup = new Promise((resolve) => {
+    dns.lookup('github.com', (err) => resolve(!err));
+  });
+  const timeout = new Promise((resolve) => setTimeout(() => resolve(false), Math.max(300, timeoutMs)));
+  try {
+    return Boolean(await Promise.race([lookup, timeout]));
+  } catch {
+    return false;
+  }
+}
 
 function broadcastUpdateState() {
   const payload = { ...updateState, currentVersion: app.getVersion(), at: new Date().toISOString() };
@@ -195,6 +209,12 @@ async function checkForUpdates() {
     setUpdateState({ status: 'idle', message: msg, error: null });
     return { ok: false, error: msg, available: false, currentVersion: app.getVersion() };
   }
+  const online = await hasInternetConnectivity();
+  if (!online) {
+    const msg = 'Offline: update check skipped.';
+    setUpdateState({ status: 'idle', message: msg, error: null, downloading: false });
+    return { ok: false, error: msg, available: false, currentVersion: app.getVersion() };
+  }
   try {
     const result = await autoUpdater.checkForUpdates();
     const info = result?.updateInfo || null;
@@ -218,6 +238,10 @@ async function checkForUpdates() {
 async function downloadUpdate() {
   if (!app.isPackaged) {
     return { ok: false, error: 'Download update works in packaged build only.' };
+  }
+  const online = await hasInternetConnectivity();
+  if (!online) {
+    return { ok: false, error: 'Offline: cannot download update.' };
   }
   try {
     await autoUpdater.downloadUpdate();
@@ -296,6 +320,8 @@ ipcMain.handle('updater:check', async () => checkForUpdates());
 ipcMain.handle('updater:download', async () => downloadUpdate());
 ipcMain.handle('updater:installNow', async () => installUpdateNow());
 ipcMain.handle('updater:openReleases', async () => {
+  const online = await hasInternetConnectivity();
+  if (!online) return { ok: false, error: 'Offline: releases page unavailable.' };
   await shell.openExternal(RELEASES_URL);
   return { ok: true, url: RELEASES_URL };
 });

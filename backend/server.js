@@ -4,6 +4,7 @@ import cors from 'cors';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
+import dns from 'dns';
 import { exec, execFile, spawn, spawnSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { createNeoTurboCleaner } from './engines/neoTurboCleaner.js';
@@ -146,6 +147,23 @@ const chunkString = (v, max = 220) => {
   if (s.length <= max) return s;
   return `${s.slice(0, Math.max(1, max - 3))}...`;
 };
+const hasInternetReachability = (host = 'database.clamav.net', timeoutMs = 1800) => new Promise((resolve) => {
+  if (process.env.NEOOPTIMIZE_OFFLINE === '1') {
+    resolve(false);
+    return;
+  }
+  let settled = false;
+  const done = (ok) => {
+    if (settled) return;
+    settled = true;
+    resolve(Boolean(ok));
+  };
+  const timer = setTimeout(() => done(false), Math.max(300, Number(timeoutMs) || 1800));
+  dns.lookup(String(host || 'database.clamav.net'), (err) => {
+    clearTimeout(timer);
+    done(!err);
+  });
+});
 
 const pushEngineLog = (level, message) => {
   Object.keys(engineBuffers).forEach((k) => {
@@ -325,7 +343,8 @@ const securityEngineInfo = () => {
   const clamDb = resolveClamavDb(clamBin);
   const clam = Boolean(clamBin) && Boolean(clamProbe.runnable);
   const freshclam = clamavFreshclamPath();
-  const recommended = clam ? 'clamav' : (kico ? 'kicomav' : null);
+  const clamReady = clam && Boolean(clamDb.ready);
+  const recommended = clamReady ? 'clamav' : (kico ? 'kicomav' : null);
   return {
     recommended,
     kicomav: { available: kico, root: KICOMAV_ROOT, module: KICOMAV_MODULE },
@@ -890,7 +909,7 @@ app.get('/api/security/status', (req, res) => {
     issues.push(`${securityScan.suspicious} suspicious item(s) found in latest scan`);
   }
   if (securityScan.lastError) issues.push(`Last scan error: ${securityScan.lastError}`);
-  const activeEngine = securityScan.running ? securityScan.engine : (info.recommended || securityScan.engine || 'none');
+  const activeEngine = securityScan.running ? securityScan.engine : (info.recommended || 'none');
   return res.send({
     ok: true,
     status: {
@@ -998,6 +1017,13 @@ app.post('/api/security/clamav/update-db', (req, res) => {
     if (!info.clamav.binary) {
       return res.status(400).send({ ok: false, error: 'ClamAV binary not configured' });
     }
+    const online = await hasInternetReachability('database.clamav.net', 2000);
+    if (!online) {
+      return res.status(503).send({
+        ok: false,
+        error: 'Offline: ClamAV database update requires internet connection.'
+      });
+    }
     const freshclam = info.clamav.freshclam || clamavFreshclamPath();
     if (!freshclam || !fs.existsSync(freshclam)) {
       return res.status(400).send({ ok: false, error: 'freshclam not found near ClamAV binary' });
@@ -1089,13 +1115,14 @@ app.post('/api/security/scan', (req, res) => {
   if (securityScan.running) return res.send({ ok: true, scan: securityScan });
 
   const info = securityEngineInfo();
+  const clamUsable = Boolean(info.clamav.available && info.clamav.database?.ready);
   const requestedEngine = String(req.body?.engine || 'auto').toLowerCase();
   const requested = ['auto', 'kicomav', 'clamav'].includes(requestedEngine) ? requestedEngine : 'auto';
   let selectedEngine = null;
   if (requested === 'kicomav' && info.kicomav.available) selectedEngine = 'kicomav';
-  if (requested === 'clamav' && info.clamav.available) selectedEngine = 'clamav';
+  if (requested === 'clamav' && clamUsable) selectedEngine = 'clamav';
   if (requested === 'auto') {
-    if (securitySettings.preferredEngine === 'clamav' && info.clamav.available) selectedEngine = 'clamav';
+    if (securitySettings.preferredEngine === 'clamav' && clamUsable) selectedEngine = 'clamav';
     else if (securitySettings.preferredEngine === 'kicomav' && info.kicomav.available) selectedEngine = 'kicomav';
     else selectedEngine = info.recommended;
   }

@@ -10,7 +10,7 @@ type EngineInfo = {
 
 export function AboutPage() {
   const [engines, setEngines] = useState<EngineInfo | null>(null);
-  const [version, setVersion] = useState('0.0.1');
+  const [version, setVersion] = useState('1.0.0');
 
   useEffect(() => {
     const neo = (window as any)?.neo;
