@@ -42,3 +42,12 @@ engines/__pycache__/
 build/builder-config.json
 **/__pycache__/
 *.pyc
+
+# .NET build artifacts
+dotnet/**/bin/
+dotnet/**/obj/
+
+# AI runtime artifacts
+gpt4all-installer-win64.exe
+OllamaSetup.exe
+*.gguf

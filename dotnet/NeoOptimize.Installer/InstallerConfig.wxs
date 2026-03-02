@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="NeoOptimize"
+           Manufacturer="NeoOptimize"
+           Version="1.0.0"
+           UpgradeCode="PUT-GUID-HERE"
+           Language="1033">
+    <MajorUpgrade DowngradeErrorMessage="A newer version is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+  </Package>
+</Wix>

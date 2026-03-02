@@ -1,0 +1,23 @@
+<UserControl x:Class="NeoOptimize.App.Views.SecurityView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel>
+        <TextBlock Text="Security"
+                   Foreground="{StaticResource TitleBrush}"
+                   FontSize="18"
+                   FontWeight="SemiBold" />
+        <TextBlock Text="Unified scan memakai engine yang dipilih. AI hanya memberi saran, eksekusi tetap di core native."
+                   Margin="0,8,0,10"
+                   Foreground="{StaticResource MutedBrush}"
+                   TextWrapping="Wrap" />
+
+        <CheckBox Content="Use ClamAV"
+                  IsChecked="{Binding UseClamAv}" />
+        <CheckBox Content="Use KicomAV"
+                  IsChecked="{Binding UseKicomAv}" />
+        <CheckBox Content="Defender toggle integration"
+                  IsChecked="{Binding UseDefenderToggle}" />
+        <CheckBox Content="USB autorun blocker (default ON)"
+                  IsChecked="{Binding UsbAutorunBlockerEnabled}" />
+    </StackPanel>
+</UserControl>

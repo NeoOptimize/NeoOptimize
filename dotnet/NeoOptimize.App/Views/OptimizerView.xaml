@@ -1,0 +1,25 @@
+<UserControl x:Class="NeoOptimize.App.Views.OptimizerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel>
+        <TextBlock Text="Optimizer"
+                   Foreground="{StaticResource TitleBrush}"
+                   FontSize="18"
+                   FontWeight="SemiBold" />
+        <TextBlock Text="Smart Mode membaca tekanan resource lalu memilih aksi. Manual Mode untuk tuning spesifik."
+                   Margin="0,8,0,10"
+                   Foreground="{StaticResource MutedBrush}"
+                   TextWrapping="Wrap" />
+
+        <CheckBox Content="Privacy Pack (telemetry/background apps/tracking)"
+                  IsChecked="{Binding PrivacyPackEnabled}" />
+        <CheckBox Content="Manual CPU tuning"
+                  IsChecked="{Binding ManualCpuTuning}" />
+        <CheckBox Content="Manual RAM tuning"
+                  IsChecked="{Binding ManualRamTuning}" />
+        <CheckBox Content="Manual Disk tuning"
+                  IsChecked="{Binding ManualDiskTuning}" />
+        <CheckBox Content="Manual Network tuning"
+                  IsChecked="{Binding ManualNetworkTuning}" />
+    </StackPanel>
+</UserControl>

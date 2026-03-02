@@ -1,0 +1,31 @@
+<UserControl x:Class="NeoOptimize.App.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel>
+        <TextBlock Text="Dashboard Core Hub"
+                   Foreground="{StaticResource TitleBrush}"
+                   FontSize="18"
+                   FontWeight="SemiBold" />
+        <TextBlock Text="{Binding StatusNote}"
+                   Margin="0,8,0,12"
+                   Foreground="{StaticResource MutedBrush}"
+                   TextWrapping="Wrap" />
+        <WrapPanel>
+            <Button Content="Smart Clean"
+                    Command="{Binding DataContext.SmartCleanCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                    Margin="0,0,8,8" />
+            <Button Content="Smart Optimize"
+                    Command="{Binding DataContext.SmartOptimizeCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                    Margin="0,0,8,8" />
+            <Button Content="Smart Fix"
+                    Command="{Binding DataContext.SmartFixCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                    Margin="0,0,8,8" />
+            <Button Content="Unified Scan"
+                    Command="{Binding DataContext.UnifiedScanCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                    Margin="0,0,8,8" />
+        </WrapPanel>
+        <TextBlock Text="{Binding LastQuickAction, StringFormat='Last quick action: {0}'}"
+                   Margin="0,10,0,0"
+                   Foreground="{StaticResource AccentBrush}" />
+    </StackPanel>
+</UserControl>

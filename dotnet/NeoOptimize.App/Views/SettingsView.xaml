@@ -1,0 +1,29 @@
+<UserControl x:Class="NeoOptimize.App.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel>
+        <TextBlock Text="Settings"
+                   Foreground="{StaticResource TitleBrush}"
+                   FontSize="18"
+                   FontWeight="SemiBold" />
+        <TextBlock Text="Atur pengalaman simple/advanced, tema, bahasa, dan scheduler."
+                   Margin="0,8,0,10"
+                   Foreground="{StaticResource MutedBrush}"
+                   TextWrapping="Wrap" />
+
+        <TextBlock Text="Experience Mode"
+                   Foreground="{StaticResource TitleBrush}" />
+        <ComboBox ItemsSource="{Binding ExperienceModes}"
+                  SelectedItem="{Binding ExperienceMode}" />
+
+        <TextBlock Text="Theme"
+                   Foreground="{StaticResource TitleBrush}" />
+        <ComboBox ItemsSource="{Binding Themes}"
+                  SelectedItem="{Binding Theme}" />
+
+        <TextBlock Text="Language"
+                   Foreground="{StaticResource TitleBrush}" />
+        <ComboBox ItemsSource="{Binding Languages}"
+                  SelectedItem="{Binding Language}" />
+    </StackPanel>
+</UserControl>

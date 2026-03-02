@@ -1,0 +1,26 @@
+<UserControl x:Class="NeoOptimize.App.Views.CleanerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel>
+        <TextBlock Text="Cleaner (Adaptive)"
+                   Foreground="{StaticResource TitleBrush}"
+                   FontSize="18"
+                   FontWeight="SemiBold" />
+        <TextBlock Text="Default mode membersihkan cache/temp. Aktifkan advanced untuk registry, driver leftovers, dan bloatware."
+                   Margin="0,8,0,10"
+                   Foreground="{StaticResource MutedBrush}"
+                   TextWrapping="Wrap" />
+
+        <CheckBox Content="Enable Advanced Mode"
+                  IsChecked="{Binding AdvancedMode}" />
+        <CheckBox Content="Registry Cleaner"
+                  IsChecked="{Binding IncludeRegistry}"
+                  IsEnabled="{Binding AdvancedMode}" />
+        <CheckBox Content="Driver Leftovers Cleaner"
+                  IsChecked="{Binding IncludeDriverLeftovers}"
+                  IsEnabled="{Binding AdvancedMode}" />
+        <CheckBox Content="Bloatware Uninstaller"
+                  IsChecked="{Binding IncludeBloatware}"
+                  IsEnabled="{Binding AdvancedMode}" />
+    </StackPanel>
+</UserControl>
