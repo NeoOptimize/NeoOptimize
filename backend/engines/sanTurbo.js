@@ -7,7 +7,13 @@ export function createSanTurbo() {
   const listeners = { progress: [], log: [], done: [] };
 
   function emit(name, payload) {
-    listeners[name].forEach((cb) => { try { cb(payload); } catch (e) {} });
+    listeners[name].forEach((cb) => {
+      try {
+        cb(payload);
+      } catch (e) {
+        void e;
+      }
+    });
   }
 
   function start(opts = {}) {

@@ -7,6 +7,8 @@ contextBridge.exposeInMainWorld('neo', {
   // generic exec (use carefully)
   execCmd: (cmd, args) => ipcRenderer.invoke('exec:run', { cmd, args }),
   getUpdaterState: () => ipcRenderer.invoke('updater:getState'),
+  getUpdaterSettings: () => ipcRenderer.invoke('updater:getSettings'),
+  setUpdaterSettings: (patch) => ipcRenderer.invoke('updater:setSettings', patch),
   checkForUpdates: () => ipcRenderer.invoke('updater:check'),
   downloadUpdate: () => ipcRenderer.invoke('updater:download'),
   installUpdateNow: () => ipcRenderer.invoke('updater:installNow'),

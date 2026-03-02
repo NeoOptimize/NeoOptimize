@@ -1,12 +1,21 @@
 module.exports = {
   root: true,
-  env: { browser: true, es2020: true },
+  env: { browser: true, node: true, es2020: true },
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:react-hooks/recommended',
   ],
-  ignorePatterns: ['dist', '.eslintrc.cjs'],
+  ignorePatterns: [
+    'dist',
+    'build',
+    'release',
+    'vendor',
+    'clamav-1.5.1',
+    'kicomav-master',
+    'monitor/public',
+    '.eslintrc.cjs',
+  ],
   parser: '@typescript-eslint/parser',
   plugins: ['react-refresh'],
   rules: {

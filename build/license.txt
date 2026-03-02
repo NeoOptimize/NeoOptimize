@@ -1,0 +1,33 @@
+NeoOptimize End User License Agreement (EULA)
+Version 1.0.0
+Effective Date: March 1, 2026
+
+1. Grant of License
+You are granted a non-exclusive, non-transferable right to install and use NeoOptimize
+on Windows devices under your control.
+
+2. Administrator Operations
+NeoOptimize performs system-level operations that may require administrator privileges.
+You are responsible for confirming and reviewing each high-risk action before execution.
+
+3. Safety and Backups
+NeoOptimize provides safe mode and dry-run defaults for selected actions.
+You are responsible for creating backups and restore points before APPLY operations.
+
+4. No Warranty
+NeoOptimize is provided "as is" without warranties of any kind.
+The developer is not liable for indirect, incidental, or consequential damages.
+
+5. User Responsibility
+You agree to use NeoOptimize only on systems you own or are authorized to manage.
+You must comply with applicable laws and organizational policies.
+
+6. Third-Party Components
+NeoOptimize may include third-party tools and engines (for example ClamAV/KicomAV)
+that remain subject to their own licenses and terms.
+
+7. Termination
+This license terminates automatically if you violate these terms.
+Upon termination, you must stop using and remove NeoOptimize from your systems.
+
+By installing NeoOptimize, you acknowledge that you have read and agree to this EULA.

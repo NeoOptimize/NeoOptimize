@@ -29,8 +29,15 @@ release/
 upload_release_output.txt
 msert x32.exe
 msert x64.exe
+NeoOptimize.rar
+kico-test/
 backend/reports/
 backend/backups/
+backend/diagnostics/
+backend/node_modules/
+monitor/data/
+config/diagnostics.json
+config/monitor-agent.json
 engines/__pycache__/
 build/builder-config.json
 **/__pycache__/

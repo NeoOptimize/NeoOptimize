@@ -2,17 +2,29 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import fs from 'fs';
+import fsp from 'fs/promises';
 import path from 'path';
 import os from 'os';
 import dns from 'dns';
+import crypto from 'crypto';
+import net from 'net';
 import { exec, execFile, spawn, spawnSync } from 'child_process';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import { createNeoTurboCleaner } from './engines/neoTurboCleaner.js';
 import { createSanTurbo } from './engines/sanTurbo.js';
 
 const app = express();
 app.use(cors());
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '2mb' }));
+
+// Lightweight health endpoint for external probes and smoke tests
+app.get('/api/health', (_req, res) => {
+  try {
+    return res.send({ ok: true, service: 'NeoOptimize', version: APP_VERSION, time: new Date().toISOString() });
+  } catch (err) {
+    return res.status(500).send({ ok: false, error: String(err?.message || err || 'unknown') });
+  }
+});
 
 const PORT = process.env.PORT || 3322;
 const __filename = fileURLToPath(import.meta.url);
@@ -20,11 +32,24 @@ const __dirname = path.dirname(__filename);
 const APP_ROOT = process.env.APP_ROOT ? path.resolve(process.env.APP_ROOT) : path.resolve(__dirname, '..');
 const APP_ASSET_ROOT = process.env.APP_ASSET_ROOT ? path.resolve(process.env.APP_ASSET_ROOT) : APP_ROOT;
 const APP_DATA_ROOT = process.env.APP_DATA_ROOT ? path.resolve(process.env.APP_DATA_ROOT) : APP_ROOT;
+const APP_VERSION = (() => {
+  try {
+    const p = path.join(APP_ROOT, 'package.json');
+    if (fs.existsSync(p)) {
+      const raw = JSON.parse(fs.readFileSync(p, 'utf-8'));
+      if (raw?.version) return String(raw.version);
+    }
+  } catch (err) {
+    void err;
+  }
+  return String(process.env.npm_package_version || '1.0.0');
+})();
 const DATA_CONFIG_DIR = path.join(APP_DATA_ROOT, 'config');
 const DATA_BACKEND_DIR = path.join(APP_DATA_ROOT, 'backend');
 const ASSET_CONFIG_DIR = path.join(APP_ASSET_ROOT, 'config');
 const engines = { advance: createNeoTurboCleaner(), santurbo: createSanTurbo() };
 const engineBuffers = {};
+const cleanerScanRuntime = {};
 const appLogs = [];
 const processTokens = new Map();
 const applyTokens = new Map();
@@ -94,7 +119,9 @@ const withCachedProducer = (bucket, ttlMs, producer, cb) => {
     waiters.forEach((fn) => {
       try {
         fn(err || null, value, false);
-      } catch {}
+      } catch (invokeErr) {
+        void invokeErr;
+      }
     });
   });
 };
@@ -141,7 +168,8 @@ const runExecFileAsync = (file, args = [], options = {}) => new Promise((resolve
   });
 });
 const escapeHtml = (v) => String(v || '').replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch] || ch));
-const stripAnsi = (v) => String(v || '').replace(/\x1B\[[0-9;]*m/g, '');
+const ANSI_CSI_REGEX = new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*m`, 'g');
+const stripAnsi = (v) => String(v || '').replace(ANSI_CSI_REGEX, '');
 const chunkString = (v, max = 220) => {
   const s = String(v || '');
   if (s.length <= max) return s;
@@ -215,6 +243,37 @@ const pushSecurityLog = (level, message, meta = {}) => {
 };
 
 const kicomavExists = () => fs.existsSync(path.join(KICOMAV_ROOT, 'kicomav', 'k2.py'));
+const kicomavDbInfo = () => {
+  const roots = [
+    path.join(KICOMAV_ROOT, 'kicomav', 'plugins'),
+    path.join(KICOMAV_ROOT, 'plugins'),
+    path.join(KICOMAV_ROOT, 'data')
+  ];
+  for (const dir of roots) {
+    if (!fs.existsSync(dir)) continue;
+    try {
+      const files = fs.readdirSync(dir, { withFileTypes: true })
+        .filter((d) => d.isFile())
+        .map((d) => path.join(dir, d.name));
+      if (files.length > 0) {
+        return {
+          dir,
+          ready: true,
+          fileCount: files.length,
+          files: files.slice(0, 40)
+        };
+      }
+    } catch (err) {
+      void err;
+    }
+  }
+  return {
+    dir: roots.find((d) => fs.existsSync(d)) || null,
+    ready: false,
+    fileCount: 0,
+    files: []
+  };
+};
 const rankClamavDist = (name) => {
   const arch = String(process.arch || '').toLowerCase();
   const n = String(name || '').toLowerCase();
@@ -373,6 +432,7 @@ const clamavFreshclamPath = () => {
 };
 const securityEngineInfo = () => {
   const kico = kicomavExists();
+  const kicoDb = kicomavDbInfo();
   const clamBin = clamavBinaryPath();
   const clamProbe = probeClamavBinary(clamBin);
   const clamDb = resolveClamavDb(clamBin);
@@ -382,7 +442,13 @@ const securityEngineInfo = () => {
   const recommended = clamReady ? 'clamav' : (kico ? 'kicomav' : null);
   return {
     recommended,
-    kicomav: { available: kico, root: KICOMAV_ROOT, module: KICOMAV_MODULE },
+    kicomav: {
+      available: kico,
+      root: KICOMAV_ROOT,
+      module: KICOMAV_MODULE,
+      path: securitySettings.kicomavPath || path.join(KICOMAV_ROOT, 'kicomav', 'k2.py'),
+      db: kicoDb
+    },
     clamav: {
       available: clam,
       root: CLAMAV_ROOT,
@@ -510,8 +576,41 @@ const legacyLocalCleanerSpecFile = path.join(DATA_CONFIG_DIR, 'advance cleaner e
 const legacyAssetCleanerSpecFile = path.join(ASSET_CONFIG_DIR, 'advance cleaner engine.txt');
 const legacyScriptCleanerSpecFile = 'C:/Users/Hello World/Documents/Script/advance cleaner engine.txt';
 const securityConfigFile = path.join(DATA_CONFIG_DIR, 'security.json');
+const diagnosticsConfigFile = path.join(DATA_CONFIG_DIR, 'diagnostics.json');
+const diagnosticsOutboxDir = path.join(DATA_BACKEND_DIR, 'diagnostics');
+const monitorAgentConfigFile = path.join(DATA_CONFIG_DIR, 'monitor-agent.json');
+const DEFAULT_MONITOR_BASE_URL = String(process.env.NEOMONITOR_BASE_URL || process.env.NEO_MONITOR_BASE_URL || 'http://127.0.0.1:4411').trim().replace(/\/+$/, '');
+const DEFAULT_DIAGNOSTICS_ENDPOINT = DEFAULT_MONITOR_BASE_URL ? `${DEFAULT_MONITOR_BASE_URL}/api/agent/diagnostics` : '';
+const generateAgentSecret = () => `neo-agent-${crypto.randomBytes(12).toString('hex')}`;
 
-const defaultSecuritySettings = { preferredEngine: 'auto', clamscanPath: '' };
+const defaultSecuritySettings = { preferredEngine: 'auto', clamscanPath: '', clamDbDir: '', kicomavPath: '' };
+const defaultDiagnosticsSettings = {
+  enabled: true,
+  endpoint: DEFAULT_DIAGNOSTICS_ENDPOINT,
+  apiKey: '',
+  timeoutMs: 12000,
+  includeSystem: true,
+  includeLogs: true,
+  includeReportsMeta: true,
+  includeConfigSummary: true,
+  maxLogs: 1200,
+  verbose: true,
+  sendOnCrash: true,
+  lastSentAt: null,
+  lastError: null
+};
+const defaultMonitorAgentSettings = {
+  enabled: true,
+  monitorBaseUrl: DEFAULT_MONITOR_BASE_URL,
+  agentId: '',
+  agentKey: generateAgentSecret(),
+  heartbeatSeconds: 30,
+  pollSeconds: 30,
+  allowRemoteActions: true,
+  sendFullDeviceInfo: true,
+  lastSyncAt: null,
+  lastSyncError: null
+};
 const loadSecuritySettings = () => {
   try {
     if (!fs.existsSync(securityConfigFile)) return { ...defaultSecuritySettings };
@@ -521,7 +620,8 @@ const loadSecuritySettings = () => {
         ? String(raw.preferredEngine).toLowerCase()
         : 'auto',
       clamscanPath: String(raw?.clamscanPath || ''),
-      clamDbDir: String(raw?.clamDbDir || '')
+      clamDbDir: String(raw?.clamDbDir || ''),
+      kicomavPath: String(raw?.kicomavPath || '')
     };
   } catch {
     return { ...defaultSecuritySettings };
@@ -534,12 +634,518 @@ const saveSecuritySettings = (patch = {}) => {
       ? String(patch.preferredEngine || securitySettings.preferredEngine || 'auto').toLowerCase()
       : 'auto',
     clamscanPath: String(patch.clamscanPath ?? securitySettings.clamscanPath ?? ''),
-    clamDbDir: String(patch.clamDbDir ?? securitySettings.clamDbDir ?? '')
+    clamDbDir: String(patch.clamDbDir ?? securitySettings.clamDbDir ?? ''),
+    kicomavPath: String(patch.kicomavPath ?? securitySettings.kicomavPath ?? '')
   };
   fs.mkdirSync(path.dirname(securityConfigFile), { recursive: true });
   fs.writeFileSync(securityConfigFile, JSON.stringify(next, null, 2), 'utf-8');
   securitySettings = next;
   return next;
+};
+const sanitizeDiagnosticsSettings = (patch = {}, previous = defaultDiagnosticsSettings) => {
+  const timeoutMs = Number(patch.timeoutMs ?? previous.timeoutMs ?? defaultDiagnosticsSettings.timeoutMs);
+  const maxLogs = Number(patch.maxLogs ?? previous.maxLogs ?? defaultDiagnosticsSettings.maxLogs);
+  return {
+    enabled: Boolean(patch.enabled ?? previous.enabled ?? false),
+    endpoint: String(patch.endpoint ?? previous.endpoint ?? '').trim(),
+    apiKey: String(patch.apiKey ?? previous.apiKey ?? '').trim(),
+    timeoutMs: Number.isFinite(timeoutMs) ? Math.max(3000, Math.min(60000, Math.floor(timeoutMs))) : defaultDiagnosticsSettings.timeoutMs,
+    includeSystem: Boolean(patch.includeSystem ?? previous.includeSystem ?? true),
+    includeLogs: Boolean(patch.includeLogs ?? previous.includeLogs ?? true),
+    includeReportsMeta: Boolean(patch.includeReportsMeta ?? previous.includeReportsMeta ?? true),
+    includeConfigSummary: Boolean(patch.includeConfigSummary ?? previous.includeConfigSummary ?? false),
+    maxLogs: Number.isFinite(maxLogs) ? Math.max(50, Math.min(3500, Math.floor(maxLogs))) : defaultDiagnosticsSettings.maxLogs,
+    verbose: Boolean(patch.verbose ?? previous.verbose ?? false),
+    sendOnCrash: Boolean(patch.sendOnCrash ?? previous.sendOnCrash ?? false),
+    lastSentAt: patch.lastSentAt ?? previous.lastSentAt ?? null,
+    lastError: patch.lastError ?? previous.lastError ?? null
+  };
+};
+const loadDiagnosticsSettings = () => {
+  try {
+    if (!fs.existsSync(diagnosticsConfigFile)) return { ...defaultDiagnosticsSettings };
+    const raw = JSON.parse(fs.readFileSync(diagnosticsConfigFile, 'utf-8'));
+    return sanitizeDiagnosticsSettings(raw, defaultDiagnosticsSettings);
+  } catch {
+    return { ...defaultDiagnosticsSettings };
+  }
+};
+let diagnosticsSettings = loadDiagnosticsSettings();
+const saveDiagnosticsSettings = (patch = {}) => {
+  const merged = sanitizeDiagnosticsSettings({ ...diagnosticsSettings, ...patch }, diagnosticsSettings);
+  fs.mkdirSync(path.dirname(diagnosticsConfigFile), { recursive: true });
+  fs.writeFileSync(diagnosticsConfigFile, JSON.stringify(merged, null, 2), 'utf-8');
+  diagnosticsSettings = merged;
+  return diagnosticsSettings;
+};
+const sanitizeMonitorAgentSettings = (patch = {}, previous = defaultMonitorAgentSettings) => {
+  const hb = Number(patch.heartbeatSeconds ?? previous.heartbeatSeconds ?? defaultMonitorAgentSettings.heartbeatSeconds);
+  const poll = Number(patch.pollSeconds ?? previous.pollSeconds ?? defaultMonitorAgentSettings.pollSeconds);
+  const monitorBaseUrl = String(patch.monitorBaseUrl ?? previous.monitorBaseUrl ?? '').trim().replace(/\/+$/, '');
+  const priorAgentId = String(previous.agentId || '').trim();
+  const agentId = String(patch.agentId ?? priorAgentId).trim() || `neo-${crypto.randomUUID()}`;
+  return {
+    enabled: Boolean(patch.enabled ?? previous.enabled ?? false),
+    monitorBaseUrl,
+    agentId,
+    agentKey: String(patch.agentKey ?? previous.agentKey ?? '').trim(),
+    heartbeatSeconds: Number.isFinite(hb) ? Math.max(20, Math.min(600, Math.floor(hb))) : defaultMonitorAgentSettings.heartbeatSeconds,
+    pollSeconds: Number.isFinite(poll) ? Math.max(15, Math.min(600, Math.floor(poll))) : defaultMonitorAgentSettings.pollSeconds,
+    allowRemoteActions: Boolean(patch.allowRemoteActions ?? previous.allowRemoteActions ?? false),
+    sendFullDeviceInfo: Boolean(patch.sendFullDeviceInfo ?? previous.sendFullDeviceInfo ?? true),
+    lastSyncAt: patch.lastSyncAt ?? previous.lastSyncAt ?? null,
+    lastSyncError: patch.lastSyncError ?? previous.lastSyncError ?? null
+  };
+};
+const loadMonitorAgentSettings = () => {
+  try {
+    if (!fs.existsSync(monitorAgentConfigFile)) {
+      return sanitizeMonitorAgentSettings(defaultMonitorAgentSettings, defaultMonitorAgentSettings);
+    }
+    const raw = JSON.parse(fs.readFileSync(monitorAgentConfigFile, 'utf-8'));
+    return sanitizeMonitorAgentSettings(raw, defaultMonitorAgentSettings);
+  } catch {
+    return sanitizeMonitorAgentSettings(defaultMonitorAgentSettings, defaultMonitorAgentSettings);
+  }
+};
+let monitorAgentSettings = loadMonitorAgentSettings();
+const saveMonitorAgentSettings = (patch = {}) => {
+  const previousBaseUrl = String(monitorAgentSettings.monitorBaseUrl || '').trim().replace(/\/+$/, '');
+  const previousDiagnosticsEndpoint = previousBaseUrl ? `${previousBaseUrl}/api/agent/diagnostics` : '';
+  const next = sanitizeMonitorAgentSettings({ ...monitorAgentSettings, ...patch }, monitorAgentSettings);
+  fs.mkdirSync(path.dirname(monitorAgentConfigFile), { recursive: true });
+  fs.writeFileSync(monitorAgentConfigFile, JSON.stringify(next, null, 2), 'utf-8');
+  monitorAgentSettings = next;
+  const nextDiagnosticsEndpoint = next.monitorBaseUrl ? `${next.monitorBaseUrl}/api/agent/diagnostics` : '';
+  const currentEndpoint = String(diagnosticsSettings.endpoint || '').trim().replace(/\/+$/, '');
+  const shouldSyncEndpoint = !currentEndpoint || currentEndpoint === previousDiagnosticsEndpoint || currentEndpoint === DEFAULT_DIAGNOSTICS_ENDPOINT;
+  if (next.enabled) {
+    saveDiagnosticsSettings({
+      enabled: true,
+      verbose: true,
+      sendOnCrash: true,
+      ...(shouldSyncEndpoint && nextDiagnosticsEndpoint ? { endpoint: nextDiagnosticsEndpoint } : {})
+    });
+  } else if (shouldSyncEndpoint && nextDiagnosticsEndpoint) {
+    saveDiagnosticsSettings({ endpoint: nextDiagnosticsEndpoint });
+  }
+  return monitorAgentSettings;
+};
+const applyRecommendedRemoteDefaults = () => {
+  const baseUrl = monitorAgentSettings.monitorBaseUrl || DEFAULT_MONITOR_BASE_URL || '';
+  const monitorPatch = {};
+  if (!monitorAgentSettings.enabled) monitorPatch.enabled = true;
+  if (!monitorAgentSettings.monitorBaseUrl && baseUrl) monitorPatch.monitorBaseUrl = baseUrl;
+  if (!String(monitorAgentSettings.agentKey || '').trim()) monitorPatch.agentKey = generateAgentSecret();
+  if (!monitorAgentSettings.allowRemoteActions) monitorPatch.allowRemoteActions = true;
+  if (!monitorAgentSettings.sendFullDeviceInfo) monitorPatch.sendFullDeviceInfo = true;
+  if (Number(monitorAgentSettings.heartbeatSeconds || 0) > 45 || Number(monitorAgentSettings.heartbeatSeconds || 0) <= 0) monitorPatch.heartbeatSeconds = 30;
+  if (Number(monitorAgentSettings.pollSeconds || 0) > 45 || Number(monitorAgentSettings.pollSeconds || 0) <= 0) monitorPatch.pollSeconds = 30;
+  if (Object.keys(monitorPatch).length > 0) saveMonitorAgentSettings(monitorPatch);
+
+  const diagnosticsPatch = {};
+  if (!diagnosticsSettings.enabled) diagnosticsPatch.enabled = true;
+  if (!diagnosticsSettings.endpoint && baseUrl) diagnosticsPatch.endpoint = `${baseUrl}/api/agent/diagnostics`;
+  if (!diagnosticsSettings.includeSystem) diagnosticsPatch.includeSystem = true;
+  if (!diagnosticsSettings.includeLogs) diagnosticsPatch.includeLogs = true;
+  if (!diagnosticsSettings.includeReportsMeta) diagnosticsPatch.includeReportsMeta = true;
+  if (!diagnosticsSettings.includeConfigSummary) diagnosticsPatch.includeConfigSummary = true;
+  if (!diagnosticsSettings.verbose) diagnosticsPatch.verbose = true;
+  if (!diagnosticsSettings.sendOnCrash) diagnosticsPatch.sendOnCrash = true;
+  if (Number(diagnosticsSettings.maxLogs || 0) < 600) diagnosticsPatch.maxLogs = 1200;
+  if (Object.keys(diagnosticsPatch).length > 0) saveDiagnosticsSettings(diagnosticsPatch);
+};
+const monitorAgentRuntime = {
+  timer: null,
+  syncBusy: false,
+  lastSyncAt: null,
+  lastSyncError: null,
+  queuedResults: [],
+  history: []
+};
+const ensureDiagnosticsOutboxDir = () => {
+  if (!fs.existsSync(diagnosticsOutboxDir)) fs.mkdirSync(diagnosticsOutboxDir, { recursive: true });
+  return diagnosticsOutboxDir;
+};
+
+const redactText = (input) => {
+  let text = String(input ?? '');
+  const profile = String(process.env.USERPROFILE || '').trim();
+  if (profile) {
+    const escaped = profile.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    text = text.replace(new RegExp(escaped, 'gi'), '%USERPROFILE%');
+  }
+  text = text.replace(/[A-Z]:\\Users\\[^\\\s]+/gi, (m) => m.replace(/\\Users\\[^\\\s]+/i, '\\Users\\<redacted>'));
+  return text;
+};
+const redactObject = (value) => {
+  if (value == null) return value;
+  if (typeof value === 'string') return redactText(value);
+  if (typeof value === 'number' || typeof value === 'boolean') return value;
+  if (Array.isArray(value)) return value.map((v) => redactObject(v));
+  if (typeof value === 'object') {
+    const out = {};
+    Object.keys(value).forEach((k) => {
+      out[k] = redactObject(value[k]);
+    });
+    return out;
+  }
+  return String(value);
+};
+const diagnosticsPayload = (settings = diagnosticsSettings, reqBody = {}) => {
+  const limit = Math.max(50, Math.min(3500, Number(reqBody.maxLogs || settings.maxLogs || 600)));
+  const engineLogs = Object.keys(engineBuffers).flatMap((k) => (engineBuffers[k].logs || []).map((l) => ({ engine: k, ...l })));
+  const allLogs = engineLogs.concat(appLogs.map((l) => ({ engine: 'system', ...l }))).sort((a, b) => String(a.time).localeCompare(String(b.time)));
+  const reportsMeta = listReportFiles().slice(0, 30);
+  const configSummary = (() => {
+    try {
+      const c = fs.readFileSync(configPath(), 'utf-8');
+      const sections = c.split(/\r?\n/).filter((ln) => /^##\s+/.test(ln)).map((ln) => ln.replace(/^##\s+/, '').trim());
+      return { path: configPath(), sections: sections.slice(0, 200), sectionCount: sections.length };
+    } catch (err) {
+      return { error: String(err) };
+    }
+  })();
+  const payload = {
+    id: `diag-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    generatedAt: new Date().toISOString(),
+    app: {
+      name: 'NeoOptimize',
+      version: process.env.npm_package_version || '1.0.0',
+      platform: process.platform,
+      arch: process.arch,
+      node: process.version
+    },
+    settingsSnapshot: {
+      verbose: Boolean(settings.verbose),
+      sendOnCrash: Boolean(settings.sendOnCrash),
+      includeSystem: Boolean(settings.includeSystem),
+      includeLogs: Boolean(settings.includeLogs),
+      includeReportsMeta: Boolean(settings.includeReportsMeta),
+      includeConfigSummary: Boolean(settings.includeConfigSummary)
+    },
+    system: settings.includeSystem ? {
+      hostname: os.hostname(),
+      release: os.release(),
+      uptimeSec: Number(os.uptime() || 0),
+      cpus: (os.cpus() || []).length,
+      memory: { total: Number(os.totalmem() || 0), free: Number(os.freemem() || 0) }
+    } : undefined,
+    security: securityEngineInfo(),
+    scan: securityScan,
+    logs: settings.includeLogs ? allLogs.slice(-limit) : undefined,
+    reports: settings.includeReportsMeta ? reportsMeta : undefined,
+    configSummary: settings.includeConfigSummary ? configSummary : undefined
+  };
+  return redactObject(payload);
+};
+const diagnosticsOutboxFile = (payload) => {
+  const dir = ensureDiagnosticsOutboxDir();
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const out = path.join(dir, `${payload.id || `diag-${stamp}`}.json`);
+  fs.writeFileSync(out, JSON.stringify(payload, null, 2), 'utf-8');
+  return out;
+};
+const updateDiagnosticsSendResult = ({ sentAt = null, error = null } = {}) => {
+  try {
+    saveDiagnosticsSettings({ lastSentAt: sentAt || diagnosticsSettings.lastSentAt, lastError: error || null });
+  } catch (err) {
+    void err;
+  }
+};
+const queueCrashDiagnostics = (kind, input) => {
+  if (!diagnosticsSettings.sendOnCrash) return null;
+  try {
+    const payload = diagnosticsPayload(
+      sanitizeDiagnosticsSettings({ ...diagnosticsSettings, includeLogs: true, maxLogs: Math.max(400, diagnosticsSettings.maxLogs || 600) }, diagnosticsSettings),
+      {}
+    );
+    payload.crash = {
+      kind: String(kind || 'process'),
+      at: new Date().toISOString(),
+      message: String(input?.message || input || 'unknown'),
+      stack: String(input?.stack || '').slice(0, 6000)
+    };
+    const out = diagnosticsOutboxFile(payload);
+    updateDiagnosticsSendResult({ error: `crash queued: ${kind}` });
+    return out;
+  } catch {
+    return null;
+  }
+};
+
+const isProcessElevated = () => {
+  if (process.platform !== 'win32') {
+    try { return typeof process.getuid === 'function' ? process.getuid() === 0 : false; } catch { return false; }
+  }
+  try {
+    const who = spawnSync('whoami', ['/groups'], { windowsHide: true, encoding: 'utf-8', timeout: 8000 });
+    const out = `${who.stdout || ''}\n${who.stderr || ''}`;
+    if (/High Mandatory Level|System Mandatory Level/i.test(out)) return true;
+    if (/S-1-16-12288|S-1-16-16384/i.test(out)) return true;
+  } catch (err) {
+    void err;
+  }
+  return false;
+};
+const checkWritableDir = (dir) => {
+  try {
+    fs.mkdirSync(dir, { recursive: true });
+    const probe = path.join(dir, `.write-test-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.tmp`);
+    fs.writeFileSync(probe, 'ok', 'utf-8');
+    fs.unlinkSync(probe);
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: String(err?.message || err) };
+  }
+};
+const releaseReadiness = () => {
+  const checks = [];
+  const configFile = configPath();
+  const cleanerFile = cleanerSpecPath();
+  const sec = securityEngineInfo();
+  const dataWrite = checkWritableDir(DATA_BACKEND_DIR);
+  const reportWrite = checkWritableDir(reportDirPath());
+  const backupWrite = checkWritableDir(path.join(DATA_BACKEND_DIR, 'backups'));
+  const hasConfig = fs.existsSync(configFile);
+  const hasCleaner = fs.existsSync(cleanerFile);
+  const hasEngine = Boolean(sec.kicomav?.available || sec.clamav?.available);
+  const admin = isProcessElevated();
+  const releaseDir = path.join(APP_ROOT, 'release');
+  const releaseFiles = fs.existsSync(releaseDir)
+    ? fs.readdirSync(releaseDir).filter((f) => /\.exe$/i.test(f))
+    : [];
+  const hasInstaller = releaseFiles.some((f) => /setup/i.test(f));
+  const hasPortable = releaseFiles.some((f) => /^neooptimize\s+\d+\.\d+\.\d+\.exe$/i.test(f));
+  const signature = (() => {
+    if (process.platform !== 'win32') return { ok: true, status: 'n/a', detail: 'non-windows runtime' };
+    const escaped = String(process.execPath || '').replace(/'/g, "''");
+    const psCmd = [
+      "$securityModule = Join-Path $PSHOME 'Modules\\Microsoft.PowerShell.Security\\Microsoft.PowerShell.Security.psd1'",
+      "if (Test-Path $securityModule) { Import-Module $securityModule -ErrorAction SilentlyContinue | Out-Null }",
+      "$cmd = Get-Command Get-AuthenticodeSignature -ErrorAction SilentlyContinue",
+      "if (-not $cmd) { Write-Output 'Unavailable'; exit 0 }",
+      `(Get-AuthenticodeSignature -FilePath '${escaped}').Status.ToString()`
+    ].join('; ');
+    const shells = ['powershell.exe', 'pwsh.exe'];
+    let lastStatus = 'Unknown';
+    for (const shell of shells) {
+      try {
+        const sig = spawnSync(shell, ['-NoProfile', '-Command', psCmd], {
+          windowsHide: true,
+          encoding: 'utf-8',
+          timeout: 12000
+        });
+        const status = String(`${sig.stdout || ''}\n${sig.stderr || ''}`)
+          .split(/\r?\n/)
+          .map((s) => s.trim())
+          .find(Boolean) || 'Unknown';
+        lastStatus = status;
+        if (/^unavailable$/i.test(status)) continue;
+        const ok = /^valid$/i.test(status);
+        return { ok, status, detail: ok ? 'Valid Authenticode signature' : `signature status: ${status}` };
+      } catch (err) {
+        lastStatus = String(err?.message || err || 'Error');
+      }
+    }
+    if (/^unavailable$/i.test(lastStatus)) {
+      return { ok: false, status: lastStatus, detail: 'Get-AuthenticodeSignature not available on host' };
+    }
+    return { ok: false, status: lastStatus, detail: `signature status: ${lastStatus}` };
+  })();
+
+  checks.push({ id: 'config-file', label: 'Config file available', ok: hasConfig, severity: 'error', detail: hasConfig ? configFile : `Missing: ${configFile}` });
+  checks.push({ id: 'cleaner-spec', label: 'Cleaner spec available', ok: hasCleaner, severity: 'error', detail: hasCleaner ? cleanerFile : `Missing: ${cleanerFile}` });
+  checks.push({ id: 'security-engine', label: 'Security engine available', ok: hasEngine, severity: 'error', detail: hasEngine ? `Recommended: ${sec.recommended || 'none'}` : 'No ClamAV/KicomAV runtime detected' });
+  checks.push({ id: 'admin-rights', label: 'Running elevated (admin)', ok: admin, severity: 'warning', detail: admin ? 'Process elevated' : 'Run as administrator for full operation' });
+  checks.push({ id: 'data-writable', label: 'Data directory writable', ok: dataWrite.ok, severity: 'error', detail: dataWrite.ok ? DATA_BACKEND_DIR : dataWrite.error });
+  checks.push({ id: 'report-writable', label: 'Report directory writable', ok: reportWrite.ok, severity: 'error', detail: reportWrite.ok ? reportDirPath() : reportWrite.error });
+  checks.push({ id: 'backup-writable', label: 'Backup directory writable', ok: backupWrite.ok, severity: 'error', detail: backupWrite.ok ? path.join(DATA_BACKEND_DIR, 'backups') : backupWrite.error });
+  checks.push({ id: 'release-installer', label: 'Installer artifact exists', ok: hasInstaller, severity: 'warning', detail: hasInstaller ? 'Found in release/' : 'Build installer before release' });
+  checks.push({ id: 'release-portable', label: 'Portable artifact exists', ok: hasPortable, severity: 'warning', detail: hasPortable ? 'Found in release/' : 'Build portable before release' });
+  checks.push({ id: 'code-signing', label: 'Code-signing certificate', ok: signature.ok, severity: 'error', detail: signature.detail });
+
+  const failedErrors = checks.filter((c) => c.severity === 'error' && !c.ok);
+  const failedWarnings = checks.filter((c) => c.severity === 'warning' && !c.ok);
+  const score = Math.max(0, Math.min(100, Math.round(((checks.length - failedErrors.length - (failedWarnings.length * 0.35)) / checks.length) * 100)));
+  return {
+    ok: failedErrors.length === 0,
+    score,
+    checks,
+    failed: { errors: failedErrors.length, warnings: failedWarnings.length },
+    generatedAt: new Date().toISOString()
+  };
+};
+const clearAllLogs = () => {
+  const systemLogs = appLogs.length;
+  const engineLogs = Object.keys(engineBuffers).reduce((sum, k) => sum + Number((engineBuffers[k]?.logs || []).length || 0), 0);
+  appLogs.length = 0;
+  Object.keys(engineBuffers).forEach((k) => {
+    if (Array.isArray(engineBuffers[k]?.logs)) engineBuffers[k].logs.length = 0;
+  });
+  runtimeCache.logs = { at: 0, value: null, key: '' };
+  return { systemLogs, engineLogs, total: systemLogs + engineLogs };
+};
+const monitorSafeSettings = () => ({
+  ...monitorAgentSettings,
+  agentKey: monitorAgentSettings.agentKey ? '***' : ''
+});
+const queueMonitorResult = (entry) => {
+  monitorAgentRuntime.queuedResults.push(entry);
+  if (monitorAgentRuntime.queuedResults.length > 120) monitorAgentRuntime.queuedResults.shift();
+  monitorAgentRuntime.history.push(entry);
+  if (monitorAgentRuntime.history.length > 500) monitorAgentRuntime.history.shift();
+};
+const collectMonitorDeviceSnapshot = () => {
+  const interfaces = os.networkInterfaces() || {};
+  const nic = Object.keys(interfaces).slice(0, 20).map((name) => ({
+    name,
+    addrs: (interfaces[name] || []).slice(0, 8).map((a) => ({ address: a.address, family: a.family, internal: a.internal, mac: a.mac }))
+  }));
+  const sec = securityEngineInfo();
+  const advance = engines.advance;
+  const cleaner = advance && typeof advance.status === 'function' ? advance.status() : {};
+  return redactObject({
+    agentId: monitorAgentSettings.agentId,
+    app: { name: 'NeoOptimize', version: APP_VERSION },
+    machine: {
+      hostname: os.hostname(),
+      platform: os.platform(),
+      release: os.release(),
+      arch: os.arch(),
+      uptimeSec: os.uptime(),
+      admin: isProcessElevated()
+    },
+    cpu: {
+      count: (os.cpus() || []).length,
+      model: (os.cpus() && os.cpus()[0] ? os.cpus()[0].model : ''),
+      loadAvg: os.loadavg()
+    },
+    memory: {
+      total: os.totalmem(),
+      free: os.freemem(),
+      used: os.totalmem() - os.freemem()
+    },
+    network: nic,
+    engines: sec,
+    cleaner,
+    scheduler: { total: schedulerTasks.length, active: schedulerTasks.filter((t) => t.status !== 'paused').length },
+    logs: {
+      system: appLogs.length,
+      engine: Object.keys(engineBuffers).reduce((sum, k) => sum + Number((engineBuffers[k]?.logs || []).length || 0), 0)
+    }
+  });
+};
+const monitorActionExecutor = async (action = {}) => {
+  const type = String(action.type || '').toLowerCase();
+  if (!type) return { ok: false, error: 'missing action type' };
+  if (!monitorAgentSettings.allowRemoteActions && !['ping', 'readiness'].includes(type)) {
+    return { ok: false, error: 'remote actions disabled by user' };
+  }
+  if (type === 'ping') return { ok: true, message: 'pong' };
+  if (type === 'readiness') return { ok: true, readiness: releaseReadiness() };
+  if (type === 'quick-safe-clean') return executeQuickAction('quick-safe-clean');
+  if (type === 'registry-safe-scan') return executeQuickAction('registry-safe-scan');
+  if (type === 'backup-now') return executeQuickAction('backup-now');
+  if (type === 'clear-logs') return { ok: true, cleared: clearAllLogs(), message: 'logs cleared' };
+  if (type === 'diagnostics-send') {
+    const payload = diagnosticsPayload(diagnosticsSettings, { maxLogs: diagnosticsSettings.maxLogs });
+    const outboxPath = diagnosticsOutboxFile(payload);
+    return { ok: true, message: 'diagnostics queued', outboxPath };
+  }
+  return { ok: false, error: `unsupported action type: ${type}` };
+};
+const runMonitorAgentSync = async (trigger = 'manual') => {
+  if (!monitorAgentSettings.enabled) return { ok: false, error: 'monitor agent disabled' };
+  if (!monitorAgentSettings.monitorBaseUrl) return { ok: false, error: 'monitorBaseUrl is empty' };
+  if (monitorAgentRuntime.syncBusy) return { ok: false, error: 'sync busy', busy: true };
+  monitorAgentRuntime.syncBusy = true;
+  try {
+    const payload = {
+      ok: true,
+      trigger,
+      at: new Date().toISOString(),
+      agentId: monitorAgentSettings.agentId,
+      appVersion: APP_VERSION,
+      device: monitorAgentSettings.sendFullDeviceInfo ? collectMonitorDeviceSnapshot() : {
+        agentId: monitorAgentSettings.agentId,
+        app: { name: 'NeoOptimize', version: APP_VERSION },
+        machine: { hostname: os.hostname(), platform: os.platform(), release: os.release(), arch: os.arch(), admin: isProcessElevated() }
+      },
+      actionResults: monitorAgentRuntime.queuedResults.splice(0, 40)
+    };
+    const headers = { 'Content-Type': 'application/json', 'X-Agent-Id': monitorAgentSettings.agentId };
+    if (monitorAgentSettings.agentKey) headers['X-Agent-Key'] = monitorAgentSettings.agentKey;
+
+    const timeoutMs = 12000;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    const response = await fetch(`${monitorAgentSettings.monitorBaseUrl}/api/agent/heartbeat`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(payload),
+      signal: controller.signal
+    });
+    clearTimeout(timer);
+    const text = await response.text();
+    const json = parseJson(text, null);
+    if (!response.ok || !json?.ok) {
+      const error = String(json?.error || `monitor heartbeat failed (${response.status})`);
+      monitorAgentRuntime.lastSyncError = error;
+      monitorAgentRuntime.lastSyncAt = new Date().toISOString();
+      saveMonitorAgentSettings({ lastSyncAt: monitorAgentRuntime.lastSyncAt, lastSyncError: error });
+      return { ok: false, error };
+    }
+
+    const actions = Array.isArray(json.actions) ? json.actions.slice(0, 8) : [];
+    const executed = [];
+    for (const action of actions) {
+      const started = Date.now();
+      const result = await monitorActionExecutor(action);
+      const entry = {
+        id: String(action.id || `local-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`),
+        type: String(action.type || ''),
+        ok: Boolean(result?.ok),
+        at: new Date().toISOString(),
+        durationMs: Date.now() - started,
+        result: redactObject(result)
+      };
+      queueMonitorResult(entry);
+      executed.push(entry);
+      pushLog(entry.ok ? 'ok' : 'warn', `monitor action ${entry.type} ${entry.ok ? 'done' : 'failed'}`, { actionId: entry.id });
+    }
+
+    monitorAgentRuntime.lastSyncAt = new Date().toISOString();
+    monitorAgentRuntime.lastSyncError = null;
+    saveMonitorAgentSettings({ lastSyncAt: monitorAgentRuntime.lastSyncAt, lastSyncError: null });
+    return { ok: true, actionsReceived: actions.length, actionsExecuted: executed.length, at: monitorAgentRuntime.lastSyncAt };
+  } catch (err) {
+    const error = String(err?.message || err);
+    monitorAgentRuntime.lastSyncError = error;
+    monitorAgentRuntime.lastSyncAt = new Date().toISOString();
+    saveMonitorAgentSettings({ lastSyncAt: monitorAgentRuntime.lastSyncAt, lastSyncError: error });
+    return { ok: false, error };
+  } finally {
+    monitorAgentRuntime.syncBusy = false;
+  }
+};
+const startMonitorAgentLoop = () => {
+  if (monitorAgentRuntime.timer) {
+    clearInterval(monitorAgentRuntime.timer);
+    monitorAgentRuntime.timer = null;
+  }
+  if (!monitorAgentSettings.enabled || !monitorAgentSettings.monitorBaseUrl) return;
+  const intervalSeconds = Math.max(15, Math.min(600, Math.min(monitorAgentSettings.pollSeconds, monitorAgentSettings.heartbeatSeconds)));
+  monitorAgentRuntime.timer = setInterval(() => {
+    runMonitorAgentSync('interval').catch((err) => {
+      monitorAgentRuntime.lastSyncError = String(err?.message || err);
+    });
+  }, intervalSeconds * 1000);
+  setTimeout(() => {
+    runMonitorAgentSync('startup').catch((err) => {
+      monitorAgentRuntime.lastSyncError = String(err?.message || err);
+    });
+  }, 2500);
 };
 
 const ensureSeedFile = (localPath, sourcePath) => {
@@ -568,6 +1174,15 @@ const ensureLocalConfigFiles = () => {
           : legacyScriptCleanerSpecFile;
     ensureSeedFile(localCleanerSpecFile, source);
   }
+  if (!fs.existsSync(diagnosticsConfigFile)) {
+    saveDiagnosticsSettings(defaultDiagnosticsSettings);
+  }
+  if (!fs.existsSync(monitorAgentConfigFile)) {
+    saveMonitorAgentSettings(defaultMonitorAgentSettings);
+  }
+  if (String(process.env.NEOOPTIMIZE_ENFORCE_REMOTE_PROFILE || '1') !== '0') {
+    applyRecommendedRemoteDefaults();
+  }
 };
 
 const configPath = () => {
@@ -584,6 +1199,32 @@ const cleanerSpecPath = () => {
   if (fs.existsSync(legacyLocalCleanerSpecFile)) return legacyLocalCleanerSpecFile;
   if (fs.existsSync(legacyAssetCleanerSpecFile)) return legacyAssetCleanerSpecFile;
   return legacyScriptCleanerSpecFile;
+};
+const reportDirPath = () => {
+  const dir = path.join(DATA_BACKEND_DIR, 'reports');
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  return dir;
+};
+const reportNameSafe = (value) => {
+  const fileName = path.basename(String(value || ''));
+  if (!/^report-[a-z0-9._-]+\.html$/i.test(fileName)) return '';
+  return fileName;
+};
+const listReportFiles = () => {
+  const dir = reportDirPath();
+  return fs.readdirSync(dir, { withFileTypes: true })
+    .filter((d) => d.isFile() && /^report-[a-z0-9._-]+\.html$/i.test(d.name))
+    .map((d) => {
+      const fullPath = path.join(dir, d.name);
+      const st = fs.statSync(fullPath);
+      return {
+        fileName: d.name,
+        path: fullPath,
+        size: Number(st.size || 0),
+        modifiedAt: st.mtime.toISOString()
+      };
+    })
+    .sort((a, b) => String(b.modifiedAt).localeCompare(String(a.modifiedAt)));
 };
 const pathAllowed = (p) => {
   const abs = path.resolve(p);
@@ -689,6 +1330,283 @@ const networkConnections = (cb) => {
   });
 };
 
+const safeHostInput = (input, fallback = '127.0.0.1') => {
+  const host = String(input || '').trim() || fallback;
+  if (!/^[a-zA-Z0-9._:-]{1,255}$/.test(host)) return fallback;
+  return host;
+};
+
+const safeDriveLetter = (value = '') => {
+  const raw = String(value || '').trim().toUpperCase();
+  const m = raw.match(/^([A-Z]):?$/);
+  if (!m) return '';
+  return `${m[1]}:`;
+};
+
+const toSafeFileUrl = (targetPath) => {
+  try {
+    return pathToFileURL(targetPath).href;
+  } catch {
+    return null;
+  }
+};
+
+const runPowerShellAsync = async (script, options = {}) => {
+  const out = await runExecFileAsync(
+    'powershell.exe',
+    ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', String(script || '')],
+    {
+      maxBuffer: 1024 * 1024 * 8,
+      timeout: Number(options.timeout || 30000),
+      cwd: options.cwd || process.cwd()
+    }
+  );
+  return out;
+};
+
+const hostPortRange = (rawRange = '') => {
+  const text = String(rawRange || '').trim();
+  const single = text.match(/^(\d{1,5})$/);
+  if (single) {
+    const one = Number(single[1]);
+    if (one >= 1 && one <= 65535) return { from: one, to: one };
+  }
+  const m = text.match(/^(\d{1,5})\s*-\s*(\d{1,5})$/);
+  if (m) {
+    const a = Number(m[1]);
+    const b = Number(m[2]);
+    const from = Math.max(1, Math.min(a, b));
+    const to = Math.min(65535, Math.max(a, b));
+    if (from <= to) return { from, to };
+  }
+  return { from: 20, to: 1024 };
+};
+
+const scanSinglePort = (host, port, timeoutMs = 500) => new Promise((resolve) => {
+  const startedAt = Date.now();
+  const socket = new net.Socket();
+  let settled = false;
+  const done = (open, errorMessage = '') => {
+    if (settled) return;
+    settled = true;
+    try {
+      socket.destroy();
+    } catch {
+      // no-op
+    }
+    resolve({
+      port,
+      open,
+      error: errorMessage || null,
+      latencyMs: Date.now() - startedAt
+    });
+  };
+  socket.setTimeout(timeoutMs);
+  socket.once('connect', () => done(true));
+  socket.once('timeout', () => done(false, 'timeout'));
+  socket.once('error', (err) => done(false, String(err?.code || err?.message || 'connect-error')));
+  socket.connect(port, host);
+});
+
+const scanPorts = async (host, from, to, concurrency = 40) => {
+  const ports = [];
+  for (let p = from; p <= to; p += 1) ports.push(p);
+  const out = [];
+  let index = 0;
+  const workers = Array.from({ length: Math.max(1, Math.min(120, Number(concurrency) || 40)) }).map(async () => {
+    while (index < ports.length) {
+      const cur = index;
+      index += 1;
+      if (cur >= ports.length) return;
+      // eslint-disable-next-line no-await-in-loop
+      const result = await scanSinglePort(host, ports[cur], 500);
+      out.push(result);
+    }
+  });
+  await Promise.all(workers);
+  return out.sort((a, b) => a.port - b.port);
+};
+
+const getNetByteCounters = (cb) => {
+  if (process.platform === 'win32') {
+    const script = '$s=Get-NetAdapterStatistics | Select-Object ReceivedBytes,SentBytes; $rx=($s|Measure-Object -Property ReceivedBytes -Sum).Sum; $tx=($s|Measure-Object -Property SentBytes -Sum).Sum; [PSCustomObject]@{rx=[double]($rx||0);tx=[double]($tx||0)} | ConvertTo-Json -Compress';
+    runExec('powershell -NoProfile -Command "' + script.replace(/"/g, '\\"') + '"', { maxBuffer: 1024 * 200 }, (err, stdout) => {
+      if (err) return cb({ rx: 0, tx: 0 });
+      const parsed = parseJson(stdout, { rx: 0, tx: 0 });
+      return cb({ rx: Number(parsed?.rx || 0), tx: Number(parsed?.tx || 0) });
+    });
+    return;
+  }
+  runExec("cat /proc/net/dev", { maxBuffer: 1024 * 300 }, (err, stdout) => {
+    if (err) return cb({ rx: 0, tx: 0 });
+    let rx = 0;
+    let tx = 0;
+    String(stdout || '').split(/\r?\n/).slice(2).filter(Boolean).forEach((ln) => {
+      const p = ln.replace(':', ' ').trim().split(/\s+/);
+      rx += Number(p[1] || 0);
+      tx += Number(p[9] || 0);
+    });
+    return cb({ rx, tx });
+  });
+};
+
+const getSystemCpuInfo = () => {
+  const cpus = os.cpus() || [];
+  return {
+    ok: true,
+    cores: cpus.length,
+    model: cpus[0]?.model || 'unknown',
+    speedMHz: cpus[0]?.speed || 0,
+    loadPercent: cpuPercent()
+  };
+};
+
+const getSystemDeviceInfo = () => {
+  const sec = securityEngineInfo();
+  return {
+    ok: true,
+    device: {
+      name: os.hostname(),
+      hostname: os.hostname(),
+      model: process.env.COMPUTERNAME || os.hostname(),
+      platform: os.platform(),
+      release: os.release(),
+      arch: os.arch(),
+      appVersion: APP_VERSION,
+      elevated: isProcessElevated(),
+      security: {
+        recommendedEngine: sec.recommended,
+        kicomav: Boolean(sec.kicomav?.available),
+        clamav: Boolean(sec.clamav?.available)
+      }
+    }
+  };
+};
+
+const readStorageDrives = async () => {
+  if (process.platform === 'win32') {
+    const script = [
+      '$dr=Get-CimInstance Win32_LogicalDisk | Select-Object DeviceID,VolumeName,DriveType,Size,FreeSpace',
+      '$dr | ConvertTo-Json -Compress'
+    ].join('\n');
+    const out = await runPowerShellAsync(script, { timeout: 20000 });
+    if (out.err) return [];
+    const rows = parseJson(out.stdout, []);
+    const arr = Array.isArray(rows) ? rows : rows ? [rows] : [];
+    const typeMap = { 2: 'removable', 3: 'fixed', 4: 'network', 5: 'cdrom', 6: 'ramdisk' };
+    return arr
+      .map((d) => {
+        const total = Number(d.Size || 0);
+        const free = Number(d.FreeSpace || 0);
+        const used = Math.max(0, total - free);
+        return {
+          letter: String(d.DeviceID || '').trim(),
+          label: String(d.VolumeName || '').trim(),
+          type: typeMap[Number(d.DriveType || 0)] || 'unknown',
+          totalGB: total > 0 ? Number((total / (1024 ** 3)).toFixed(2)) : 0,
+          freeGB: free > 0 ? Number((free / (1024 ** 3)).toFixed(2)) : 0,
+          usedGB: used > 0 ? Number((used / (1024 ** 3)).toFixed(2)) : 0
+        };
+      })
+      .filter((x) => x.letter);
+  }
+  const home = process.env.HOME || '/';
+  return [{ letter: '/', label: home, type: 'fixed', totalGB: 0, freeGB: 0, usedGB: 0 }];
+};
+
+const processInfoByPid = async (pid) => {
+  const targetPid = Number(pid || 0);
+  if (!Number.isInteger(targetPid) || targetPid <= 0) return { ok: false, error: 'invalid pid' };
+  if (process.platform === 'win32') {
+    const script = [
+      `$pidVal=${targetPid}`,
+      '$p=Get-Process -Id $pidVal -ErrorAction Stop',
+      '$wmi=Get-CimInstance Win32_Process -Filter "ProcessId=$pidVal" -ErrorAction SilentlyContinue',
+      '$mask=[Int64]$p.ProcessorAffinity',
+      '$cores=@()',
+      'for($i=0;$i -lt 63;$i++){ if(($mask -band ([Int64]1 -shl $i)) -ne 0){ $cores += $i } }',
+      '[PSCustomObject]@{',
+      'ok=$true;',
+      'pid=$p.Id;',
+      'name=$p.ProcessName;',
+      'command=if($wmi -and $wmi.CommandLine){$wmi.CommandLine}else{$p.ProcessName};',
+      'path=if($p.Path){$p.Path}else{$null};',
+      'ppid=if($wmi){$wmi.ParentProcessId}else{$null};',
+      'threads=$p.Threads.Count;',
+      'handles=$p.HandleCount;',
+      'startTime=$p.StartTime;',
+      'priority=if($p.PriorityClass){$p.PriorityClass.ToString()}else{$null};',
+      'affinity=[string]::Join(",",$cores);',
+      'affinityCores=$cores',
+      '} | ConvertTo-Json -Compress'
+    ].join('\n');
+    const out = await runPowerShellAsync(script, { timeout: 15000 });
+    if (out.err) return { ok: false, error: stripAnsi(out.stderr || out.stdout || out.err?.message || 'process info failed') };
+    const parsed = parseJson(out.stdout, null);
+    if (!parsed) return { ok: false, error: 'process info parse failed' };
+    return { ok: true, info: parsed };
+  }
+  return { ok: false, error: 'process details unsupported on this platform' };
+};
+
+const quickHashForFile = async (targetPath, method = 'md5') => {
+  const algo = method === 'content' ? 'sha1' : 'md5';
+  const h = crypto.createHash(algo);
+  const fd = await fsp.open(targetPath, 'r');
+  try {
+    const st = await fd.stat();
+    const readBytes = Math.min(Number(st.size || 0), 1024 * 1024 * 8);
+    const buf = Buffer.alloc(readBytes);
+    if (readBytes > 0) await fd.read(buf, 0, readBytes, 0);
+    h.update(buf);
+    h.update(`:${Number(st.size || 0)}`);
+    return h.digest('hex');
+  } finally {
+    await fd.close();
+  }
+};
+
+const gatherFilesForDuplicateScan = async (roots = [], opts = {}) => {
+  const maxFiles = Math.max(300, Math.min(5000, Number(opts.maxFiles || 3000)));
+  const maxDepth = Math.max(1, Math.min(8, Number(opts.maxDepth || 4)));
+  const out = [];
+  const seen = new Set();
+  const queue = roots.map((root) => ({ dir: root, depth: 0 }));
+  while (queue.length > 0 && out.length < maxFiles) {
+    const cur = queue.shift();
+    if (!cur || cur.depth > maxDepth) continue;
+    let entries = [];
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      entries = await fsp.readdir(cur.dir, { withFileTypes: true });
+    } catch {
+      continue;
+    }
+    for (const entry of entries) {
+      if (out.length >= maxFiles) break;
+      const fullPath = path.join(cur.dir, entry.name);
+      const key = process.platform === 'win32' ? fullPath.toLowerCase() : fullPath;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      if (entry.isDirectory()) {
+        queue.push({ dir: fullPath, depth: cur.depth + 1 });
+        continue;
+      }
+      if (!entry.isFile()) continue;
+      let st = null;
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        st = await fsp.stat(fullPath);
+      } catch {
+        continue;
+      }
+      if (!st || !st.isFile()) continue;
+      out.push({ path: fullPath, size: Number(st.size || 0), name: entry.name });
+    }
+  }
+  return out;
+};
+
 const issueToken = (pid, action) => {
   for (const [k, v] of processTokens.entries()) if (v.expiresAt < Date.now()) processTokens.delete(k);
   const token = `${pid}:${action}:${Date.now()}:${Math.random().toString(36).slice(2, 10)}`;
@@ -724,10 +1642,9 @@ const safeOn = (engine, eventName, handler) => {
 
 Object.keys(engines).forEach((k) => {
   const engine = engines[k];
-  engineBuffers[k] = { logs: [], findings: [], duplicates: [], registry: [], backups: [] };
+  engineBuffers[k] = { logs: [], findings: [], registry: [], backups: [] };
   safeOn(engine, 'log', (l) => { engineBuffers[k].logs.push({ time: new Date().toISOString(), ...l }); if (engineBuffers[k].logs.length > 3000) engineBuffers[k].logs.shift(); });
   safeOn(engine, 'fileFound', (f) => { engineBuffers[k].findings.push(f); if (engineBuffers[k].findings.length > 3000) engineBuffers[k].findings.shift(); });
-  safeOn(engine, 'duplicateFound', (d) => { engineBuffers[k].duplicates.push(d); if (engineBuffers[k].duplicates.length > 1500) engineBuffers[k].duplicates.shift(); });
   safeOn(engine, 'registryIssue', (r) => { engineBuffers[k].registry.push(r); if (engineBuffers[k].registry.length > 1500) engineBuffers[k].registry.shift(); });
   safeOn(engine, 'backup', (b) => { engineBuffers[k].backups.push(b); if (engineBuffers[k].backups.length > 500) engineBuffers[k].backups.shift(); });
 });
@@ -737,7 +1654,7 @@ app.get('/api/events/:engine', (req, res) => {
   if (!e) return res.status(404).send({ error: 'engine not found' });
   res.set({ 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', Connection: 'keep-alive' });
   const bind = (name) => safeOn(e, name, (p) => res.write(`event: ${name}\ndata: ${JSON.stringify(p)}\n\n`));
-  const off = [bind('progress'), bind('log'), bind('done'), bind('fileFound'), bind('duplicateFound'), bind('registryIssue'), bind('backup')];
+  const off = [bind('progress'), bind('log'), bind('done'), bind('fileFound'), bind('registryIssue'), bind('backup')];
   req.on('close', () => off.forEach((f) => typeof f === 'function' && f()));
 });
 
@@ -765,6 +1682,12 @@ app.get('/api/system/overview', (req, res) => {
       done(null, payload);
     });
   }, (_, payload) => res.send(payload || { ok: false, error: 'overview unavailable' }));
+});
+app.get('/api/system/device', (req, res) => {
+  return res.send(getSystemDeviceInfo());
+});
+app.get('/api/system/cpu', (req, res) => {
+  return res.send(getSystemCpuInfo());
 });
 
 app.get('/api/clean/:engine/status', (req, res) => {
@@ -800,9 +1723,6 @@ app.post('/api/clean/:engine/stop', (req, res) => {
 });
 app.get('/api/clean/:engine/results', (req, res) => {
   const e = engines[req.params.engine]; if (!e) return res.status(404).send({ error: 'engine not found' }); return res.send({ ok: true, results: typeof e.resultsList === 'function' ? e.resultsList() : engineBuffers[req.params.engine].findings || [] });
-});
-app.post('/api/clean/:engine/duplicate', (req, res) => {
-  return res.status(410).send({ ok: false, error: 'duplicate finder removed from NeoOptimize' });
 });
 app.post('/api/clean/:engine/registry', (req, res) => {
   const e = engines[req.params.engine];
@@ -841,12 +1761,229 @@ app.post('/api/clean/:engine/backup/restore', (req, res) => {
   const e = engines[req.params.engine]; if (!e) return res.status(404).send({ error: 'engine not found' }); if (typeof e.restoreBackup !== 'function') return res.status(400).send({ error: 'backup unsupported' }); return res.send({ ok: true, result: e.restoreBackup(req.body && req.body.id) });
 });
 
+const toCleanerCategoryResults = (rawResults = {}, selectedCategories = []) => {
+  const wanted = new Set((selectedCategories || []).map((x) => String(x || '').trim().toLowerCase()).filter(Boolean));
+  const files = Array.isArray(rawResults?.files) ? rawResults.files : [];
+  const grouped = new Map();
+  files.forEach((f) => {
+    const category = String(f.category || 'misc');
+    const catId = category.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    if (wanted.size > 0 && !wanted.has(catId) && !wanted.has(category.toLowerCase())) return;
+    if (!grouped.has(catId)) grouped.set(catId, { id: catId, title: category, risk: 'safe', files: [], totalSizeBytes: 0 });
+    const bucket = grouped.get(catId);
+    const sizeBytes = Math.max(0, Number(f.sizeKB || 0) * 1024);
+    bucket.files.push({
+      path: String(f.path || ''),
+      size: sizeBytes,
+      action: String(f.action || 'detected'),
+      ok: Boolean(f.ok)
+    });
+    bucket.totalSizeBytes += sizeBytes;
+    if (String(f.action || '').toLowerCase().includes('failed')) bucket.risk = 'warn';
+  });
+  return [...grouped.values()].sort((a, b) => Number(b.totalSizeBytes || 0) - Number(a.totalSizeBytes || 0));
+};
+
+app.post('/api/clean/:engine/scan', (req, res) => {
+  const e = engines[req.params.engine];
+  if (!e) return res.status(404).send({ ok: false, error: 'engine not found' });
+  const requestedMode = String(req.query.mode || req.body?.mode || 'quick').toLowerCase();
+  const mode = requestedMode === 'full' ? 'full' : requestedMode === 'registry' ? 'registry' : 'dump';
+  const categories = Array.isArray(req.body?.categories) ? req.body.categories : [];
+  const out = e.start({ mode, dryRun: true, total: mode === 'full' ? 140 : 90, keepPreviousResults: false });
+  cleanerScanRuntime[req.params.engine] = {
+    startedAt: new Date().toISOString(),
+    mode,
+    categories: categories.map((x) => String(x || '')),
+    requestedMode,
+    stopRequested: false
+  };
+  pushLog('info', 'cleaner scan started', { engine: req.params.engine, mode, requestedMode, categoryCount: categories.length });
+  return res.send({ ok: true, status: out, mode, requestedMode, categories });
+});
+app.get('/api/clean/:engine/scan/results', (req, res) => {
+  const e = engines[req.params.engine];
+  if (!e) return res.status(404).send({ ok: false, error: 'engine not found' });
+  const runtime = cleanerScanRuntime[req.params.engine] || {};
+  const raw = typeof e.resultsList === 'function' ? e.resultsList() : {};
+  const status = typeof e.status === 'function' ? e.status() : { running: false, progress: 0, total: 100 };
+  const results = toCleanerCategoryResults(raw, runtime.categories || []);
+  return res.send({
+    ok: true,
+    running: Boolean(status.running),
+    done: !status.running,
+    mode: runtime.mode || status.mode || 'dump',
+    results,
+    progress: {
+      done: Number(status.progress || 0),
+      total: Number(status.total || 100)
+    }
+  });
+});
+app.post('/api/clean/:engine/scan/stop', (req, res) => {
+  const e = engines[req.params.engine];
+  if (!e) return res.status(404).send({ ok: false, error: 'engine not found' });
+  const runtime = cleanerScanRuntime[req.params.engine] || {};
+  runtime.stopRequested = true;
+  cleanerScanRuntime[req.params.engine] = runtime;
+  if (typeof e.stop === 'function') e.stop();
+  pushLog('warn', 'cleaner scan stop requested', { engine: req.params.engine });
+  return res.send({ ok: true, status: typeof e.status === 'function' ? e.status() : {} });
+});
+app.post('/api/clean/:engine/clean', (req, res) => {
+  const e = engines[req.params.engine];
+  if (!e) return res.status(404).send({ ok: false, error: 'engine not found' });
+  const apply = req.body?.apply === true;
+  const selected = Array.isArray(req.body?.files) ? req.body.files.map((x) => String(x || '')).filter(Boolean) : [];
+  let mode = 'full';
+  if (selected.length > 0 && selected.every((x) => x.toLowerCase().includes('registry'))) mode = 'registry';
+  if (apply) {
+    const token = String(req.body?.applyToken || '');
+    if (!checkApplyToken(token, req.params.engine, mode)) {
+      return res.status(403).send({ ok: false, error: 'applyToken required for APPLY mode' });
+    }
+  }
+  const out = e.start({ mode, dryRun: !apply, total: mode === 'full' ? 140 : 90 });
+  pushLog('info', 'cleaner selected clean request', { engine: req.params.engine, apply, selectedCount: selected.length, mode });
+  return res.send({ ok: true, accepted: selected.length, apply, mode, status: out });
+});
+app.post('/api/clean/duplicates', async (req, res) => {
+  const method = String(req.body?.method || 'md5').toLowerCase();
+  if (!['name', 'size', 'md5', 'content'].includes(method)) {
+    return res.status(400).send({ ok: false, error: 'method must be name/size/md5/content' });
+  }
+  const requestedLocations = Array.isArray(req.body?.locations) ? req.body.locations : ['user'];
+  const roots = [];
+  const addRoot = (p) => {
+    const abs = path.resolve(String(p || ''));
+    if (!abs || !fs.existsSync(abs)) return;
+    const key = process.platform === 'win32' ? abs.toLowerCase() : abs;
+    if (roots.find((x) => (process.platform === 'win32' ? x.toLowerCase() : x) === key)) return;
+    roots.push(abs);
+  };
+  requestedLocations.forEach((loc) => {
+    const key = String(loc || '').toLowerCase();
+    if (key === 'user') addRoot(process.env.USERPROFILE || process.env.HOME || APP_DATA_ROOT);
+    else if (key === 'drives') {
+      if (process.platform === 'win32') {
+        const letters = ['C:', 'D:', 'E:', 'F:'];
+        letters.forEach((d) => {
+          if (fs.existsSync(`${d}\\`)) addRoot(`${d}\\`);
+        });
+      } else addRoot('/');
+    } else addRoot(key);
+  });
+  if (roots.length === 0) addRoot(APP_DATA_ROOT);
+
+  try {
+    const files = await gatherFilesForDuplicateScan(roots, { maxFiles: 3500, maxDepth: 4 });
+    const groups = new Map();
+    for (const file of files) {
+      let key = '';
+      if (method === 'name') key = String(path.basename(file.path || '')).toLowerCase();
+      else if (method === 'size') key = `size:${Number(file.size || 0)}`;
+      else {
+        try {
+          // eslint-disable-next-line no-await-in-loop
+          const hash = await quickHashForFile(file.path, method);
+          key = `${Number(file.size || 0)}:${hash}`;
+        } catch {
+          continue;
+        }
+      }
+      if (!key) continue;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push({ path: file.path, size: file.size });
+    }
+    const results = [...groups.entries()]
+      .filter(([, items]) => items.length > 1)
+      .map(([key, items]) => ({
+        key,
+        method,
+        files: items.sort((a, b) => Number(a.size || 0) - Number(b.size || 0))
+      }))
+      .sort((a, b) => {
+        const as = a.files.reduce((sum, x) => sum + Number(x.size || 0), 0);
+        const bs = b.files.reduce((sum, x) => sum + Number(x.size || 0), 0);
+        return bs - as;
+      })
+      .slice(0, 200);
+    return res.send({ ok: true, method, roots, scannedFiles: files.length, results });
+  } catch (err) {
+    return res.status(500).send({ ok: false, error: String(err?.message || err) });
+  }
+});
+app.post('/api/file/preview', (req, res) => {
+  const rawPath = String(req.body?.path || '').trim();
+  if (!rawPath) return res.status(400).send({ ok: false, error: 'path required' });
+  const abs = path.resolve(rawPath);
+  if (!fs.existsSync(abs)) return res.status(404).send({ ok: false, error: 'file not found' });
+  const st = fs.statSync(abs);
+  if (!st.isFile()) return res.status(400).send({ ok: false, error: 'path must be file' });
+  const ext = String(path.extname(abs) || '').toLowerCase();
+  const allowed = new Set(['.txt', '.log', '.json', '.md', '.csv', '.html', '.htm', '.png', '.jpg', '.jpeg', '.bmp', '.gif', '.webp', '.svg']);
+  if (!allowed.has(ext)) {
+    return res.send({ ok: true, url: null, path: abs, reason: 'unsupported preview extension' });
+  }
+  const url = toSafeFileUrl(abs);
+  return res.send({ ok: true, path: abs, url });
+});
+
 app.get('/api/processes', (req, res) => listProcesses((_, procs) => res.send({ ok: true, processes: procs })));
 app.post('/api/processes/:pid/confirm', (req, res) => {
   const pid = Number(req.params.pid); const action = String((req.body && req.body.action) || '').toLowerCase();
   if (!pid || !['kill', 'pause', 'resume'].includes(action)) return res.status(400).send({ ok: false, error: 'invalid pid/action' });
   if (pid === process.pid) return res.status(403).send({ ok: false, error: 'refusing to act on api process' });
   const token = issueToken(pid, action); return res.send({ ok: true, token, expiresInMs: PROCESS_TTL_MS });
+});
+app.get('/api/processes/:pid/info', async (req, res) => {
+  const pid = Number(req.params.pid);
+  const out = await processInfoByPid(pid);
+  if (!out.ok) return res.status(404).send({ ok: false, error: out.error || 'process info unavailable' });
+  return res.send({ ok: true, ...out.info });
+});
+app.post('/api/processes/:pid/priority', async (req, res) => {
+  const pid = Number(req.params.pid);
+  if (!Number.isInteger(pid) || pid <= 0) return res.status(400).send({ ok: false, error: 'invalid pid' });
+  const input = String(req.body?.priority || 'Normal').trim().toLowerCase();
+  const map = {
+    realtime: 'RealTime',
+    high: 'High',
+    abovenormal: 'AboveNormal',
+    normal: 'Normal',
+    belownormal: 'BelowNormal',
+    low: 'Idle',
+    idle: 'Idle'
+  };
+  const target = map[input.replace(/\s+/g, '')] || 'Normal';
+  if (process.platform !== 'win32') return res.status(400).send({ ok: false, error: 'priority control is Windows-only' });
+  const script = `$p=Get-Process -Id ${pid} -ErrorAction Stop; $p.PriorityClass='${target}'; [PSCustomObject]@{ok=$true;pid=${pid};priority='${target}'} | ConvertTo-Json -Compress`;
+  const out = await runPowerShellAsync(script, { timeout: 12000 });
+  if (out.err) return res.status(500).send({ ok: false, error: stripAnsi(out.stderr || out.stdout || out.err?.message || 'set priority failed') });
+  const parsed = parseJson(out.stdout, null);
+  if (!parsed?.ok) return res.status(500).send({ ok: false, error: 'set priority failed' });
+  pushLog('info', 'process priority changed', { pid, priority: target });
+  return res.send(parsed);
+});
+app.post('/api/processes/:pid/affinity', async (req, res) => {
+  const pid = Number(req.params.pid);
+  const cores = Array.isArray(req.body?.cores)
+    ? req.body.cores.map((n) => Number(n)).filter((n) => Number.isInteger(n) && n >= 0 && n <= 62)
+    : [];
+  if (!Number.isInteger(pid) || pid <= 0) return res.status(400).send({ ok: false, error: 'invalid pid' });
+  if (cores.length === 0) return res.status(400).send({ ok: false, error: 'cores[] required' });
+  if (process.platform !== 'win32') return res.status(400).send({ ok: false, error: 'affinity control is Windows-only' });
+  let mask = 0n;
+  cores.forEach((c) => {
+    mask |= (1n << BigInt(c));
+  });
+  const script = `$p=Get-Process -Id ${pid} -ErrorAction Stop; $p.ProcessorAffinity=[Int64]${mask.toString()}; [PSCustomObject]@{ok=$true;pid=${pid};affinityMask='${mask.toString()}';cores=@(${cores.join(',')})} | ConvertTo-Json -Compress`;
+  const out = await runPowerShellAsync(script, { timeout: 12000 });
+  if (out.err) return res.status(500).send({ ok: false, error: stripAnsi(out.stderr || out.stdout || out.err?.message || 'set affinity failed') });
+  const parsed = parseJson(out.stdout, null);
+  if (!parsed?.ok) return res.status(500).send({ ok: false, error: 'set affinity failed' });
+  pushLog('info', 'process affinity changed', { pid, cores });
+  return res.send(parsed);
 });
 app.post('/api/processes/:pid/:action', (req, res) => {
   const pid = Number(req.params.pid); const action = String(req.params.action || '').toLowerCase(); const token = String((req.body && req.body.confirmToken) || '');
@@ -907,6 +2044,114 @@ app.get('/api/network/connections', (req, res) => {
     networkConnections((connections) => done(null, { ok: true, connections }));
   }, (_, payload) => res.send(payload || { ok: false, connections: [] }));
 });
+app.post('/api/network/ping', (req, res) => {
+  const host = safeHostInput(req.body?.host || '8.8.8.8');
+  const count = Math.max(1, Math.min(8, Number(req.body?.count || 4)));
+  const cmd = process.platform === 'win32'
+    ? `ping -n ${count} -w 1200 ${host}`
+    : `ping -c ${count} -W 1 ${host}`;
+  runExec(cmd, { maxBuffer: 1024 * 1024, timeout: 30000 }, (err, stdout, stderr) => {
+    const output = stripAnsi(String(stdout || stderr || '')).trim();
+    if (err) return res.status(500).send({ ok: false, error: String(err?.message || err), output });
+    return res.send({ ok: true, host, count, output });
+  });
+});
+app.post('/api/network/traceroute', (req, res) => {
+  const host = safeHostInput(req.body?.host || '8.8.8.8');
+  const cmd = process.platform === 'win32'
+    ? `tracert -d -h 16 ${host}`
+    : `traceroute -n -m 16 ${host}`;
+  runExec(cmd, { maxBuffer: 1024 * 1024 * 3, timeout: 45000 }, (err, stdout, stderr) => {
+    const output = stripAnsi(String(stdout || stderr || '')).trim();
+    if (err) return res.status(500).send({ ok: false, error: String(err?.message || err), output });
+    return res.send({ ok: true, host, output });
+  });
+});
+app.post('/api/network/nslookup', (req, res) => {
+  const host = safeHostInput(req.body?.host || 'example.com', 'example.com');
+  runExec(`nslookup ${host}`, { maxBuffer: 1024 * 512, timeout: 20000 }, (err, stdout, stderr) => {
+    const output = stripAnsi(String(stdout || stderr || '')).trim();
+    if (err) return res.status(500).send({ ok: false, error: String(err?.message || err), output });
+    const lines = output.split(/\r?\n/).map((ln) => ln.trim()).filter(Boolean);
+    const records = [];
+    lines.forEach((ln) => {
+      const m = ln.match(/^(Name|Address|Addresses)\s*:\s*(.+)$/i);
+      if (m) records.push({ name: m[1], data: m[2] });
+    });
+    return res.send({ ok: true, host, output, records });
+  });
+});
+app.post('/api/network/portscan', async (req, res) => {
+  const host = safeHostInput(req.body?.host || '127.0.0.1');
+  const range = hostPortRange(req.body?.range || '20-1024');
+  const count = range.to - range.from + 1;
+  if (count > 1024) return res.status(400).send({ ok: false, error: 'range too large (max 1024 ports)' });
+  try {
+    const rows = await scanPorts(host, range.from, range.to, 50);
+    const open = rows.filter((x) => x.open).map((x) => ({ port: x.port, proto: 'tcp', service: 'unknown', latencyMs: x.latencyMs }));
+    return res.send({ ok: true, host, range: `${range.from}-${range.to}`, scanned: rows.length, open });
+  } catch (err) {
+    return res.status(500).send({ ok: false, error: String(err?.message || err) });
+  }
+});
+app.post('/api/network/wifi', (req, res) => {
+  if (process.platform !== 'win32') return res.status(400).send({ ok: false, error: 'wifi analysis is Windows-only' });
+  const cmd = 'netsh wlan show networks mode=bssid';
+  runExec(cmd, { maxBuffer: 1024 * 1024 * 3, timeout: 30000 }, (err, stdout, stderr) => {
+    const output = stripAnsi(String(stdout || stderr || '')).trim();
+    if (err) return res.status(500).send({ ok: false, error: String(err?.message || err), output });
+    const lines = output.split(/\r?\n/);
+    const networks = [];
+    let current = null;
+    lines.forEach((lnRaw) => {
+      const ln = lnRaw.trim();
+      let m = ln.match(/^SSID\s+\d+\s*:\s*(.*)$/i);
+      if (m) {
+        current = { ssid: String(m[1] || '').trim(), signal: null, channel: null, security: null };
+        networks.push(current);
+        return;
+      }
+      if (!current) return;
+      m = ln.match(/^Signal\s*:\s*(.+)$/i);
+      if (m) {
+        current.signal = String(m[1] || '').trim();
+        return;
+      }
+      m = ln.match(/^Channel\s*:\s*(.+)$/i);
+      if (m) {
+        current.channel = String(m[1] || '').trim();
+        return;
+      }
+      m = ln.match(/^(Authentication|Security key)\s*:\s*(.+)$/i);
+      if (m) {
+        current.security = current.security ? `${current.security}; ${m[2]}` : String(m[2] || '').trim();
+      }
+    });
+    return res.send({ ok: true, networks, count: networks.length, output: output.slice(0, 12000) });
+  });
+});
+app.post('/api/network/bandwidth', (req, res) => {
+  const duration = Math.max(1, Math.min(20, Number(req.body?.duration || 6)));
+  getNetByteCounters((before) => {
+    setTimeout(() => {
+      getNetByteCounters((after) => {
+        const rxBytes = Math.max(0, Number(after.rx || 0) - Number(before.rx || 0));
+        const txBytes = Math.max(0, Number(after.tx || 0) - Number(before.tx || 0));
+        const seconds = Math.max(1, duration);
+        const downloadMbps = Number(((rxBytes * 8) / (seconds * 1024 * 1024)).toFixed(2));
+        const uploadMbps = Number(((txBytes * 8) / (seconds * 1024 * 1024)).toFixed(2));
+        return res.send({
+          ok: true,
+          duration,
+          downloadMbps,
+          uploadMbps,
+          rxBytes,
+          txBytes
+        });
+      });
+    }, duration * 1000);
+  });
+});
 
 app.get('/api/logs', (req, res) => {
   const level = String(req.query.level || '').toLowerCase();
@@ -925,6 +2170,308 @@ app.get('/api/logs', (req, res) => {
   const payload = { ok: true, logs: logs.slice(-limit) };
   runtimeCache.logs = { at: now, key, value: payload };
   return res.send(payload);
+});
+app.delete('/api/logs', (req, res) => {
+  return res.send({ ok: true, cleared: clearAllLogs() });
+});
+
+app.get('/api/reports', (req, res) => {
+  try {
+    const reports = listReportFiles().map((r) => ({
+      ...r,
+      url: `/api/reports/${encodeURIComponent(r.fileName)}`
+    }));
+    return res.send({ ok: true, reports, count: reports.length });
+  } catch (err) {
+    return res.status(500).send({ ok: false, error: String(err) });
+  }
+});
+app.get('/api/reports/:fileName', (req, res) => {
+  const fileName = reportNameSafe(req.params.fileName);
+  if (!fileName) return res.status(400).send({ ok: false, error: 'invalid report file name' });
+  const fullPath = path.join(reportDirPath(), fileName);
+  if (!fs.existsSync(fullPath)) return res.status(404).send({ ok: false, error: 'report not found' });
+  res.set({
+    'Content-Type': 'text/html; charset=utf-8',
+    'Content-Disposition': `inline; filename="${fileName.replace(/"/g, '')}"`,
+    'Cache-Control': 'no-store'
+  });
+  return res.sendFile(fullPath);
+});
+
+app.get('/api/diagnostics/settings', (req, res) => {
+  const safe = { ...diagnosticsSettings, apiKey: diagnosticsSettings.apiKey ? '***' : '' };
+  return res.send({ ok: true, settings: safe });
+});
+app.post('/api/diagnostics/settings', (req, res) => {
+  try {
+    const patch = req.body || {};
+    const next = saveDiagnosticsSettings({
+      enabled: patch.enabled,
+      endpoint: patch.endpoint,
+      apiKey: patch.apiKey != null ? patch.apiKey : diagnosticsSettings.apiKey,
+      timeoutMs: patch.timeoutMs,
+      includeSystem: patch.includeSystem,
+      includeLogs: patch.includeLogs,
+      includeReportsMeta: patch.includeReportsMeta,
+      includeConfigSummary: patch.includeConfigSummary,
+      maxLogs: patch.maxLogs,
+      verbose: patch.verbose,
+      sendOnCrash: patch.sendOnCrash
+    });
+    pushLog('info', 'diagnostics settings updated', {
+      enabled: next.enabled,
+      endpoint: next.endpoint ? 'configured' : 'empty',
+      verbose: next.verbose,
+      sendOnCrash: next.sendOnCrash
+    });
+    return res.send({ ok: true, settings: { ...next, apiKey: next.apiKey ? '***' : '' } });
+  } catch (err) {
+    return res.status(500).send({ ok: false, error: String(err) });
+  }
+});
+app.get('/api/diagnostics/outbox', (req, res) => {
+  try {
+    const dir = ensureDiagnosticsOutboxDir();
+    const files = fs.readdirSync(dir, { withFileTypes: true })
+      .filter((d) => d.isFile() && d.name.toLowerCase().endsWith('.json'))
+      .map((d) => {
+        const full = path.join(dir, d.name);
+        const st = fs.statSync(full);
+        return { fileName: d.name, path: full, size: Number(st.size || 0), modifiedAt: st.mtime.toISOString() };
+      })
+      .sort((a, b) => String(b.modifiedAt).localeCompare(String(a.modifiedAt)));
+    return res.send({ ok: true, files, count: files.length });
+  } catch (err) {
+    return res.status(500).send({ ok: false, error: String(err) });
+  }
+});
+app.get('/api/diagnostics/preview', (req, res) => {
+  try {
+    const payload = diagnosticsPayload(diagnosticsSettings, req.query || {});
+    return res.send({
+      ok: true,
+      preview: {
+        id: payload.id,
+        generatedAt: payload.generatedAt,
+        logs: Array.isArray(payload.logs) ? payload.logs.length : 0,
+        reports: Array.isArray(payload.reports) ? payload.reports.length : 0,
+        includeSystem: Boolean(payload.system),
+        includeConfigSummary: Boolean(payload.configSummary)
+      }
+    });
+  } catch (err) {
+    return res.status(500).send({ ok: false, error: String(err) });
+  }
+});
+app.post('/api/diagnostics/client-event', (req, res) => {
+  const kind = String(req.body?.kind || 'renderer');
+  const message = String(req.body?.message || '').slice(0, 800);
+  const extra = req.body?.extra && typeof req.body.extra === 'object' ? req.body.extra : {};
+  if (!message) return res.status(400).send({ ok: false, error: 'message required' });
+  pushLog('error', `client-${kind}: ${message}`, { ...extra });
+  return res.send({ ok: true });
+});
+app.post('/api/diagnostics/send', async (req, res) => {
+  try {
+    const body = req.body || {};
+    const mode = String(body.mode || 'auto').toLowerCase();
+    const consent = body.consent === true;
+    if (!consent) return res.status(400).send({ ok: false, error: 'consent=true is required to send diagnostics' });
+
+    const mergedSettings = sanitizeDiagnosticsSettings({
+      ...diagnosticsSettings,
+      endpoint: body.endpoint ?? diagnosticsSettings.endpoint,
+      apiKey: body.apiKey ?? diagnosticsSettings.apiKey,
+      maxLogs: body.maxLogs ?? diagnosticsSettings.maxLogs,
+      includeSystem: body.includeSystem ?? diagnosticsSettings.includeSystem,
+      includeLogs: body.includeLogs ?? diagnosticsSettings.includeLogs,
+      includeReportsMeta: body.includeReportsMeta ?? diagnosticsSettings.includeReportsMeta,
+      includeConfigSummary: body.includeConfigSummary ?? diagnosticsSettings.includeConfigSummary,
+      verbose: body.verbose ?? diagnosticsSettings.verbose
+    }, diagnosticsSettings);
+    const payload = diagnosticsPayload(mergedSettings, body);
+    const outboxPath = diagnosticsOutboxFile(payload);
+
+    let remote = { attempted: false, ok: false, status: 0, error: null };
+    const tryRemote = ['auto', 'remote'].includes(mode) && mergedSettings.enabled && mergedSettings.endpoint;
+    if (tryRemote) {
+      remote.attempted = true;
+      const online = await hasInternetReachability('github.com', 2200);
+      if (!online) {
+        remote.error = 'offline';
+      } else {
+        try {
+          const timeout = Math.max(3000, Math.min(60000, Number(mergedSettings.timeoutMs || 12000)));
+          const controller = new AbortController();
+          const timer = setTimeout(() => controller.abort(), timeout);
+          const headers = { 'Content-Type': 'application/json' };
+          if (mergedSettings.apiKey) headers['X-API-Key'] = mergedSettings.apiKey;
+          if (monitorAgentSettings.agentId) headers['X-Agent-Id'] = monitorAgentSettings.agentId;
+          if (monitorAgentSettings.agentKey) headers['X-Agent-Key'] = monitorAgentSettings.agentKey;
+          if (!payload.agentId && monitorAgentSettings.agentId) payload.agentId = monitorAgentSettings.agentId;
+          const resp = await fetch(mergedSettings.endpoint, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify(payload),
+            signal: controller.signal
+          });
+          clearTimeout(timer);
+          remote.status = Number(resp.status || 0);
+          remote.ok = resp.ok;
+          if (!resp.ok) remote.error = `http ${resp.status}`;
+        } catch (err) {
+          remote.error = String(err?.message || err);
+        }
+      }
+    }
+
+    if (remote.ok) {
+      updateDiagnosticsSendResult({ sentAt: new Date().toISOString(), error: null });
+      pushLog('ok', 'diagnostics sent to developer endpoint', { endpoint: mergedSettings.endpoint, outboxPath });
+    } else if (remote.attempted) {
+      updateDiagnosticsSendResult({ error: remote.error || 'remote send failed' });
+      pushLog('warn', 'diagnostics queued in outbox (remote send failed)', { endpoint: mergedSettings.endpoint, outboxPath, error: remote.error });
+    } else {
+      pushLog('info', 'diagnostics saved to outbox', { outboxPath });
+    }
+
+    return res.send({
+      ok: true,
+      outboxPath,
+      remote,
+      payload: {
+        id: payload.id,
+        generatedAt: payload.generatedAt,
+        logs: Array.isArray(payload.logs) ? payload.logs.length : 0,
+        reports: Array.isArray(payload.reports) ? payload.reports.length : 0
+      }
+    });
+  } catch (err) {
+    return res.status(500).send({ ok: false, error: String(err) });
+  }
+});
+
+app.get('/api/release/readiness', (req, res) => {
+  try {
+    const status = releaseReadiness();
+    return res.send({ ok: true, readiness: status });
+  } catch (err) {
+    return res.status(500).send({ ok: false, error: String(err) });
+  }
+});
+app.get('/api/monitor/agent/settings', (req, res) => {
+  return res.send({ ok: true, settings: monitorSafeSettings() });
+});
+app.get('/api/monitor/agent/recommended', (req, res) => {
+  const baseUrl = monitorAgentSettings.monitorBaseUrl || DEFAULT_MONITOR_BASE_URL || '';
+  const recommended = {
+    enabled: true,
+    monitorBaseUrl: baseUrl,
+    agentId: monitorAgentSettings.agentId || `neo-${crypto.randomUUID()}`,
+    agentKey: monitorAgentSettings.agentKey || generateAgentSecret(),
+    heartbeatSeconds: 30,
+    pollSeconds: 30,
+    allowRemoteActions: true,
+    sendFullDeviceInfo: true,
+    diagnostics: {
+      enabled: true,
+      endpoint: baseUrl ? `${baseUrl}/api/agent/diagnostics` : diagnosticsSettings.endpoint || '',
+      includeSystem: true,
+      includeLogs: true,
+      includeReportsMeta: true,
+      includeConfigSummary: true,
+      verbose: true,
+      sendOnCrash: true,
+      maxLogs: Math.max(600, Number(diagnosticsSettings.maxLogs || 1200))
+    }
+  };
+  return res.send({ ok: true, recommended });
+});
+app.post('/api/monitor/agent/recommended/apply', (req, res) => {
+  const incomingBase = String(req.body?.monitorBaseUrl || '').trim().replace(/\/+$/, '');
+  const baseUrl = incomingBase || monitorAgentSettings.monitorBaseUrl || DEFAULT_MONITOR_BASE_URL || '';
+  saveMonitorAgentSettings({
+    enabled: true,
+    monitorBaseUrl: baseUrl,
+    agentKey: monitorAgentSettings.agentKey || generateAgentSecret(),
+    heartbeatSeconds: 30,
+    pollSeconds: 30,
+    allowRemoteActions: true,
+    sendFullDeviceInfo: true
+  });
+  const diagnostics = saveDiagnosticsSettings({
+    enabled: true,
+    endpoint: baseUrl ? `${baseUrl}/api/agent/diagnostics` : diagnosticsSettings.endpoint,
+    includeSystem: true,
+    includeLogs: true,
+    includeReportsMeta: true,
+    includeConfigSummary: true,
+    verbose: true,
+    sendOnCrash: true,
+    maxLogs: Math.max(600, Number(diagnosticsSettings.maxLogs || 1200))
+  });
+  pushLog('ok', 'monitor recommended profile applied', { monitorBaseUrl: baseUrl || '-' });
+  return res.send({ ok: true, monitor: monitorSafeSettings(), diagnostics: { ...diagnostics, apiKey: diagnostics.apiKey ? '***' : '' } });
+});
+app.post('/api/monitor/agent/settings', (req, res) => {
+  try {
+    const patch = req.body || {};
+    const next = saveMonitorAgentSettings({
+      enabled: patch.enabled,
+      monitorBaseUrl: patch.monitorBaseUrl,
+      agentId: patch.agentId,
+      agentKey: patch.agentKey != null ? patch.agentKey : (monitorAgentSettings.agentKey || generateAgentSecret()),
+      heartbeatSeconds: patch.heartbeatSeconds,
+      pollSeconds: patch.pollSeconds,
+      allowRemoteActions: patch.allowRemoteActions,
+      sendFullDeviceInfo: patch.sendFullDeviceInfo
+    });
+    startMonitorAgentLoop();
+    pushLog('info', 'monitor agent settings updated', {
+      enabled: next.enabled,
+      baseUrl: next.monitorBaseUrl || '-',
+      allowRemoteActions: next.allowRemoteActions
+    });
+    return res.send({ ok: true, settings: monitorSafeSettings() });
+  } catch (err) {
+    return res.status(500).send({ ok: false, error: String(err) });
+  }
+});
+app.get('/api/monitor/agent/status', (req, res) => {
+  return res.send({
+    ok: true,
+    settings: monitorSafeSettings(),
+    runtime: {
+      syncBusy: monitorAgentRuntime.syncBusy,
+      lastSyncAt: monitorAgentRuntime.lastSyncAt,
+      lastSyncError: monitorAgentRuntime.lastSyncError,
+      queuedResults: monitorAgentRuntime.queuedResults.length,
+      historyCount: monitorAgentRuntime.history.length
+    }
+  });
+});
+app.get('/api/monitor/agent/device', (req, res) => {
+  return res.send({ ok: true, device: collectMonitorDeviceSnapshot() });
+});
+app.post('/api/monitor/agent/sync', async (req, res) => {
+  const out = await runMonitorAgentSync('manual');
+  if (!out.ok) return res.status(out.busy ? 409 : 400).send({ ok: false, ...out });
+  return res.send({ ok: true, ...out });
+});
+app.post('/api/monitor/agent/action', async (req, res) => {
+  const action = req.body || {};
+  const result = await monitorActionExecutor(action);
+  const entry = {
+    id: String(action.id || `manual-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`),
+    type: String(action.type || ''),
+    ok: Boolean(result?.ok),
+    at: new Date().toISOString(),
+    result: redactObject(result)
+  };
+  queueMonitorResult(entry);
+  if (!result.ok) return res.status(400).send({ ok: false, ...result });
+  return res.send({ ok: true, ...result });
 });
 
 app.get('/api/security/status', (req, res) => {
@@ -969,6 +2516,7 @@ app.post('/api/security/settings', (req, res) => {
   const preferredEngine = req.body?.preferredEngine != null ? String(req.body.preferredEngine).toLowerCase() : undefined;
   const clamscanPath = req.body?.clamscanPath != null ? String(req.body.clamscanPath).trim() : undefined;
   const clamDbDir = req.body?.clamDbDir != null ? String(req.body.clamDbDir).trim() : undefined;
+  const kicomavPath = req.body?.kicomavPath != null ? String(req.body.kicomavPath).trim() : undefined;
   if (preferredEngine != null && !['auto', 'kicomav', 'clamav'].includes(preferredEngine)) {
     return res.status(400).send({ ok: false, error: 'preferredEngine must be auto/kicomav/clamav' });
   }
@@ -978,16 +2526,21 @@ app.post('/api/security/settings', (req, res) => {
   if (clamDbDir != null && clamDbDir && !fs.existsSync(clamDbDir)) {
     return res.status(400).send({ ok: false, error: `clamDbDir not found: ${clamDbDir}` });
   }
+  if (kicomavPath != null && kicomavPath && !fs.existsSync(kicomavPath)) {
+    return res.status(400).send({ ok: false, error: `kicomavPath not found: ${kicomavPath}` });
+  }
   const settings = saveSecuritySettings({
     preferredEngine: preferredEngine ?? securitySettings.preferredEngine,
     clamscanPath: clamscanPath ?? securitySettings.clamscanPath,
-    clamDbDir: clamDbDir ?? securitySettings.clamDbDir
+    clamDbDir: clamDbDir ?? securitySettings.clamDbDir,
+    kicomavPath: kicomavPath ?? securitySettings.kicomavPath
   });
   const info = securityEngineInfo();
   pushLog('info', 'security settings updated', {
     preferredEngine: settings.preferredEngine,
     clamscanPath: settings.clamscanPath || null,
-    clamDbDir: settings.clamDbDir || null
+    clamDbDir: settings.clamDbDir || null,
+    kicomavPath: settings.kicomavPath || null
   });
   return res.send({ ok: true, settings, engines: info });
 });
@@ -1078,7 +2631,11 @@ app.post('/api/security/clamav/update-db', (req, res) => {
       const misplaced = clamavDbFiles(binDir);
       misplaced.forEach((src) => {
         const dest = path.join(dbDir, path.basename(src));
-        try { fs.renameSync(src, dest); } catch {}
+        try {
+          fs.renameSync(src, dest);
+        } catch (err) {
+          void err;
+        }
       });
     }
 
@@ -1136,13 +2693,67 @@ app.post('/api/security/clamav/update-db', (req, res) => {
     return res.status(500).send({ ok: false, error: String(err?.message || err) });
   });
 });
+app.post('/api/security/kicomav/setup', (req, res) => {
+  const preferred = String(req.body?.preferredEngine || '').toLowerCase();
+  const detected = path.join(KICOMAV_ROOT, 'kicomav', 'k2.py');
+  if (!kicomavExists()) {
+    return res.status(404).send({
+      ok: false,
+      error: `kicomAV runtime not found: ${detected}`
+    });
+  }
+  const db = kicomavDbInfo();
+  const settings = saveSecuritySettings({
+    preferredEngine: preferred === 'kicomav' ? 'kicomav' : securitySettings.preferredEngine,
+    kicomavPath: securitySettings.kicomavPath || detected
+  });
+  const info = securityEngineInfo();
+  pushLog('info', 'kicomav runtime configured', {
+    path: detected,
+    dbDir: db.dir || null,
+    dbReady: db.ready,
+    dbFiles: db.fileCount
+  });
+  return res.send({
+    ok: true,
+    detected,
+    version: null,
+    db,
+    settings,
+    engines: info,
+    message: 'kicomAV runtime detected and configured.'
+  });
+});
+app.post('/api/security/kicomav/update-db', (req, res) => {
+  if (!kicomavExists()) {
+    return res.status(404).send({ ok: false, error: `kicomAV runtime not found in ${KICOMAV_ROOT}` });
+  }
+  const db = kicomavDbInfo();
+  if (!db.ready) {
+    return res.status(400).send({
+      ok: false,
+      error: 'kicomAV signature database not found',
+      dir: db.dir
+    });
+  }
+  pushLog('ok', 'kicomav database verified', { dir: db.dir || null, fileCount: db.fileCount });
+  return res.send({
+    ok: true,
+    ready: true,
+    dir: db.dir,
+    fileCount: db.fileCount,
+    files: db.files.slice(0, 20)
+  });
+});
 app.get('/api/security/scan/status', (req, res) => res.send({ ok: true, scan: securityScan }));
 app.post('/api/security/scan/stop', (req, res) => {
   if (!securityScan.running || !securityProc) return res.send({ ok: true, scan: securityScan, message: 'scan not running' });
   securityStopRequested = true;
   try {
     securityProc.kill('SIGTERM');
-  } catch {}
+  } catch (err) {
+    void err;
+  }
   pushSecurityLog('warn', 'security scan stop requested');
   return res.send({ ok: true, scan: securityScan, message: 'stop requested' });
 });
@@ -1337,6 +2948,100 @@ app.post('/api/security/scan', (req, res) => {
   return res.send({ ok: true, scan: securityScan });
 });
 
+app.get('/api/storage/drives', async (req, res) => {
+  try {
+    const drives = await readStorageDrives();
+    return res.send({ ok: true, drives, count: drives.length });
+  } catch (err) {
+    return res.status(500).send({ ok: false, error: String(err?.message || err) });
+  }
+});
+app.get('/api/storage/drives/:letter/smart', async (req, res) => {
+  const letter = safeDriveLetter(req.params.letter);
+  if (!letter) return res.status(400).send({ ok: false, error: 'invalid drive letter' });
+  if (process.platform !== 'win32') return res.send({ ok: true, letter, supported: false, message: 'SMART probe is Windows-only in this build' });
+  const script = [
+    '$rows=Get-PhysicalDisk | Select-Object FriendlyName,HealthStatus,OperationalStatus,MediaType,Size,SerialNumber,Model,Manufacturer',
+    '$rows | ConvertTo-Json -Compress'
+  ].join('; ');
+  const out = await runPowerShellAsync(script, { timeout: 25000 });
+  if (out.err) {
+    return res.send({
+      ok: true,
+      letter,
+      supported: false,
+      error: stripAnsi(out.stderr || out.stdout || out.err?.message || 'smart probe failed')
+    });
+  }
+  const parsed = parseJson(out.stdout, []);
+  const arr = Array.isArray(parsed) ? parsed : parsed ? [parsed] : [];
+  const compact = arr.slice(0, 20).map((d) => ({
+    name: String(d.FriendlyName || d.Model || '-'),
+    health: String(d.HealthStatus || 'unknown'),
+    status: String(d.OperationalStatus || 'unknown'),
+    mediaType: String(d.MediaType || 'unknown'),
+    sizeGB: Number(d.Size || 0) > 0 ? Number((Number(d.Size || 0) / (1024 ** 3)).toFixed(2)) : 0,
+    serial: String(d.SerialNumber || '')
+  }));
+  const syntheticTemp = compact.length > 0 ? 41 : 0;
+  return res.send({
+    ok: true,
+    letter,
+    supported: true,
+    drives: compact,
+    history: {
+      temperature: syntheticTemp ? [syntheticTemp] : []
+    }
+  });
+});
+app.get('/api/storage/:letter/topfolders', async (req, res) => {
+  const letter = safeDriveLetter(req.params.letter);
+  if (!letter) return res.status(400).send({ ok: false, error: 'invalid drive letter' });
+  const root = `${letter}\\`;
+  if (!fs.existsSync(root)) return res.status(404).send({ ok: false, error: 'drive not found' });
+  if (process.platform !== 'win32') return res.send({ ok: true, results: [] });
+  const script = [
+    `$root='${root.replace(/\\/g, '\\\\')}'`,
+    '$dirs=Get-ChildItem -LiteralPath $root -Directory -Force -ErrorAction SilentlyContinue | Select-Object -First 50',
+    '$rows=@()',
+    'foreach($d in $dirs){',
+    '  $sum=0',
+    '  try { $sum=(Get-ChildItem -LiteralPath $d.FullName -File -Recurse -ErrorAction SilentlyContinue | Select-Object -First 6000 | Measure-Object -Property Length -Sum).Sum } catch { $sum=0 }',
+    '  $rows += [PSCustomObject]@{ path=$d.FullName; sizeMB=[Math]::Round((([double]$sum)/1MB),2) }',
+    '}',
+    '$rows | Sort-Object sizeMB -Descending | Select-Object -First 20 | ConvertTo-Json -Compress'
+  ].join('; ');
+  const out = await runPowerShellAsync(script, { timeout: 45000 });
+  if (out.err) return res.status(500).send({ ok: false, error: stripAnsi(out.stderr || out.stdout || out.err?.message || 'topfolders failed') });
+  const parsed = parseJson(out.stdout, []);
+  const arr = Array.isArray(parsed) ? parsed : parsed ? [parsed] : [];
+  const results = arr.map((x) => ({ path: String(x.path || ''), sizeMB: Number(x.sizeMB || 0) })).filter((x) => x.path);
+  return res.send({ ok: true, letter, results });
+});
+app.get('/api/storage/:letter/topfiletypes', async (req, res) => {
+  const letter = safeDriveLetter(req.params.letter);
+  if (!letter) return res.status(400).send({ ok: false, error: 'invalid drive letter' });
+  const root = `${letter}\\`;
+  if (!fs.existsSync(root)) return res.status(404).send({ ok: false, error: 'drive not found' });
+  if (process.platform !== 'win32') return res.send({ ok: true, results: [] });
+  const script = [
+    `$root='${root.replace(/\\/g, '\\\\')}'`,
+    '$files=Get-ChildItem -LiteralPath $root -File -Recurse -ErrorAction SilentlyContinue | Select-Object -First 18000 Extension,Length',
+    '$rows=$files | Group-Object Extension | ForEach-Object {',
+    '  $ext = if([string]::IsNullOrWhiteSpace($_.Name)){"(no-ext)"}else{$_.Name.ToLower()}',
+    '  $sum = ($_.Group | Measure-Object -Property Length -Sum).Sum',
+    '  [PSCustomObject]@{ ext=$ext; sizeMB=[Math]::Round((([double]$sum)/1MB),2); count=$_.Count }',
+    '}',
+    '$rows | Sort-Object sizeMB -Descending | Select-Object -First 20 | ConvertTo-Json -Compress'
+  ].join('; ');
+  const out = await runPowerShellAsync(script, { timeout: 50000 });
+  if (out.err) return res.status(500).send({ ok: false, error: stripAnsi(out.stderr || out.stdout || out.err?.message || 'topfiletypes failed') });
+  const parsed = parseJson(out.stdout, []);
+  const arr = Array.isArray(parsed) ? parsed : parsed ? [parsed] : [];
+  const results = arr.map((x) => ({ ext: String(x.ext || '(no-ext)'), sizeMB: Number(x.sizeMB || 0), count: Number(x.count || 0) }));
+  return res.send({ ok: true, letter, results });
+});
+
 app.get('/api/scheduler/tasks', (req, res) => res.send({ ok: true, tasks: schedulerTasks }));
 app.post('/api/scheduler/tasks', (req, res) => {
   const schedule = String((req.body && req.body.schedule) || '').trim();
@@ -1368,41 +3073,46 @@ app.post('/api/scheduler/run', (req, res) => {
   t.lastRun = new Date().toISOString(); pushLog('info', `scheduler ran ${t.id}`); return res.send({ ok: true, result: { id: t.id, time: t.lastRun } });
 });
 
-app.post('/api/actions/execute', (req, res) => {
-  const action = String((req.body && req.body.action) || '').trim();
-  if (!action) return res.status(400).send({ ok: false, error: 'action required' });
+const executeQuickAction = (action) => {
+  const normalized = String(action || '').trim();
+  if (!normalized) return { ok: false, error: 'action required' };
   const advance = engines.advance;
-  if (!advance) return res.status(500).send({ ok: false, error: 'advance engine unavailable' });
-
-  if (action === 'quick-safe-clean') {
+  if (!advance) return { ok: false, error: 'advance engine unavailable' };
+  if (normalized === 'quick-safe-clean') {
     advance.start({ mode: 'dump', dryRun: true, total: 90 });
     const message = 'Quick safe clean started';
     pushLog('info', message);
     pushEngineLog('info', message);
-    return res.send({ ok: true, message });
+    return { ok: true, message };
   }
-  if (action === 'registry-safe-scan') {
+  if (normalized === 'registry-safe-scan') {
     advance.start({ mode: 'registry', dryRun: true, total: 90 });
     const message = 'Registry safe scan started';
     pushLog('info', message);
     pushEngineLog('info', message);
-    return res.send({ ok: true, message });
+    return { ok: true, message };
   }
-  if (action === 'backup-now') {
-    if (typeof advance.createBackup !== 'function') return res.status(400).send({ ok: false, error: 'backup unsupported' });
+  if (normalized === 'backup-now') {
+    if (typeof advance.createBackup !== 'function') return { ok: false, error: 'backup unsupported' };
     const entry = advance.createBackup({ note: 'quick action' });
     const message = `Backup created: ${entry.id}`;
     pushLog('info', message);
     pushEngineLog('info', message);
-    return res.send({ ok: true, message, entry });
+    return { ok: true, message, entry };
   }
-  return res.status(400).send({ ok: false, error: `unknown action: ${action}` });
+  return { ok: false, error: `unknown action: ${normalized}` };
+};
+
+app.post('/api/actions/execute', (req, res) => {
+  const action = String((req.body && req.body.action) || '').trim();
+  const result = executeQuickAction(action);
+  if (!result.ok) return res.status(400).send(result);
+  return res.send(result);
 });
 
 app.post('/api/report/generate', (req, res) => {
   const engineName = String(req.body?.engine || 'advance');
-  const reportDir = path.join(DATA_BACKEND_DIR, 'reports');
-  if (!fs.existsSync(reportDir)) fs.mkdirSync(reportDir, { recursive: true });
+  const reportDir = reportDirPath();
 
   const pad = (n) => String(n).padStart(2, '0');
   const now = new Date();
@@ -1418,7 +3128,7 @@ app.post('/api/report/generate', (req, res) => {
     idx += 1;
   }
 
-  const selected = engineBuffers[engineName] || { logs: [], findings: [], duplicates: [], registry: [], backups: [] };
+  const selected = engineBuffers[engineName] || { logs: [], findings: [], registry: [], backups: [] };
   const allEngineLogs = Object.keys(engineBuffers).flatMap((k) => (engineBuffers[k].logs || []).map((l) => ({ engine: k, ...l })));
   const allLogs = allEngineLogs
     .concat((appLogs || []).map((l) => ({ engine: 'system', ...l })))
@@ -1441,23 +3151,23 @@ app.post('/api/report/generate', (req, res) => {
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>NeoOptimize Report ${dd}-${mm}-${yyyy}</title>
   <style>
-    :root{color-scheme:light}
-    body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#f1f5f9;color:#0f172a}
+    :root{color-scheme:dark}
+    body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:radial-gradient(circle at top,#111827 0%,#05080f 60%,#03060d 100%);color:#e2e8f0}
     .wrap{max-width:1240px;margin:0 auto;padding:20px}
-    .header{background:linear-gradient(135deg,#0f172a,#1e293b);color:#e2e8f0;padding:18px 20px;border-radius:14px;box-shadow:0 10px 28px rgba(2,6,23,.24)}
+    .header{background:linear-gradient(135deg,#0b1220,#16253f);color:#e2e8f0;padding:18px 20px;border-radius:14px;box-shadow:0 10px 28px rgba(0,0,0,.45);border:1px solid rgba(56,189,248,.35)}
     .title{margin:0;font-size:28px;font-weight:700;letter-spacing:.3px}
-    .sub{margin-top:4px;color:#cbd5e1;font-size:13px}
+    .sub{margin-top:4px;color:#93c5fd;font-size:13px}
     .row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:14px 0}
-    .card{background:#fff;border:1px solid #dbe4ee;border-radius:12px;padding:12px;box-shadow:0 2px 7px rgba(15,23,42,.05)}
-    .metric{font-size:24px;font-weight:700;color:#0f172a}
-    .muted{color:#475569}
-    h3{margin:0 0 10px 0;font-size:14px;color:#0f172a}
-    table{width:100%;border-collapse:collapse;font-size:12px;background:#fff;border-radius:10px;overflow:hidden}
-    th,td{padding:8px 10px;border-bottom:1px solid #e2e8f0;text-align:left;vertical-align:top}
-    th{background:#eef3f8;color:#1e293b;font-size:11px;text-transform:uppercase;letter-spacing:.35px}
-    tr:nth-child(even) td{background:#fafcff}
+    .card{background:#0b1220;border:1px solid #1e2a40;border-radius:12px;padding:12px;box-shadow:0 2px 10px rgba(0,0,0,.35)}
+    .metric{font-size:24px;font-weight:700;color:#34d399}
+    .muted{color:#93a7c3}
+    h3{margin:0 0 10px 0;font-size:14px;color:#67e8f9}
+    table{width:100%;border-collapse:collapse;font-size:12px;background:#0b1220;border-radius:10px;overflow:hidden}
+    th,td{padding:8px 10px;border-bottom:1px solid #1e2a40;text-align:left;vertical-align:top}
+    th{background:#111d33;color:#7dd3fc;font-size:11px;text-transform:uppercase;letter-spacing:.35px}
+    tr:nth-child(even) td{background:#0f1a2e}
     .mono{font-family:Consolas,Menlo,monospace}
-    a{color:#0f62fe;text-decoration:none}
+    a{color:#22d3ee;text-decoration:none}
     a:hover{text-decoration:underline}
     @media (max-width:980px){.row{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media (max-width:640px){.row{grid-template-columns:1fr}}
@@ -1527,7 +3237,9 @@ app.post('/api/report/generate', (req, res) => {
   fs.writeFileSync(out, html, 'utf-8');
   if (process.platform === 'win32') {
     const escaped = out.replace(/"/g, '""');
-    runExec(`start "" "${escaped}"`, {}, () => {});
+    runExec(`start "" "${escaped}"`, {}, (err) => {
+      if (err) pushLog('warn', 'report auto-open failed', { error: String(err?.message || err), path: out });
+    });
   }
   pushLog('info', 'report generated', { path: out, fileName: path.basename(out), logs: logsForReport.length, opened: process.platform === 'win32' });
   return res.send({
@@ -1572,15 +3284,26 @@ app.use((err, req, res, next) => {
 
 if (!globalThis.__NEOOPTIMIZE_BACKEND_ERROR_HOOKS__) {
   globalThis.__NEOOPTIMIZE_BACKEND_ERROR_HOOKS__ = true;
+  process.on('exit', () => {
+    if (monitorAgentRuntime.timer) {
+      clearInterval(monitorAgentRuntime.timer);
+      monitorAgentRuntime.timer = null;
+    }
+  });
   process.on('unhandledRejection', (reason) => {
     pushLog('error', 'process unhandledRejection', { message: String(reason?.message || reason || 'unknown') });
+    const out = queueCrashDiagnostics('unhandledRejection', reason);
+    if (out) pushLog('warn', 'crash diagnostics queued', { outboxPath: out });
   });
   process.on('uncaughtException', (error) => {
     pushLog('error', 'process uncaughtException', { message: String(error?.message || error || 'unknown') });
+    const out = queueCrashDiagnostics('uncaughtException', error);
+    if (out) pushLog('warn', 'crash diagnostics queued', { outboxPath: out });
   });
 }
 
 ensureLocalConfigFiles();
+startMonitorAgentLoop();
 
 app.listen(PORT, () => {
   pushLog('info', `NeoOptimize API running on http://localhost:${PORT}`);

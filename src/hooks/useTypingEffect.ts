@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 
 export function useTypingEffect(
 text: string,
-speed: number = 30,
-startDelay: number = 0)
+speed = 30,
+startDelay = 0)
 {
   const [displayedText, setDisplayedText] = useState('');
   const [isComplete, setIsComplete] = useState(false);

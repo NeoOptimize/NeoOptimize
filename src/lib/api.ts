@@ -1,4 +1,5 @@
-const ENV_BASE = (import.meta as any).env?.VITE_API_BASE_URL as string | undefined;
+type ImportMetaWithEnv = ImportMeta & { env?: Record<string, string | undefined> };
+const ENV_BASE = (import.meta as ImportMetaWithEnv).env?.VITE_API_BASE_URL;
 
 function inferBase(): string {
   if (typeof window === 'undefined') return '';

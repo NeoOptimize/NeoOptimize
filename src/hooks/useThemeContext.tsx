@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, {
   useCallback,
   useEffect,
@@ -13,7 +14,7 @@ interface ThemeContextValue {
 }
 const ThemeContext = createContext<ThemeContextValue>({
   theme: 'dark',
-  setTheme: () => {},
+  setTheme: (t: Theme) => { void t; },
   resolvedTheme: 'dark'
 });
 export function ThemeProvider({ children }: {children: React.ReactNode;}) {
@@ -43,7 +44,9 @@ export function ThemeProvider({ children }: {children: React.ReactNode;}) {
     applyTheme(resolvedTheme);
     try {
       localStorage.setItem('neo-theme', theme);
-    } catch {}
+    } catch (err) {
+      void err;
+    }
   }, [theme, resolvedTheme, applyTheme]);
   // Listen for system preference changes
   useEffect(() => {

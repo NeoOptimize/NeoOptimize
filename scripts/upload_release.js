@@ -1,7 +1,7 @@
-const fs = require('fs');
-const path = require('path');
-const https = require('https');
-const { URL } = require('url');
+import fs from 'fs';
+import path from 'path';
+import https from 'https';
+import { URL } from 'url';
 
 const OWNER = 'NeoOptimize';
 const REPO = 'NeoOptimize';

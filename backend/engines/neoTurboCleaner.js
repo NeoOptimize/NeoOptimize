@@ -69,6 +69,17 @@ const DEFAULT_MAX_DEPTH = 7;
 const LOG_LIMIT = 6000;
 const RESULT_LIMIT = 30000;
 const BACKUP_LIMIT = 500;
+const MAX_APPLY_DELETE_FILES = 2500;
+const MAX_APPLY_DELETE_KB = 20 * 1024 * 1024; // 20 GB
+const MAX_SINGLE_FILE_BYTES = 2 * 1024 * 1024 * 1024; // 2 GB
+const PROTECTED_PREFIXES = [
+  'C:\\Windows\\System32\\',
+  'C:\\Windows\\WinSxS\\',
+  'C:\\Windows\\servicing\\',
+  'C:\\Program Files\\',
+  'C:\\Program Files (x86)\\',
+  'C:\\ProgramData\\Microsoft\\Windows Defender\\'
+];
 
 function nowIso() {
   return new Date().toISOString();
@@ -97,6 +108,29 @@ function normalizeWinPath(input) {
   return path.normalize(expanded);
 }
 
+function canonicalLower(input) {
+  return normalizeWinPath(input).replace(/[\\/]+$/, '').toLowerCase();
+}
+
+function isPathUnder(target, root) {
+  const t = canonicalLower(target);
+  const r = canonicalLower(root);
+  if (!t || !r) return false;
+  return t === r || t.startsWith(`${r}\\`);
+}
+
+function isProtectedPath(target) {
+  const lower = canonicalLower(target);
+  return PROTECTED_PREFIXES.some((p) => lower.startsWith(canonicalLower(p)));
+}
+
+function validateDeleteTarget(filePath, allowedRoot) {
+  if (!filePath || !allowedRoot) return { ok: false, reason: 'invalid target/root' };
+  if (!isPathUnder(filePath, allowedRoot)) return { ok: false, reason: `out-of-root target (${allowedRoot})` };
+  if (isProtectedPath(filePath)) return { ok: false, reason: 'protected path' };
+  return { ok: true, reason: '' };
+}
+
 function escapeRegExp(s) {
   return String(s || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -118,15 +152,6 @@ function wildcardRoot(pattern) {
   if (fixed.length === 0) return '';
   if (fixed.length === 1 && /^[A-Za-z]:$/.test(fixed[0])) return `${fixed[0]}\\`;
   return path.normalize(fixed.join('\\'));
-}
-
-async function fileExists(p) {
-  try {
-    await fsp.access(p, fs.constants.F_OK);
-    return true;
-  } catch {
-    return false;
-  }
 }
 
 function runReg(args) {
@@ -174,6 +199,13 @@ async function walkAndMatch(root, regex, maxDepth, maxFiles, stopRef) {
     for (const entry of entries) {
       if (stopRef.stop || out.length >= maxFiles) break;
       const full = path.join(cur.dir, entry.name);
+      let lst = null;
+      try {
+        lst = await fsp.lstat(full);
+      } catch {
+        continue;
+      }
+      if (lst?.isSymbolicLink?.()) continue;
       if (entry.isDirectory()) {
         stack.push({ dir: full, depth: cur.depth + 1 });
         continue;
@@ -183,8 +215,12 @@ async function walkAndMatch(root, regex, maxDepth, maxFiles, stopRef) {
       if (!regex.test(normalized)) continue;
       try {
         const st = await fsp.stat(full);
+        if (!st.isFile()) continue;
+        if (Number(st.size || 0) > MAX_SINGLE_FILE_BYTES) continue;
         out.push({ path: full, size: Number(st.size || 0) });
-      } catch {}
+      } catch (err) {
+        void err;
+      }
     }
   }
   return out;
@@ -215,7 +251,6 @@ export function createNeoTurboCleaner() {
     log: [],
     done: [],
     fileFound: [],
-    duplicateFound: [],
     registryIssue: [],
     backup: []
   };
@@ -231,7 +266,9 @@ export function createNeoTurboCleaner() {
     l.forEach((cb) => {
       try {
         cb(payload);
-      } catch {}
+      } catch (err) {
+        void err;
+      }
     });
   };
 
@@ -247,10 +284,24 @@ export function createNeoTurboCleaner() {
     emit('progress', { progress, total, mode, dryRun, statusMessage, ...meta });
   };
 
-  async function maybeDelete(filePath) {
+  async function maybeDelete(filePath, ctx = {}) {
+    const guard = validateDeleteTarget(filePath, ctx.root || '');
+    if (!guard.ok) return { ok: false, action: 'skip-unsafe', error: guard.reason };
     if (dryRun) return { ok: true, action: 'would-delete' };
+    if (ctx.applyState) {
+      if (ctx.applyState.deletedFiles >= MAX_APPLY_DELETE_FILES) {
+        return { ok: false, action: 'limit-reached', error: `max apply delete files reached (${MAX_APPLY_DELETE_FILES})` };
+      }
+      if (ctx.applyState.deletedKB >= MAX_APPLY_DELETE_KB) {
+        return { ok: false, action: 'limit-reached', error: `max apply reclaimed reached (${MAX_APPLY_DELETE_KB}KB)` };
+      }
+    }
     try {
       await fsp.rm(filePath, { recursive: false, force: true });
+      if (ctx.applyState) {
+        ctx.applyState.deletedFiles += 1;
+        ctx.applyState.deletedKB += Number(ctx.sizeKB || 0);
+      }
       return { ok: true, action: 'deleted' };
     } catch (err) {
       return { ok: false, action: 'skip', error: String(err?.message || err) };
@@ -266,6 +317,7 @@ export function createNeoTurboCleaner() {
       (CLEAN_PATHS[cat] || []).forEach((pattern) => jobs.push({ category: cat, pattern }));
     });
     log('info', `NeoTurbo scan start mode=${mode} jobs=${jobs.length} dryRun=${dryRun}`);
+    const applyState = { deletedFiles: 0, deletedKB: 0 };
 
     let processed = 0;
     for (let i = 0; i < jobs.length; i += 1) {
@@ -281,7 +333,7 @@ export function createNeoTurboCleaner() {
       const found = await walkAndMatch(root, regex, maxDepth, maxFiles, stopRef);
       for (const f of found) {
         if (stopRef.stop) break;
-        const result = await maybeDelete(f.path);
+        const result = await maybeDelete(f.path, { root, applyState, sizeKB: toKB(f.size) });
         const item = {
           path: f.path,
           sizeKB: toKB(f.size),
@@ -397,6 +449,14 @@ export function createNeoTurboCleaner() {
     mode = String(opts.mode || 'full').toLowerCase();
     if (!['full', 'dump', 'registry'].includes(mode)) mode = 'full';
     dryRun = opts.dryRun !== false;
+    if (!dryRun && opts.autoBackup !== false) {
+      try {
+        const b = createBackup({ note: `auto-pre-apply-${mode}` });
+        log('ok', `auto backup before apply: ${b.id}`);
+      } catch (err) {
+        log('warn', `auto backup before apply failed: ${String(err?.message || err)}`);
+      }
+    }
     running = true;
     progress = 0;
     total = 100;
@@ -431,7 +491,6 @@ export function createNeoTurboCleaner() {
       lastRun,
       counts: {
         files: files.length,
-        duplicates: 0,
         registry: registry.length,
         backups: backups.length
       }
@@ -441,7 +500,6 @@ export function createNeoTurboCleaner() {
   function resultsList() {
     return {
       files: files.slice(),
-      duplicates: [],
       registry: registry.slice(),
       backups: backups.slice(),
       mode,
@@ -488,7 +546,9 @@ export function createNeoTurboCleaner() {
           const raw = JSON.parse(fs.readFileSync(full, 'utf-8'));
           if (!raw?.id || !raw?.time) continue;
           out.push({ id: raw.id, time: raw.time, path: full, meta: raw.meta || {} });
-        } catch {}
+        } catch (err) {
+          void err;
+        }
       }
     }
     const map = new Map();

@@ -1,18 +1,24 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Shield, Lock, AlertTriangle, CheckCircle } from 'lucide-react';
 import { apiFetch } from '../../lib/api';
+import { toErrorMessage } from '../../lib/safe';
 
 type SecurityStatus = {
   antivirus: string;
   firewall: string;
   issues: string[];
   scan?: { running: boolean; progress: number; startedAt?: string; finishedAt?: string; threats?: number; suspicious?: number; scanned?: number; engine?: string; requestedEngine?: string };
-  settings?: { preferredEngine?: 'auto' | 'kicomav' | 'clamav'; clamscanPath?: string };
+  settings?: { preferredEngine?: 'auto' | 'kicomav' | 'clamav'; clamscanPath?: string; kicomavPath?: string };
   engines?: {
     recommended?: 'kicomav' | 'clamav' | null;
-    kicomav?: { available?: boolean };
+    kicomav?: { available?: boolean; binary?: string | null; database?: { ready?: boolean; fileCount?: number } };
     clamav?: { available?: boolean; binary?: string | null; database?: { ready?: boolean; dir?: string | null; fileCount?: number } };
   };
+};
+
+type SecurityLogEntry = {
+  time?: string;
+  message?: string;
 };
 
 export function SecurityPage() {
@@ -27,10 +33,14 @@ export function SecurityPage() {
   const [engineChoice, setEngineChoice] = useState<'auto' | 'kicomav' | 'clamav'>('auto');
   const [preferredEngine, setPreferredEngine] = useState<'auto' | 'kicomav' | 'clamav'>('auto');
   const [clamscanPath, setClamscanPath] = useState('');
+  const [kicomavPath, setKicomavPath] = useState('');
   const [setupBusy, setSetupBusy] = useState(false);
   const [setupInfo, setSetupInfo] = useState<{ binary?: string; version?: string; freshclam?: { path?: string; version?: string } } | null>(null);
   const [dbUpdateBusy, setDbUpdateBusy] = useState(false);
   const [dbUpdateInfo, setDbUpdateInfo] = useState<{ dbDir?: string; fileCount?: number; output?: string } | null>(null);
+  const [kicoSetupBusy, setKicoSetupBusy] = useState(false);
+  const [kicoInfo, setKicoInfo] = useState<{ binary?: string; version?: string; db?: { ready?: boolean; fileCount?: number } } | null>(null);
+  const [kicoUpdateBusy, setKicoUpdateBusy] = useState(false);
 
   const refresh = React.useCallback(async () => {
     try {
@@ -44,6 +54,7 @@ export function SecurityPage() {
         if (!settingsInitialized) {
           if (s.status?.settings?.preferredEngine) setPreferredEngine(s.status.settings.preferredEngine);
           if (s.status?.settings?.clamscanPath != null) setClamscanPath(String(s.status.settings.clamscanPath || ''));
+          if (s.status?.settings?.kicomavPath != null) setKicomavPath(String(s.status.settings.kicomavPath || ''));
           setSettingsInitialized(true);
         }
       }
@@ -51,12 +62,12 @@ export function SecurityPage() {
         setStatus((prev) => ({ ...prev, engines: e, settings: e.settings || prev.settings }));
       }
       if (l?.ok) {
-        const lines = (l.logs || []).map((x: any) => `[${new Date(x.time).toLocaleTimeString()}] ${x.message}`);
+        const lines = (l.logs || []).map((x: SecurityLogEntry) => `[${new Date(x.time || '').toLocaleTimeString()}] ${x.message || ''}`);
         setLogs(lines.slice(-40));
       }
       setError('');
-    } catch (err: any) {
-      setError(String(err?.message || err));
+    } catch (err: unknown) {
+      setError(toErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -91,8 +102,23 @@ export function SecurityPage() {
         setMessage(`Security scan started (${engineChoice.toUpperCase()})`);
       }
       else setError(String(j?.error || 'scan failed'));
-    } catch (err: any) {
-      setError(String(err?.message || err));
+    } catch (err: unknown) {
+      setError(toErrorMessage(err));
+    }
+  };
+
+  const runScanWith = async (engine: 'auto' | 'kicomav' | 'clamav') => {
+    try {
+      setMessage('');
+      const r = await apiFetch('/api/security/scan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ detail: 'manual-ui-scan', engine }) });
+      const j = await r.json();
+      if (j?.ok) {
+        setScanning(true);
+        setError('');
+        setMessage(`Security scan started (${engine.toUpperCase()})`);
+      } else setError(String(j?.error || 'scan failed'));
+    } catch (err: unknown) {
+      setError(toErrorMessage(err));
     }
   };
 
@@ -106,8 +132,8 @@ export function SecurityPage() {
         setMessage('Security scan stop requested');
       }
       await refresh();
-    } catch (err: any) {
-      setError(String(err?.message || err));
+    } catch (err: unknown) {
+      setError(toErrorMessage(err));
     }
   };
 
@@ -117,7 +143,7 @@ export function SecurityPage() {
       const r = await apiFetch('/api/security/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ preferredEngine, clamscanPath })
+        body: JSON.stringify({ preferredEngine, clamscanPath, kicomavPath })
       });
       const j = await r.json();
       if (!r.ok || !j?.ok) {
@@ -127,11 +153,12 @@ export function SecurityPage() {
         setError('');
         if (j.settings?.preferredEngine) setPreferredEngine(j.settings.preferredEngine);
         if (j.settings?.clamscanPath != null) setClamscanPath(String(j.settings.clamscanPath || ''));
+        if (j.settings?.kicomavPath != null) setKicomavPath(String(j.settings.kicomavPath || ''));
         setSettingsInitialized(true);
       }
       await refresh();
-    } catch (err: any) {
-      setError(String(err?.message || err));
+    } catch (err: unknown) {
+      setError(toErrorMessage(err));
     } finally {
       setSaving(false);
     }
@@ -157,10 +184,35 @@ export function SecurityPage() {
         if (j.settings?.clamscanPath != null) setClamscanPath(String(j.settings.clamscanPath || ''));
       }
       await refresh();
-    } catch (err: any) {
-      setError(String(err?.message || err));
+    } catch (err: unknown) {
+      setError(toErrorMessage(err));
     } finally {
       setSetupBusy(false);
+    }
+  };
+
+  const runKicoSetup = async () => {
+    setKicoSetupBusy(true);
+    try {
+      const r = await apiFetch('/api/security/kicomav/setup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ preferredEngine })
+      });
+      const j = await r.json();
+      if (!r.ok || !j?.ok) {
+        setKicoInfo(null);
+        setError(String(j?.error || 'kicomAV setup failed'));
+      } else {
+        setKicoInfo({ binary: j.detected, version: j.version, db: j.db || null });
+        setMessage(j.message || 'kicomAV configured');
+        setError('');
+      }
+      await refresh();
+    } catch (err: unknown) {
+      setError(toErrorMessage(err));
+    } finally {
+      setKicoSetupBusy(false);
     }
   };
 
@@ -182,10 +234,31 @@ export function SecurityPage() {
         setError('');
       }
       await refresh();
-    } catch (err: any) {
-      setError(String(err?.message || err));
+    } catch (err: unknown) {
+      setError(toErrorMessage(err));
     } finally {
       setDbUpdateBusy(false);
+    }
+  };
+
+  const updateKicoDb = async () => {
+    setKicoUpdateBusy(true);
+    try {
+      const r = await apiFetch('/api/security/kicomav/update-db', { method: 'POST' });
+      const j = await r.json();
+      if (!r.ok || !j?.ok) {
+        setKicoInfo(null);
+        setError(String(j?.error || 'kicomAV db update failed'));
+      } else {
+        setKicoInfo((prev) => ({ ...(prev || {}), db: { ready: j.ready, fileCount: j.fileCount } }));
+        setMessage(`kicomAV database updated (${j.fileCount} files)`);
+        setError('');
+      }
+      await refresh();
+    } catch (err: unknown) {
+      setError(toErrorMessage(err));
+    } finally {
+      setKicoUpdateBusy(false);
     }
   };
 
@@ -225,6 +298,10 @@ export function SecurityPage() {
             <option value="kicomav">KICOMAV</option>
             <option value="clamav">CLAMAV</option>
           </select>
+          <div className="ml-3 flex items-center gap-2">
+            <button onClick={() => runScanWith('kicomav')} disabled={scanning} className="px-2 py-1 text-[10px] border" style={{ borderColor: 'var(--ansi-cyan)', color: 'var(--ansi-cyan)' }}>Scan KICOMAV</button>
+            <button onClick={() => runScanWith('clamav')} disabled={scanning} className="px-2 py-1 text-[10px] border" style={{ borderColor: 'var(--ansi-yellow)', color: 'var(--ansi-yellow)' }}>Scan CLAMAV</button>
+          </div>
           <div className="text-[10px]" style={{ color: 'var(--text-muted)' }}>
             Recommended: <span style={{ color: 'var(--ansi-cyan)' }}>{status.engines?.recommended || 'none'}</span>
             {' '}| Kico: <span style={{ color: status.engines?.kicomav?.available ? 'var(--ansi-green)' : 'var(--ansi-red)' }}>{status.engines?.kicomav?.available ? 'READY' : 'N/A'}</span>
@@ -258,7 +335,7 @@ export function SecurityPage() {
 
       <div className="border p-4" style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--bg-secondary)' }}>
         <div className="text-xs font-bold mb-3" style={{ color: 'var(--ansi-yellow)' }}>ENGINE SETTINGS</div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <div className="space-y-1">
             <div className="text-[10px]" style={{ color: 'var(--text-muted)' }}>Preferred engine (auto follows recommendation)</div>
             <select
@@ -291,6 +368,23 @@ export function SecurityPage() {
               {status.engines?.clamav?.database?.dir ? ` @ ${status.engines.clamav.database.dir}` : ''}
             </div>
           </div>
+          <div className="space-y-1">
+            <div className="text-[10px]" style={{ color: 'var(--text-muted)' }}>KicomAV binary path (`kicomav.exe`)</div>
+            <input
+              value={kicomavPath}
+              onChange={(e) => setKicomavPath(e.target.value)}
+              placeholder="C:\\Program Files\\kicomav\\kicomav.exe"
+              disabled={saving || scanning}
+              className="w-full px-2 py-1 text-[10px] border bg-transparent font-mono outline-none"
+              style={{ borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}
+            />
+            <div className="text-[10px]" style={{ color: 'var(--text-muted)' }}>
+              Detected: <span style={{ color: 'var(--text-primary)' }}>{kicoInfo?.binary || status.engines?.kicomav?.binary || '-'}</span>
+            </div>
+            <div className="text-[10px]" style={{ color: kicoInfo?.db?.ready ? 'var(--ansi-green)' : 'var(--ansi-yellow)' }}>
+              DB: {kicoInfo?.db?.ready ? `READY (${kicoInfo?.db?.fileCount || 0})` : (status.engines?.kicomav?.available ? 'READY' : 'MISSING')}
+            </div>
+          </div>
         </div>
         <div className="mt-3 flex items-center justify-between gap-2">
           <button
@@ -318,11 +412,36 @@ export function SecurityPage() {
             {saving ? 'SAVING...' : 'SAVE SETTINGS'}
           </button>
         </div>
+        <div className="mt-2 flex items-center gap-2">
+          <button
+            onClick={runKicoSetup}
+            disabled={kicoSetupBusy || saving || scanning}
+            className="px-3 py-1 text-[10px] font-bold border disabled:opacity-50"
+            style={{ borderColor: 'var(--ansi-blue)', color: 'var(--ansi-blue)' }}
+          >
+            {kicoSetupBusy ? 'SETTING UP...' : 'AUTO SETUP KICOMAV'}
+          </button>
+          <button
+            onClick={updateKicoDb}
+            disabled={kicoUpdateBusy || kicoSetupBusy || saving || scanning || !(kicoInfo?.binary || status.engines?.kicomav?.binary)}
+            className="px-3 py-1 text-[10px] font-bold border disabled:opacity-50"
+            style={{ borderColor: 'var(--ansi-yellow)', color: 'var(--ansi-yellow)' }}
+          >
+            {kicoUpdateBusy ? 'UPDATING DB...' : 'UPDATE KICOMAV DB'}
+          </button>
+        </div>
         {setupInfo && (
           <div className="mt-3 p-2 border text-[10px] space-y-1 font-mono" style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-primary)' }}>
             <div>clamscan: {setupInfo.binary || '-'}</div>
             <div>version: {setupInfo.version || '-'}</div>
             <div>freshclam: {setupInfo.freshclam?.path || '-'}</div>
+          </div>
+        )}
+        {(kicoInfo || status.engines?.kicomav) && (
+          <div className="mt-3 p-2 border text-[10px] space-y-1 font-mono" style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-primary)' }}>
+            <div>kicomav: {kicoInfo?.binary || status.engines?.kicomav?.binary || '-'}</div>
+            <div>version: {kicoInfo?.version || '-'}</div>
+            <div>db: {kicoInfo?.db?.ready ? `READY (${kicoInfo?.db?.fileCount || 0})` : (status.engines?.kicomav?.available ? 'READY' : 'MISSING')}</div>
           </div>
         )}
         {dbUpdateInfo && (

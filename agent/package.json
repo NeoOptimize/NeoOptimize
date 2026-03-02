@@ -1,0 +1,10 @@
+{
+  "name": "neooptimize-agent",
+  "version": "0.1.0",
+  "description": "Local agent for NeoOptimize PoC",
+  "main": "agent.js",
+  "private": true,
+  "scripts": {
+    "start": "node agent.js"
+  }
+}

@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain, Menu, dialog, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 const dns = require('dns');
 const { spawn } = require('child_process');
 const { pathToFileURL } = require('url');
@@ -8,8 +9,16 @@ const { autoUpdater } = require('electron-updater');
 
 let backendProcess = null;
 let backendStartedInProcess = false;
+let autoUpdateTimer = null;
+let isUpdateCheckRunning = false;
 
 const RELEASES_URL = 'https://github.com/NeoOptimize/NeoOptimize/releases';
+const defaultUpdaterSettings = {
+  autoCheck: true,
+  autoDownload: false,
+  checkIntervalMinutes: 360
+};
+let updaterSettings = { ...defaultUpdaterSettings };
 let updateState = {
   status: 'idle',
   message: 'Updater idle',
@@ -23,6 +32,63 @@ let updateState = {
   error: null,
   at: new Date().toISOString()
 };
+
+// Optional safe-start: allow disabling GPU via env to mitigate GPU-driver crashes
+if (process.env.NEOOPTIMIZE_SAFE_START === '1') {
+  try {
+    app.disableHardwareAcceleration();
+    app.commandLine.appendSwitch('disable-gpu');
+    appendDesktopCrashLog('safe-start', 'GPU disabled via NEOOPTIMIZE_SAFE_START');
+  } catch (e) {
+    // ignore
+  }
+}
+
+function updaterSettingsPath() {
+  return path.join(app.getPath('userData'), 'config', 'updater.json');
+}
+
+function clampUpdaterSettings(input = {}) {
+  const interval = Number(input.checkIntervalMinutes ?? defaultUpdaterSettings.checkIntervalMinutes);
+  return {
+    autoCheck: Boolean(input.autoCheck ?? defaultUpdaterSettings.autoCheck),
+    autoDownload: Boolean(input.autoDownload ?? defaultUpdaterSettings.autoDownload),
+    checkIntervalMinutes: Number.isFinite(interval) ? Math.max(30, Math.min(1440, Math.floor(interval))) : defaultUpdaterSettings.checkIntervalMinutes
+  };
+}
+
+function loadUpdaterSettings() {
+  try {
+    const p = updaterSettingsPath();
+    if (!fs.existsSync(p)) return { ...defaultUpdaterSettings };
+    const raw = JSON.parse(fs.readFileSync(p, 'utf-8'));
+    return clampUpdaterSettings(raw);
+  } catch {
+    return { ...defaultUpdaterSettings };
+  }
+}
+
+function saveUpdaterSettings(patch = {}) {
+  const next = clampUpdaterSettings({ ...updaterSettings, ...patch });
+  const p = updaterSettingsPath();
+  fs.mkdirSync(path.dirname(p), { recursive: true });
+  fs.writeFileSync(p, JSON.stringify(next, null, 2), 'utf-8');
+  updaterSettings = next;
+  autoUpdater.autoDownload = Boolean(updaterSettings.autoDownload);
+  return updaterSettings;
+}
+
+function scheduleAutoUpdateChecks() {
+  if (autoUpdateTimer) {
+    clearInterval(autoUpdateTimer);
+    autoUpdateTimer = null;
+  }
+  if (!updaterSettings.autoCheck) return;
+  const ms = Math.max(30, Number(updaterSettings.checkIntervalMinutes || 360)) * 60 * 1000;
+  autoUpdateTimer = setInterval(() => {
+    checkForUpdates({ manual: false }).catch(() => {});
+  }, ms);
+}
 
 async function hasInternetConnectivity(timeoutMs = 1800) {
   if (process.env.NEOOPTIMIZE_OFFLINE === '1') return false;
@@ -60,6 +126,46 @@ function resolveAppPaths() {
   const spawnCwd = app.isPackaged ? process.resourcesPath : devRoot;
   const serverPath = path.join(appRoot, 'backend', 'server.js');
   return { appRoot, assetRoot, dataRoot, spawnCwd, serverPath };
+}
+
+function appendDesktopCrashLog(kind, errorLike) {
+  try {
+    const { dataRoot } = resolveAppPaths();
+    const dir = path.join(dataRoot, 'backend', 'diagnostics');
+    fs.mkdirSync(dir, { recursive: true });
+    const file = path.join(dir, 'desktop-crash.log');
+    const entry = {
+      time: new Date().toISOString(),
+      kind: String(kind || 'desktop'),
+      message: String(errorLike?.message || errorLike || 'unknown'),
+      stack: String(errorLike?.stack || '')
+    };
+    fs.appendFileSync(file, `${JSON.stringify(entry)}\n`, 'utf-8');
+  } catch {}
+}
+
+function ensureUserDataWritable() {
+  try {
+    const dataPath = app.getPath('userData');
+    const testDir = path.join(dataPath, '.__writetest');
+    fs.mkdirSync(testDir, { recursive: true });
+    const testFile = path.join(testDir, 'ping');
+    fs.writeFileSync(testFile, 'ok', 'utf-8');
+    try { fs.unlinkSync(testFile); } catch {};
+    try { fs.rmdirSync(testDir); } catch {};
+    return { ok: true, path: dataPath };
+  } catch (err) {
+    try {
+      const alt = path.join(os.tmpdir(), `neo-user-data-${Date.now()}`);
+      fs.mkdirSync(alt, { recursive: true });
+      app.setPath('userData', alt);
+      appendDesktopCrashLog('userDataFallback', `userData not writable, switched to ${alt}`);
+      return { ok: false, fallback: alt };
+    } catch (err2) {
+      appendDesktopCrashLog('userDataError', err2 || err);
+      return { ok: false, error: String(err2 || err) };
+    }
+  }
 }
 
 async function startBackendServer() {
@@ -143,7 +249,7 @@ function runPowerShellScript(scriptPath, args = []) {
 }
 
 function setupAutoUpdater() {
-  autoUpdater.autoDownload = false;
+  autoUpdater.autoDownload = Boolean(updaterSettings.autoDownload);
   autoUpdater.autoInstallOnAppQuit = true;
 
   autoUpdater.on('checking-for-update', () => {
@@ -160,6 +266,9 @@ function setupAutoUpdater() {
       downloading: false,
       error: null
     });
+    if (updaterSettings.autoDownload) {
+      downloadUpdate().catch(() => {});
+    }
   });
   autoUpdater.on('update-not-available', () => {
     setUpdateState({
@@ -203,18 +312,23 @@ function setupAutoUpdater() {
   });
 }
 
-async function checkForUpdates() {
+async function checkForUpdates(options = {}) {
+  const manual = Boolean(options.manual);
+  if (isUpdateCheckRunning) {
+    return { ok: false, error: 'Update check already running', busy: true, currentVersion: app.getVersion() };
+  }
   if (!app.isPackaged) {
     const msg = 'Updater works in packaged build (.exe).';
-    setUpdateState({ status: 'idle', message: msg, error: null });
+    if (manual) setUpdateState({ status: 'idle', message: msg, error: null });
     return { ok: false, error: msg, available: false, currentVersion: app.getVersion() };
   }
   const online = await hasInternetConnectivity();
   if (!online) {
     const msg = 'Offline: update check skipped.';
-    setUpdateState({ status: 'idle', message: msg, error: null, downloading: false });
+    if (manual) setUpdateState({ status: 'idle', message: msg, error: null, downloading: false });
     return { ok: false, error: msg, available: false, currentVersion: app.getVersion() };
   }
+  isUpdateCheckRunning = true;
   try {
     const result = await autoUpdater.checkForUpdates();
     const info = result?.updateInfo || null;
@@ -230,8 +344,10 @@ async function checkForUpdates() {
     };
   } catch (err) {
     const message = String(err?.message || err);
-    setUpdateState({ status: 'error', message: 'Check update failed', error: message });
+    if (manual) setUpdateState({ status: 'error', message: 'Check update failed', error: message });
     return { ok: false, error: message, currentVersion: app.getVersion() };
+  } finally {
+    isUpdateCheckRunning = false;
   }
 }
 
@@ -316,7 +432,17 @@ ipcMain.handle('exec:run', async (event, { cmd, args }) => {
 });
 
 ipcMain.handle('updater:getState', async () => ({ ok: true, ...updateState, currentVersion: app.getVersion() }));
-ipcMain.handle('updater:check', async () => checkForUpdates());
+ipcMain.handle('updater:getSettings', async () => ({ ok: true, settings: updaterSettings }));
+ipcMain.handle('updater:setSettings', async (_event, patch) => {
+  try {
+    const next = saveUpdaterSettings(patch || {});
+    scheduleAutoUpdateChecks();
+    return { ok: true, settings: next };
+  } catch (err) {
+    return { ok: false, error: String(err?.message || err) };
+  }
+});
+ipcMain.handle('updater:check', async () => checkForUpdates({ manual: true }));
 ipcMain.handle('updater:download', async () => downloadUpdate());
 ipcMain.handle('updater:installNow', async () => installUpdateNow());
 ipcMain.handle('updater:openReleases', async () => {
@@ -344,15 +470,66 @@ function createWindow() {
   }
 }
 
+process.on('uncaughtException', (err) => {
+  appendDesktopCrashLog('uncaughtException', err);
+});
+process.on('unhandledRejection', (reason) => {
+  appendDesktopCrashLog('unhandledRejection', reason);
+});
+
 app.whenReady().then(async () => {
+  updaterSettings = loadUpdaterSettings();
   setupAutoUpdater();
-  await startBackendServer();
-  createWindow();
-  createAppMenu();
-  broadcastUpdateState();
+
+  // Ensure userData is writable; if not, fallback to a temp path to avoid hard crashes
+  try {
+    const ud = ensureUserDataWritable();
+    if (ud && ud.fallback) {
+      console.warn('[startup] userData not writable, using fallback:', ud.fallback);
+    }
+  } catch (e) {
+    appendDesktopCrashLog('startup-check', e);
+  }
+
+  // Start backend and create window with guarded fallbacks
+  try {
+    await startBackendServer();
+  } catch (e) {
+    appendDesktopCrashLog('backend.start.error', e);
+  }
+
+  try {
+    createWindow();
+  } catch (err) {
+    appendDesktopCrashLog('createWindow.error', err);
+    // Attempt fallback: set userData to tmp and retry once
+    try {
+      const alt = path.join(os.tmpdir(), `neo-user-data-retry-${Date.now()}`);
+      fs.mkdirSync(alt, { recursive: true });
+      app.setPath('userData', alt);
+      appendDesktopCrashLog('createWindow.retry', `retrying with userData ${alt}`);
+      createWindow();
+    } catch (err2) {
+      appendDesktopCrashLog('createWindow.retry.failed', err2);
+    }
+  }
+
+  try { createAppMenu(); } catch (e) { appendDesktopCrashLog('menu.error', e); }
+  try { broadcastUpdateState(); } catch (e) { appendDesktopCrashLog('broadcast.error', e); }
+  try { scheduleAutoUpdateChecks(); } catch (e) { appendDesktopCrashLog('schedule.error', e); }
+
+  if (updaterSettings.autoCheck) {
+    setTimeout(() => {
+      checkForUpdates({ manual: false }).catch(() => {});
+    }, 8000);
+  }
 });
 
 app.on('before-quit', () => {
+  if (autoUpdateTimer) {
+    clearInterval(autoUpdateTimer);
+    autoUpdateTimer = null;
+  }
   stopBackendServer();
 });
 

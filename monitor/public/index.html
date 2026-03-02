@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NeoMonitor</title>
+  <style>
+    :root{--bg:#071308;--panel:#0e1d12;--line:#23462b;--text:#c8f6d0;--green:#00ff41;--warn:#f5c518;--red:#ff4b4b;--blue:#5ca8ff}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:Consolas,monospace}
+    .wrap{max-width:1400px;margin:0 auto;padding:16px}
+    .row{display:grid;grid-template-columns:1.2fr 1fr;gap:12px}
+    .card{border:1px solid var(--line);background:var(--panel);padding:12px}
+    .title{font-size:13px;color:var(--green);font-weight:700}
+    .muted{color:#8cb196}
+    input,select,button,textarea{background:#08150b;color:var(--text);border:1px solid var(--line);padding:6px;font-family:inherit;font-size:12px}
+    button{cursor:pointer}
+    table{width:100%;border-collapse:collapse;font-size:11px}
+    th,td{padding:6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+    th{color:#9ed0a6}
+    tr.active td{background:#12351a}
+    .ok{color:var(--green)}.warn{color:var(--warn)}.err{color:var(--red)}
+    .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .pre{white-space:pre-wrap;word-break:break-word;background:#08150b;border:1px solid var(--line);padding:8px;max-height:300px;overflow:auto}
+    @media (max-width: 1000px){.row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="title">NEOMONITOR CONTROL PANEL</div>
+      <div class="toolbar" style="margin-top:8px">
+        <label>Admin Token <input id="token" type="password" placeholder="x-admin-token" style="min-width:260px"></label>
+        <button id="saveToken">SAVE TOKEN</button>
+        <button id="refreshAgents">REFRESH AGENTS</button>
+        <span id="status" class="muted"></span>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:12px">
+      <div class="card">
+        <div class="title">AGENTS</div>
+        <table id="agentsTable">
+          <thead><tr><th>Agent ID</th><th>Host</th><th>OS</th><th>Ver</th><th>Admin</th><th>Pending</th><th>Last Seen</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="title">REMOTE ACTIONS</div>
+        <div class="toolbar" style="margin-top:8px">
+          <select id="actionType">
+            <option value="ping">ping</option>
+            <option value="readiness">readiness</option>
+            <option value="backup-now">backup-now</option>
+            <option value="quick-safe-clean">quick-safe-clean</option>
+            <option value="registry-safe-scan">registry-safe-scan</option>
+            <option value="clear-logs">clear-logs</option>
+            <option value="diagnostics-send">diagnostics-send</option>
+          </select>
+          <button id="queueAction">QUEUE ACTION</button>
+          <button id="queueFix">QUEUE BASIC FIX</button>
+        </div>
+        <div style="margin-top:8px" class="muted">Selected Agent: <span id="selectedAgent">-</span></div>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:12px">
+      <div class="card">
+        <div class="title">AGENT DETAILS</div>
+        <div id="agentSummary" class="pre" style="margin-top:8px">No agent selected</div>
+      </div>
+      <div class="card">
+        <div class="title">ACTION HISTORY</div>
+        <div id="actionHistory" class="pre" style="margin-top:8px">No data</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const state = { token: localStorage.getItem('neomonitor-token') || '', agents: [], selectedId: '' };
+    const tokenInput = document.getElementById('token');
+    const statusEl = document.getElementById('status');
+    const tbody = document.querySelector('#agentsTable tbody');
+    const selectedEl = document.getElementById('selectedAgent');
+    const summaryEl = document.getElementById('agentSummary');
+    const historyEl = document.getElementById('actionHistory');
+    const actionTypeEl = document.getElementById('actionType');
+
+    tokenInput.value = state.token;
+
+    async function api(path, options = {}) {
+      const headers = Object.assign({ 'Content-Type': 'application/json', 'x-admin-token': state.token }, options.headers || {});
+      const res = await fetch(path, Object.assign({}, options, { headers }));
+      const txt = await res.text();
+      let json = null;
+      try { json = JSON.parse(txt); } catch {}
+      if (!res.ok || !json || json.ok === false) throw new Error((json && json.error) || txt || `HTTP ${res.status}`);
+      return json;
+    }
+
+    function setStatus(msg, cls = 'muted') {
+      statusEl.className = cls;
+      statusEl.textContent = msg;
+    }
+
+    function renderAgents() {
+      tbody.innerHTML = '';
+      state.agents.forEach((a) => {
+        const tr = document.createElement('tr');
+        if (a.id === state.selectedId) tr.className = 'active';
+        tr.innerHTML = `
+          <td>${a.id}</td>
+          <td>${a.hostname || '-'}</td>
+          <td>${a.os || '-'}</td>
+          <td>${a.appVersion || '-'}</td>
+          <td class="${a.admin ? 'ok' : 'warn'}">${a.admin ? 'YES' : 'NO'}</td>
+          <td>${a.pendingActions || 0}</td>
+          <td>${a.lastSeenAt || '-'}</td>
+        `;
+        tr.addEventListener('click', () => selectAgent(a.id));
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function loadAgents() {
+      setStatus('Loading agents...');
+      try {
+        const j = await api('/api/admin/agents');
+        state.agents = j.agents || [];
+        if (!state.selectedId && state.agents.length > 0) state.selectedId = state.agents[0].id;
+        renderAgents();
+        if (state.selectedId) await selectAgent(state.selectedId);
+        setStatus(`Agents loaded: ${state.agents.length}`, 'ok');
+      } catch (e) {
+        setStatus(String(e.message || e), 'err');
+      }
+    }
+
+    async function selectAgent(id) {
+      state.selectedId = id;
+      selectedEl.textContent = id || '-';
+      renderAgents();
+      try {
+        const j = await api(`/api/admin/agents/${encodeURIComponent(id)}`);
+        summaryEl.textContent = JSON.stringify(j.agent.summary || {}, null, 2) + '\n\n' + JSON.stringify(j.agent.snapshot || {}, null, 2);
+        historyEl.textContent = JSON.stringify((j.agent.actions || []).slice(-100), null, 2);
+      } catch (e) {
+        summaryEl.textContent = String(e.message || e);
+      }
+    }
+
+    async function queueAction(type) {
+      if (!state.selectedId) return setStatus('Select agent first', 'warn');
+      try {
+        const j = await api(`/api/admin/agents/${encodeURIComponent(state.selectedId)}/actions`, {
+          method: 'POST',
+          body: JSON.stringify({ type, payload: {} })
+        });
+        setStatus(`Action queued: ${j.action.type}`, 'ok');
+        await loadAgents();
+      } catch (e) {
+        setStatus(String(e.message || e), 'err');
+      }
+    }
+
+    async function queueBasicFix() {
+      if (!state.selectedId) return setStatus('Select agent first', 'warn');
+      try {
+        const j = await api(`/api/admin/agents/${encodeURIComponent(state.selectedId)}/fix/basic`, { method: 'POST', body: '{}' });
+        setStatus(`Basic fix queued (${j.queued})`, 'ok');
+        await loadAgents();
+      } catch (e) {
+        setStatus(String(e.message || e), 'err');
+      }
+    }
+
+    document.getElementById('saveToken').addEventListener('click', () => {
+      state.token = tokenInput.value.trim();
+      localStorage.setItem('neomonitor-token', state.token);
+      setStatus('Token saved', 'ok');
+    });
+    document.getElementById('refreshAgents').addEventListener('click', loadAgents);
+    document.getElementById('queueAction').addEventListener('click', () => queueAction(actionTypeEl.value));
+    document.getElementById('queueFix').addEventListener('click', queueBasicFix);
+
+    setTimeout(loadAgents, 250);
+  </script>
+</body>
+</html>
