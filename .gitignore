@@ -46,6 +46,8 @@ build/builder-config.json
 # .NET build artifacts
 dotnet/**/bin/
 dotnet/**/obj/
+dotnet/out/
+dotnet/runtime/ai/
 
 # AI runtime artifacts
 gpt4all-installer-win64.exe

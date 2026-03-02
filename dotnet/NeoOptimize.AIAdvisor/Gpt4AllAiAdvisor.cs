@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
@@ -38,7 +39,7 @@ public sealed class Gpt4AllAiAdvisor : IAiAdvisor
             : cliPath;
 
         _cliArgsTemplate = string.IsNullOrWhiteSpace(cliArgsTemplate)
-            ? Environment.GetEnvironmentVariable("NEO_GPT4ALL_CLI_ARGS") ?? "--model {model} --prompt {prompt}"
+            ? Environment.GetEnvironmentVariable("NEO_GPT4ALL_CLI_ARGS") ?? string.Empty
             : cliArgsTemplate;
 
         _httpClient = httpClient ?? new HttpClient
@@ -101,15 +102,13 @@ public sealed class Gpt4AllAiAdvisor : IAiAdvisor
             using var content = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
             using var document = await JsonDocument.ParseAsync(content, cancellationToken: cancellationToken).ConfigureAwait(false);
 
-            if (!document.RootElement.TryGetProperty("choices", out var choices) ||
-                choices.GetArrayLength() == 0)
+            if (!document.RootElement.TryGetProperty("choices", out var choices) || choices.GetArrayLength() == 0)
             {
                 return new AiAdviceResponse(false, "GPT4All", "GPT4All HTTP response has no choices.", DateTimeOffset.Now);
             }
 
             var first = choices[0];
-            if (!first.TryGetProperty("message", out var messageNode) ||
-                !messageNode.TryGetProperty("content", out var contentNode))
+            if (!first.TryGetProperty("message", out var messageNode) || !messageNode.TryGetProperty("content", out var contentNode))
             {
                 return new AiAdviceResponse(false, "GPT4All", "GPT4All HTTP response missing message content.", DateTimeOffset.Now);
             }
@@ -120,11 +119,7 @@ public sealed class Gpt4AllAiAdvisor : IAiAdvisor
                 return new AiAdviceResponse(false, "GPT4All", "GPT4All returned empty recommendation.", DateTimeOffset.Now);
             }
 
-            return new AiAdviceResponse(
-                true,
-                "GPT4All",
-                text.Trim(),
-                DateTimeOffset.Now);
+            return new AiAdviceResponse(true, "GPT4All", text.Trim(), DateTimeOffset.Now);
         }
         catch
         {
@@ -139,10 +134,66 @@ public sealed class Gpt4AllAiAdvisor : IAiAdvisor
             return new AiAdviceResponse(false, "GPT4All", "GPT4All CLI path is not set.", DateTimeOffset.Now);
         }
 
-        var arguments = _cliArgsTemplate
-            .Replace("{model}", Quote(_model), StringComparison.OrdinalIgnoreCase)
-            .Replace("{prompt}", Quote(prompt), StringComparison.OrdinalIgnoreCase);
+        var exeName = Path.GetFileName(_cliPath);
+        if (exeName.Contains("installer", StringComparison.OrdinalIgnoreCase))
+        {
+            return new AiAdviceResponse(
+                false,
+                "GPT4All",
+                "GPT4All CLI path points to installer binary, not runtime executable.",
+                DateTimeOffset.Now);
+        }
 
+        string? lastError = null;
+        foreach (var args in BuildCliArgumentCandidates(prompt))
+        {
+            var run = await ExecuteCliOnceAsync(args, cancellationToken).ConfigureAwait(false);
+            if (run.Success)
+            {
+                return new AiAdviceResponse(true, "GPT4All", run.Message, DateTimeOffset.Now);
+            }
+
+            lastError = run.Message;
+        }
+
+        return new AiAdviceResponse(
+            false,
+            "GPT4All",
+            string.IsNullOrWhiteSpace(lastError) ? "GPT4All CLI execution failed." : lastError,
+            DateTimeOffset.Now);
+    }
+
+    private IEnumerable<string> BuildCliArgumentCandidates(string prompt)
+    {
+        var candidates = new List<string>();
+        var promptQuoted = Quote(prompt);
+        var modelQuoted = Quote(_model);
+
+        if (!string.IsNullOrWhiteSpace(_cliArgsTemplate))
+        {
+            candidates.Add(
+                _cliArgsTemplate
+                    .Replace("{model}", modelQuoted, StringComparison.OrdinalIgnoreCase)
+                    .Replace("{prompt}", promptQuoted, StringComparison.OrdinalIgnoreCase));
+        }
+
+        candidates.Add($"--model {modelQuoted} --prompt {promptQuoted}");
+        candidates.Add($"--model {modelQuoted} -p {promptQuoted}");
+        candidates.Add($"-m {modelQuoted} -p {promptQuoted}");
+        candidates.Add($"--prompt {promptQuoted}");
+        candidates.Add($"-p {promptQuoted}");
+        candidates.Add(promptQuoted);
+
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var item in candidates)
+        {
+            if (!seen.Add(item)) continue;
+            yield return item;
+        }
+    }
+
+    private async Task<OperationResult> ExecuteCliOnceAsync(string arguments, CancellationToken cancellationToken)
+    {
         using var process = new Process();
         process.StartInfo = new ProcessStartInfo
         {
@@ -170,14 +221,15 @@ public sealed class Gpt4AllAiAdvisor : IAiAdvisor
 
             if (process.ExitCode == 0 && !string.IsNullOrWhiteSpace(stdout))
             {
-                return new AiAdviceResponse(true, "GPT4All", stdout, DateTimeOffset.Now);
+                var parsed = TryExtractMessage(stdout);
+                return OperationResult.Ok(parsed);
             }
 
             var reason = string.IsNullOrWhiteSpace(stderr)
-                ? $"GPT4All CLI exited with code {process.ExitCode}."
-                : stderr;
+                ? $"CLI exited with code {process.ExitCode} ({arguments})."
+                : $"{stderr} ({arguments})";
 
-            return new AiAdviceResponse(false, "GPT4All", reason, DateTimeOffset.Now);
+            return OperationResult.Fail(reason);
         }
         catch (OperationCanceledException)
         {
@@ -189,12 +241,49 @@ public sealed class Gpt4AllAiAdvisor : IAiAdvisor
             {
             }
 
-            return new AiAdviceResponse(false, "GPT4All", "GPT4All CLI timeout.", DateTimeOffset.Now);
+            return OperationResult.Fail($"GPT4All CLI timeout ({arguments}).");
         }
         catch (Exception ex)
         {
-            return new AiAdviceResponse(false, "GPT4All", ex.Message, DateTimeOffset.Now);
+            return OperationResult.Fail($"{ex.Message} ({arguments})");
         }
+    }
+
+    private static string TryExtractMessage(string output)
+    {
+        var text = output.Trim();
+        if (string.IsNullOrWhiteSpace(text)) return text;
+
+        try
+        {
+            using var document = JsonDocument.Parse(text);
+            var root = document.RootElement;
+
+            if (root.TryGetProperty("response", out var responseNode) && responseNode.ValueKind == JsonValueKind.String)
+            {
+                return responseNode.GetString() ?? text;
+            }
+
+            if (root.TryGetProperty("content", out var contentNode) && contentNode.ValueKind == JsonValueKind.String)
+            {
+                return contentNode.GetString() ?? text;
+            }
+
+            if (root.TryGetProperty("text", out var textNode) && textNode.ValueKind == JsonValueKind.String)
+            {
+                return textNode.GetString() ?? text;
+            }
+
+            if (root.TryGetProperty("message", out var messageNode) && messageNode.ValueKind == JsonValueKind.String)
+            {
+                return messageNode.GetString() ?? text;
+            }
+        }
+        catch
+        {
+        }
+
+        return text;
     }
 
     private static string BuildPrompt(AiAdviceRequest request)
@@ -211,5 +300,11 @@ public sealed class Gpt4AllAiAdvisor : IAiAdvisor
     {
         var escaped = value.Replace("\"", "\\\"", StringComparison.Ordinal);
         return $"\"{escaped}\"";
+    }
+
+    private sealed record OperationResult(bool Success, string Message)
+    {
+        public static OperationResult Ok(string message) => new(true, message);
+        public static OperationResult Fail(string message) => new(false, message);
     }
 }

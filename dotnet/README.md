@@ -19,6 +19,25 @@ dotnet test .\NeoOptimize.slnx
 dotnet run --project .\NeoOptimize.App\NeoOptimize.App.csproj
 ```
 
+## Packaging
+
+Install WiX CLI once:
+
+```powershell
+dotnet tool install --global wix --version 4.*
+```
+
+Build installers:
+
+```powershell
+.\scripts\package-installers.ps1 -Variant both -ProductVersion 1.0.0
+```
+
+Outputs:
+
+- `out/installers/NeoOptimize-CoreOnly.msi`
+- `out/installers/NeoOptimize-CorePlusAI.msi`
+
 ## AI Advisor Notes
 
 - AI is advisor-only by design.
@@ -47,6 +66,14 @@ Optional env vars:
 - `NEO_GPT4ALL_ENDPOINT` (default: `http://127.0.0.1:4891/v1/chat/completions`)
 - `NEO_GPT4ALL_MODEL` (default: `gpt4all`)
 - `NEO_GPT4ALL_CLI` (full path to CLI executable)
-- `NEO_GPT4ALL_CLI_ARGS` (default: `--model {model} --prompt {prompt}`)
+- `NEO_GPT4ALL_CLI_ARGS` (optional explicit template)
+
+If `NEO_GPT4ALL_CLI_ARGS` is not set, adapter probes common CLI patterns:
+
+- `--model {model} --prompt {prompt}`
+- `--model {model} -p {prompt}`
+- `-m {model} -p {prompt}`
+- `--prompt {prompt}`
+- `-p {prompt}`
 
 If both adapters are unavailable, app falls back to `RuleBasedAiAdvisor`.

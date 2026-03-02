@@ -1,0 +1,70 @@
+name: Dotnet Installer
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - "dotnet/**"
+      - ".github/workflows/dotnet-installer.yml"
+  pull_request:
+    branches: [ main ]
+    paths:
+      - "dotnet/**"
+      - ".github/workflows/dotnet-installer.yml"
+
+jobs:
+  build-installers:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore
+        run: dotnet restore .\dotnet\NeoOptimize.slnx
+
+      - name: Build
+        run: dotnet build .\dotnet\NeoOptimize.slnx --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test .\dotnet\NeoOptimize.slnx --configuration Release --no-build
+
+      - name: Install WiX CLI
+        shell: pwsh
+        run: |
+          dotnet tool update --global wix --version 4.* | Out-Null
+          if ($LASTEXITCODE -ne 0) {
+            dotnet tool install --global wix --version 4.* | Out-Null
+          }
+          "$env:USERPROFILE\.dotnet\tools" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: Seed optional AI runtime directory
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path .\dotnet\runtime\ai | Out-Null
+          Set-Content -Path .\dotnet\runtime\ai\README.txt -Value "Replace with actual offline AI runtime/model files for release packaging." -Encoding UTF8
+
+      - name: Build Core and Core+AI installers
+        shell: pwsh
+        run: |
+          .\dotnet\scripts\package-installers.ps1 -Variant both -ProductVersion 1.0.0
+
+      - name: Upload installer artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: neooptimize-msi
+          path: dotnet/out/installers/*.msi
+          if-no-files-found: error
+
+      - name: Upload publish artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: neooptimize-publish
+          path: dotnet/out/publish/**
+          if-no-files-found: error

@@ -4,6 +4,7 @@
   <?define UpgradeCode = "{7E7A5D0F-CB70-4E6A-9F1A-9C7EFA1BDA54}" ?>
   <?define CoreSourceDir = "..\NeoOptimize.App\bin\Release\net8.0-windows\publish" ?>
   <?define AiSourceDir = "..\runtime\ai" ?>
+  <?define IncludeAi = 1 ?>
 
   <Package Name="NeoOptimize"
            Manufacturer="NeoOptimize"
@@ -27,6 +28,7 @@
                AllowAdvertise="no">
         <ComponentGroupRef Id="CoreFilesGroup" />
       </Feature>
+      <?if $(var.IncludeAi) = 1 ?>
       <Feature Id="AiAdvisorFeature"
                Title="AI Advisor Runtime (Optional)"
                Description="Optional local runtime/model files for offline AI recommendations."
@@ -35,13 +37,16 @@
                AllowAdvertise="no">
         <ComponentGroupRef Id="AiAdvisorFilesGroup" />
       </Feature>
+      <?endif?>
     </Feature>
   </Package>
 
   <Fragment>
     <StandardDirectory Id="ProgramFiles64Folder">
       <Directory Id="INSTALLFOLDER" Name="NeoOptimize">
+        <?if $(var.IncludeAi) = 1 ?>
         <Directory Id="AIADVISORFOLDER" Name="AIAdvisor" />
+        <?endif?>
       </Directory>
     </StandardDirectory>
   </Fragment>
@@ -51,9 +56,11 @@
       <Files Include="$(var.CoreSourceDir)\**\*"
              Exclude="$(var.CoreSourceDir)\**\*.pdb;$(var.CoreSourceDir)\**\*.xml" />
     </ComponentGroup>
+    <?if $(var.IncludeAi) = 1 ?>
     <ComponentGroup Id="AiAdvisorFilesGroup" Directory="AIADVISORFOLDER">
       <Files Include="$(var.AiSourceDir)\**\*"
              Exclude="$(var.AiSourceDir)\**\*.tmp" />
     </ComponentGroup>
+    <?endif?>
   </Fragment>
 </Wix>
