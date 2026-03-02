@@ -15,12 +15,18 @@ public sealed class OllamaAiAdvisor : IAiAdvisor
     private readonly string _model;
 
     public OllamaAiAdvisor(
-        string endpoint = "http://127.0.0.1:11434/api/generate",
-        string model = "llama3.1:8b",
+        string? endpoint = null,
+        string? model = null,
         HttpClient? httpClient = null)
     {
-        _endpoint = endpoint;
-        _model = model;
+        _endpoint = string.IsNullOrWhiteSpace(endpoint)
+            ? Environment.GetEnvironmentVariable("NEO_OLLAMA_ENDPOINT") ?? "http://127.0.0.1:11434/api/generate"
+            : endpoint;
+
+        _model = string.IsNullOrWhiteSpace(model)
+            ? Environment.GetEnvironmentVariable("NEO_OLLAMA_MODEL") ?? "llama3.1:8b"
+            : model;
+
         _httpClient = httpClient ?? new HttpClient
         {
             Timeout = TimeSpan.FromSeconds(8)
@@ -40,26 +46,33 @@ public sealed class OllamaAiAdvisor : IAiAdvisor
             stream = false
         };
 
-        using var response = await _httpClient.PostAsJsonAsync(_endpoint, payload, cancellationToken).ConfigureAwait(false);
-        if (!response.IsSuccessStatusCode)
+        try
         {
+            using var response = await _httpClient.PostAsJsonAsync(_endpoint, payload, cancellationToken).ConfigureAwait(false);
+            if (!response.IsSuccessStatusCode)
+            {
+                return new AiAdviceResponse(
+                    false,
+                    "Ollama",
+                    $"Ollama unavailable ({(int)response.StatusCode}).",
+                    DateTimeOffset.Now);
+            }
+
+            using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+            using var document = await JsonDocument.ParseAsync(stream, cancellationToken: cancellationToken).ConfigureAwait(false);
+            var text = document.RootElement.TryGetProperty("response", out var resultNode)
+                ? resultNode.GetString() ?? "No response from Ollama."
+                : "No response from Ollama.";
+
             return new AiAdviceResponse(
-                false,
+                true,
                 "Ollama",
-                $"Ollama unavailable ({(int)response.StatusCode}).",
+                text.Trim(),
                 DateTimeOffset.Now);
         }
-
-        using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-        using var document = await JsonDocument.ParseAsync(stream, cancellationToken: cancellationToken).ConfigureAwait(false);
-        var text = document.RootElement.TryGetProperty("response", out var resultNode)
-            ? resultNode.GetString() ?? "No response from Ollama."
-            : "No response from Ollama.";
-
-        return new AiAdviceResponse(
-            true,
-            "Ollama",
-            text.Trim(),
-            DateTimeOffset.Now);
+        catch
+        {
+            return new AiAdviceResponse(false, "Ollama", "Ollama adapter failed.", DateTimeOffset.Now);
+        }
     }
 }

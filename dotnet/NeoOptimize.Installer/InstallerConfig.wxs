@@ -1,11 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <?define ProductVersion = "1.0.0" ?>
+  <?define UpgradeCode = "{7E7A5D0F-CB70-4E6A-9F1A-9C7EFA1BDA54}" ?>
+  <?define CoreSourceDir = "..\NeoOptimize.App\bin\Release\net8.0-windows\publish" ?>
+  <?define AiSourceDir = "..\runtime\ai" ?>
+
   <Package Name="NeoOptimize"
            Manufacturer="NeoOptimize"
-           Version="1.0.0"
-           UpgradeCode="PUT-GUID-HERE"
-           Language="1033">
-    <MajorUpgrade DowngradeErrorMessage="A newer version is already installed." />
+           Version="$(var.ProductVersion)"
+           UpgradeCode="$(var.UpgradeCode)"
+           Language="1033"
+           Scope="perMachine">
+    <MajorUpgrade DowngradeErrorMessage="A newer version of NeoOptimize is already installed." />
     <MediaTemplate EmbedCab="yes" />
+
+    <Feature Id="CompleteFeature"
+             Title="NeoOptimize"
+             Description="NeoOptimize Windows optimizer with optional offline AI advisor runtime."
+             Level="1"
+             Display="expand"
+             AllowAdvertise="no">
+      <Feature Id="CoreFeature"
+               Title="Core Application"
+               Description="Required: Native app and core engine modules."
+               Level="1"
+               AllowAdvertise="no">
+        <ComponentGroupRef Id="CoreFilesGroup" />
+      </Feature>
+      <Feature Id="AiAdvisorFeature"
+               Title="AI Advisor Runtime (Optional)"
+               Description="Optional local runtime/model files for offline AI recommendations."
+               Level="2"
+               Absent="allow"
+               AllowAdvertise="no">
+        <ComponentGroupRef Id="AiAdvisorFilesGroup" />
+      </Feature>
+    </Feature>
   </Package>
+
+  <Fragment>
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="NeoOptimize">
+        <Directory Id="AIADVISORFOLDER" Name="AIAdvisor" />
+      </Directory>
+    </StandardDirectory>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="CoreFilesGroup" Directory="INSTALLFOLDER">
+      <Files Include="$(var.CoreSourceDir)\**\*"
+             Exclude="$(var.CoreSourceDir)\**\*.pdb;$(var.CoreSourceDir)\**\*.xml" />
+    </ComponentGroup>
+    <ComponentGroup Id="AiAdvisorFilesGroup" Directory="AIADVISORFOLDER">
+      <Files Include="$(var.AiSourceDir)\**\*"
+             Exclude="$(var.AiSourceDir)\**\*.tmp" />
+    </ComponentGroup>
+  </Fragment>
 </Wix>
