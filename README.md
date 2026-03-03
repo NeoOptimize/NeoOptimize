@@ -21,7 +21,7 @@ NeoOptimize is a native Windows optimization application built with C# WPF
 
 ## Prerequisites
 
-- Windows 10/11
+- Windows 10/11/12
 - .NET SDK 8.x
 - PowerShell 7+
 - WiX CLI 4.x (`dotnet tool install --global wix --version 4.*`)
