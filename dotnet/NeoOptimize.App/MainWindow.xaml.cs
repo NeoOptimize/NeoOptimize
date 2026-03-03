@@ -4,6 +4,10 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using WinForms = System.Windows.Forms;
+using System.Net.Http;
+using System.Text.Json;
+using System.Net.Http.Json;
+using System.IO;
 using NeoOptimize.AIAdvisor;
 using NeoOptimize.App.ViewModels;
 using NeoOptimize.Core;
@@ -25,10 +29,20 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
+        var loadedSettings = ViewModels.SettingsViewModel.Load();
+
+        var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(Math.Max(1, loadedSettings.Gpt4AllTimeoutSeconds)) };
+        var gpt4All = new Gpt4AllAiAdvisor(
+            endpoint: string.IsNullOrWhiteSpace(loadedSettings.Gpt4AllEndpoint) ? Environment.GetEnvironmentVariable("NEO_GPT4ALL_ENDPOINT") : loadedSettings.Gpt4AllEndpoint,
+            model: null,
+            cliPath: string.IsNullOrWhiteSpace(loadedSettings.Gpt4AllCliPath) ? Environment.GetEnvironmentVariable("NEO_GPT4ALL_CLI") : loadedSettings.Gpt4AllCliPath,
+            cliArgsTemplate: null,
+            httpClient: httpClient);
+
         var aiAdvisor = new CompositeAiAdvisor(
             new RuleBasedAiAdvisor(),
-            new OllamaAiAdvisor(),
-            new Gpt4AllAiAdvisor());
+            gpt4All,
+            new RuleBasedAiAdvisor());
 
         DataContext = new MainWindowViewModel(
             new CleanerEngine(),
@@ -43,11 +57,99 @@ public partial class MainWindow : Window
             new RemoteAssistService(),
             aiAdvisor);
 
+        // Apply loaded settings into ViewModel.Settings (copy values)
+        if (DataContext is MainWindowViewModel vm)
+        {
+            vm.Settings.ExperienceMode = loadedSettings.ExperienceMode;
+            vm.Settings.Theme = loadedSettings.Theme;
+            vm.Settings.Language = loadedSettings.Language;
+            vm.Settings.AiProvider = loadedSettings.AiProvider;
+            vm.Settings.Gpt4AllCliPath = loadedSettings.Gpt4AllCliPath;
+            vm.Settings.Gpt4AllEndpoint = loadedSettings.Gpt4AllEndpoint;
+            vm.Settings.Gpt4AllTimeoutSeconds = loadedSettings.Gpt4AllTimeoutSeconds;
+        }
+
+        // Start AI health-check in background and report status to UI
+        _ = CheckAiHealthAsync(gpt4All, loadedSettings);
+
         Loaded += OnLoaded;
         StateChanged += OnStateChanged;
         Closing += OnClosing;
         Closed += OnClosed;
         Application.Current.SessionEnding += OnSessionEnding;
+    }
+
+    private async Task CheckAiHealthAsync(Gpt4AllAiAdvisor gpt4All, ViewModels.SettingsViewModel loadedSettings)
+    {
+        try
+        {
+            var endpointEnv = string.IsNullOrWhiteSpace(loadedSettings.Gpt4AllEndpoint)
+                ? Environment.GetEnvironmentVariable("NEO_GPT4ALL_ENDPOINT")
+                : loadedSettings.Gpt4AllEndpoint;
+
+            var cliEnv = string.IsNullOrWhiteSpace(loadedSettings.Gpt4AllCliPath)
+                ? Environment.GetEnvironmentVariable("NEO_GPT4ALL_CLI")
+                : loadedSettings.Gpt4AllCliPath;
+
+            string status;
+
+            if (!string.IsNullOrWhiteSpace(cliEnv) && File.Exists(cliEnv))
+            {
+                status = $"AI: GPT4All CLI available ({Path.GetFileName(cliEnv)}).";
+            }
+            else if (!string.IsNullOrWhiteSpace(endpointEnv))
+            {
+                // Quick HTTP health check
+                using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(3) };
+
+                var payload = new
+                {
+                    model = "health-check",
+                    messages = new[] { new { role = "user", content = "health check" } }
+                };
+
+                try
+                {
+                    using var cts = new System.Threading.CancellationTokenSource(TimeSpan.FromSeconds(3));
+                    var resp = await http.PostAsJsonAsync(endpointEnv, payload, cts.Token).ConfigureAwait(false);
+                    if (resp.IsSuccessStatusCode)
+                    {
+                        status = "AI: GPT4All HTTP endpoint reachable.";
+                    }
+                    else
+                    {
+                        status = $"AI: GPT4All HTTP unreachable (status {(int)resp.StatusCode}).";
+                    }
+                }
+                catch
+                {
+                    status = "AI: GPT4All HTTP unreachable (timeout/error).";
+                }
+            }
+            else
+            {
+                status = "AI: No GPT4All configuration found. Set NEO_GPT4ALL_CLI or NEO_GPT4ALL_ENDPOINT.";
+            }
+
+            // Update UI friendly message
+            Dispatcher.Invoke(() =>
+            {
+                if (DataContext is MainWindowViewModel vm)
+                {
+                    vm.UpdateStatus = status;
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (DataContext is MainWindowViewModel vm)
+                {
+                    vm.UpdateStatus = "AI health-check failed: " + ex.Message;
+                }
+            });
+        }
     }
 
     private MainWindowViewModel ViewModel => (MainWindowViewModel)DataContext;

@@ -32,6 +32,28 @@
                            Foreground="{StaticResource TitleBrush}" />
                 <ComboBox ItemsSource="{Binding Languages}"
                           SelectedItem="{Binding Language}" />
+
+                <TextBlock Text="AI Provider"
+                           Foreground="{StaticResource TitleBrush}"
+                           Margin="0,12,0,0" />
+                <ComboBox ItemsSource="{Binding AiProviders}"
+                          SelectedItem="{Binding AiProvider}" />
+
+                <TextBlock Text="GPT4All HTTP Endpoint"
+                           Foreground="{StaticResource TitleBrush}"
+                           Margin="0,8,0,0" />
+                <TextBox Text="{Binding Gpt4AllEndpoint, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBlock Text="GPT4All CLI Path"
+                           Foreground="{StaticResource TitleBrush}"
+                           Margin="0,8,0,0" />
+                <TextBox Text="{Binding Gpt4AllCliPath, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBlock Text="GPT4All Timeout (s)"
+                           Foreground="{StaticResource TitleBrush}"
+                           Margin="0,8,0,0" />
+                <TextBox Text="{Binding Gpt4AllTimeoutSeconds, UpdateSourceTrigger=PropertyChanged}" />
+                <Button Content="Save Settings" Margin="0,10,0,0" Click="OnSaveSettingsClicked" />
             </StackPanel>
         </Border>
 

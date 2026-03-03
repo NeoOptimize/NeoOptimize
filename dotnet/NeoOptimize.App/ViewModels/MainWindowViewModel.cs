@@ -160,7 +160,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     public string UpdateStatus
     {
         get => _updateStatus;
-        private set => SetProperty(ref _updateStatus, value);
+        set => SetProperty(ref _updateStatus, value);
     }
 
     public string AiProviderName

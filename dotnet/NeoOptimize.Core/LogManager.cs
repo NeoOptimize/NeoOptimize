@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Diagnostics;
 using NeoOptimize.Core.Models;
 
 namespace NeoOptimize.Core;
@@ -12,7 +13,7 @@ public sealed class LogManager
 {
     private readonly object _sync = new();
     private readonly string _reportDirectory;
-    private readonly List<LogEntry> _entries = [];
+    private readonly List<LogEntry> _entries = new();
 
     public LogManager(string? reportDirectory = null)
     {
@@ -26,7 +27,7 @@ public sealed class LogManager
     }
 
     public string CurrentReportPath =>
-        Path.Combine(_reportDirectory, $"report-{DateTime.Now:dd-MM-yyyy}.html");
+        Path.Combine(_reportDirectory, $"report-{DateTime.Now:yyyy-MM-dd}.html");
 
     public LogEntry Append(string module, string action, OperationResult result)
     {
@@ -88,6 +89,14 @@ public sealed class LogManager
         }
 
         sb.AppendLine("</tbody></table></body></html>");
-        File.WriteAllText(CurrentReportPath, sb.ToString(), Encoding.UTF8);
+
+        try
+        {
+            File.WriteAllText(CurrentReportPath, sb.ToString(), Encoding.UTF8);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"NeoOptimize: failed to write HTML report to {CurrentReportPath}: {ex}");
+        }
     }
 }
