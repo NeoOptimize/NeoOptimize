@@ -9,33 +9,21 @@
            UpgradeCode="$(var.UpgradeCode)"
            Language="1033"
            Scope="perMachine">
-    <MajorUpgrade DowngradeErrorMessage="A newer version of NeoOptimize is already installed." />
+    <MajorUpgrade AllowSameVersionUpgrades="yes"
+                  DowngradeErrorMessage="A newer version of NeoOptimize is already installed." />
     <MediaTemplate EmbedCab="yes" />
 
-    <ui:WixUI Id="WixUI_FeatureTree" InstallDirectory="INSTALLFOLDER" />
+    <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
     <WixVariable Id="WixUILicenseRtf" Value="$(var.LicenseRtf)" />
 
-    <Feature Id="CompleteFeature"
+    <Feature Id="MainFeature"
              Title="NeoOptimize"
-             Description="NeoOptimize Windows optimizer with optional offline AI advisor runtime."
+             Description="NeoOptimize Windows optimizer."
              Level="1"
-             Display="expand"
              AllowAdvertise="no">
-      <Feature Id="CoreFeature"
-               Title="Core Application"
-               Description="Required: Native app and core engine modules."
-               Level="1"
-               AllowAdvertise="no">
-        <ComponentGroupRef Id="CoreFilesGroup" />
-      </Feature>
+      <ComponentGroupRef Id="CoreFilesGroup" />
       <?if $(var.IncludeAi) = 1 ?>
-      <Feature Id="AiAdvisorFeature"
-               Title="AI Advisor Runtime (Optional)"
-               Description="Optional local runtime/model files for offline AI recommendations."
-               Level="2"
-               AllowAdvertise="no">
-        <ComponentGroupRef Id="AiAdvisorFilesGroup" />
-      </Feature>
+      <ComponentGroupRef Id="AiAdvisorFilesGroup" />
       <?endif?>
     </Feature>
   </Package>
@@ -47,6 +35,24 @@
         <Directory Id="AIADVISORFOLDER" Name="AIAdvisor" />
         <?endif?>
       </Directory>
+    </StandardDirectory>
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="ProgramMenuNeoOptimizeFolder" Name="NeoOptimize" />
+    </StandardDirectory>
+    <StandardDirectory Id="DesktopFolder">
+      <Component Id="cmpDesktopShortcut" Guid="*">
+        <Shortcut Id="scDesktopNeoOptimize"
+                  Name="NeoOptimize"
+                  Description="Launch NeoOptimize"
+                  Target="[INSTALLFOLDER]NeoOptimize.App.exe"
+                  WorkingDirectory="INSTALLFOLDER" />
+        <RegistryValue Root="HKLM"
+                       Key="Software\NeoOptimize"
+                       Name="DesktopShortcut"
+                       Type="integer"
+                       Value="1"
+                       KeyPath="yes" />
+      </Component>
     </StandardDirectory>
   </Fragment>
 
@@ -76,6 +82,29 @@
     </DirectoryRef>
   </Fragment>
 
+  <Fragment>
+    <DirectoryRef Id="ProgramMenuNeoOptimizeFolder">
+      <Component Id="cmpStartMenuShortcut" Guid="*">
+        <Shortcut Id="scMenuNeoOptimize"
+                  Name="NeoOptimize"
+                  Description="Launch NeoOptimize"
+                  Target="[INSTALLFOLDER]NeoOptimize.App.exe"
+                  WorkingDirectory="INSTALLFOLDER" />
+        <Shortcut Id="scMenuUninstall"
+                  Name="Uninstall NeoOptimize"
+                  Target="[System64Folder]msiexec.exe"
+                  Arguments="/x [ProductCode]" />
+        <RemoveFolder Id="RemoveProgramMenuNeoOptimizeFolder" On="uninstall" />
+        <RegistryValue Root="HKLM"
+                       Key="Software\NeoOptimize"
+                       Name="StartMenuShortcut"
+                       Type="integer"
+                       Value="1"
+                       KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
   <?if $(var.IncludeAi) = 1 ?>
   <Fragment>
     <DirectoryRef Id="AIADVISORFOLDER">
@@ -95,6 +124,8 @@
       <ComponentRef Id="cmpCoreDll" />
       <ComponentRef Id="cmpServicesDll" />
       <ComponentRef Id="cmpAiAdvisorDll" />
+      <ComponentRef Id="cmpStartMenuShortcut" />
+      <ComponentRef Id="cmpDesktopShortcut" />
     </ComponentGroup>
   </Fragment>
 

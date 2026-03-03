@@ -1,51 +1,34 @@
-# NeoOptimize Installer (WiX v4 Template)
+# NeoOptimize Installer (WiX v4)
 
-`InstallerConfig.wxs` is prepared with two install features:
+`InstallerConfig.wxs` builds a simple install flow (no feature selection page) with:
 
-- `CoreFeature` (required)
-- `AiAdvisorFeature` (optional)
+- MIT license agreement page
+- install directory page
+- desktop shortcut + start menu shortcut
+- `perMachine` scope
 
-Installer UI now includes a `WixUI_FeatureTree` flow with a mandatory MIT
-license agreement step (`License.rtf`).
+## Build
 
-## Source folders
-
-- Core publish output:
-  - `..\NeoOptimize.App\bin\Release\net8.0-windows\publish`
-- Optional AI runtime/model bundle:
-  - `..\runtime\ai`
-
-Adjust these via preprocessor variables in `InstallerConfig.wxs`.
-
-## Build flow (example)
-
-1. Install WiX CLI (once):
+1. Install WiX CLI once:
    - `dotnet tool install --global wix --version 4.*`
-2. Run packaging script:
+2. Package both variants:
    - `..\scripts\package-installers.ps1 -Variant both -ProductVersion 1.0.0`
-3. MSI outputs:
-   - `..\out\installers\NeoOptimize-CoreOnly.msi`
-   - `..\out\installers\NeoOptimize-CorePlusAI.msi`
 
-Optional:
+Outputs:
 
-- pass `-AiRuntimeSource <path>` to copy real offline AI runtime/model files before packaging.
+- `..\out\installers\NeoOptimize-CoreOnly.msi`
+- `..\out\installers\NeoOptimize-CorePlusAI.msi`
 
-## Feature selection at install time
+## Variant model
 
-Use MSI features:
+Installer UI does not ask optional components to avoid user confusion.
+Variant is decided at build time:
 
-- Core only:
-  - `ADDLOCAL=CoreFeature`
-- Core + AI Advisor:
-  - `ADDLOCAL=CoreFeature,AiAdvisorFeature`
+- `CoreOnly`: app + core modules only.
+- `CorePlusAI`: app + core modules + bundled AI runtime payload.
 
-Keep code-signing enabled for both MSI and binaries.
+## Release hardening
 
-## IncludeAi switch
-
-`InstallerConfig.wxs` supports `IncludeAi` preprocessor define:
-
-- `IncludeAi=0` -> build core-only package without AI feature.
-- `IncludeAi=1` -> include optional AI feature and AI payload directory.
-
+- Sign `NeoOptimize.App.exe` and both MSI files using Authenticode (`signtool`)
+  before GitHub release.
+- Unsigned binaries may still trigger SmartScreen reputation warnings.

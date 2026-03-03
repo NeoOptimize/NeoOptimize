@@ -45,7 +45,26 @@ Outputs:
 - `dotnet/out/installers/NeoOptimize-CoreOnly.msi`
 - `dotnet/out/installers/NeoOptimize-CorePlusAI.msi`
 
+## Install Notes (Windows)
+
+- Run MSI with administrator privileges (app is `perMachine` and app manifest uses
+  `requireAdministrator`).
+- Desktop and Start Menu shortcuts are created automatically.
+- SmartScreen reputation warnings can still appear on unsigned binaries. To reduce
+  this for end users, sign both `.exe` and `.msi` with an Authenticode certificate
+  before publishing release artifacts.
+
 ## Release Checklist
 
 See `RELEASE_CHECKLIST_v1.0.md` for final validation, tagging, and GitHub
 release steps.
+
+## SmartScreen Readiness
+
+To minimize SmartScreen warnings on distributed installers:
+
+1. Provide a trusted Authenticode certificate.
+2. Configure GitHub secrets:
+   - `WIN_SIGN_CERT_BASE64` (base64-encoded `.pfx`)
+   - `WIN_SIGN_CERT_PASSWORD`
+3. Publish from tag `v*` so CI signs `NeoOptimize.App.exe` and both MSI files.

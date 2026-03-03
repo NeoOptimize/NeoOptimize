@@ -7,6 +7,8 @@
 - [x] Build installer MSI:
   - `.\dotnet\scripts\package-installers.ps1 -Variant both -ProductVersion 1.0.0`
 - [x] MIT license agreement integrated in installer UI.
+- [x] Installer creates Desktop + Start Menu shortcuts.
+- [x] MiniTray (system tray icon + quick actions) works in app runtime.
 
 ## 2. Artifact Verification
 
@@ -39,3 +41,11 @@
   - UI modernization + MiniTray panel.
   - MIT license agreement during install.
   - AI advisor remains advisor-only (no direct system mutation).
+  - SmartScreen note if artifacts are not code-signed.
+
+## 6. Code Signing (required for SmartScreen reputation)
+
+- [ ] Sign `NeoOptimize.App.exe` (Authenticode, SHA256 timestamp).
+- [ ] Sign `NeoOptimize-CoreOnly.msi` and `NeoOptimize-CorePlusAI.msi`.
+- [ ] Verify signatures:
+  - `Get-AuthenticodeSignature <file>`

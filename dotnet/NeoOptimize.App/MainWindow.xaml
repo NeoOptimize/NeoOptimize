@@ -6,6 +6,7 @@
         xmlns:views="clr-namespace:NeoOptimize.App.Views"
         mc:Ignorable="d"
         Title="NeoOptimize Terminal Console"
+        Icon="Assets/logo.ico"
         MinWidth="1280"
         MinHeight="820"
         Width="1500"
