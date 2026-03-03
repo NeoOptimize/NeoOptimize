@@ -6,188 +6,229 @@
         xmlns:views="clr-namespace:NeoOptimize.App.Views"
         mc:Ignorable="d"
         Title="NeoOptimize Adaptive (WPF Preview)"
-        MinWidth="1180"
-        MinHeight="760"
-        Width="1420"
-        Height="860"
+        MinWidth="1220"
+        MinHeight="780"
+        Width="1450"
+        Height="900"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource AppBackgroundBrush}">
-    <Grid Margin="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="210" />
-        </Grid.RowDefinitions>
+    <Grid>
+        <Canvas IsHitTestVisible="False">
+            <Ellipse Width="380"
+                     Height="380"
+                     Fill="#203DB2FF"
+                     Opacity="0.16"
+                     Canvas.Left="-120"
+                     Canvas.Top="-120" />
+            <Ellipse Width="260"
+                     Height="260"
+                     Fill="#2846F4BE"
+                     Opacity="0.12"
+                     Canvas.Right="-40"
+                     Canvas.Top="110" />
+        </Canvas>
 
-        <Border Grid.Row="0" Style="{StaticResource CardBorderStyle}">
-            <Grid>
+        <Grid Margin="24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="220" />
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0" Style="{StaticResource HeroCardBorderStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="420" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Margin="0,0,16,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="44"
+                                    Height="44"
+                                    CornerRadius="10"
+                                    Background="#0E2237"
+                                    BorderBrush="{StaticResource PanelBorderBrush}"
+                                    BorderThickness="1"
+                                    Padding="4">
+                                <Image Source="Assets/logo.png"
+                                       Stretch="Uniform" />
+                            </Border>
+                            <StackPanel Margin="10,0,0,0">
+                                <TextBlock Text="NeoOptimize"
+                                           Style="{StaticResource TitleTextStyle}" />
+                                <TextBlock Text="v1.0.0"
+                                           Style="{StaticResource StatusChipTextStyle}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <TextBlock Text="Windows offline optimizer dengan AI advisor mode dan eksekusi native berhak administrator."
+                                   Margin="0,8,0,10"
+                                   Style="{StaticResource SubtleTextStyle}"
+                                   TextWrapping="Wrap" />
+
+                        <WrapPanel Margin="0,4,0,0">
+                            <Border Background="#142C45"
+                                    BorderBrush="{StaticResource PanelBorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="999"
+                                    Padding="10,4"
+                                    Margin="0,0,8,8">
+                                <TextBlock Text="{Binding Settings.ExperienceMode, StringFormat='Mode: {0}'}"
+                                           Style="{StaticResource StatusChipTextStyle}" />
+                            </Border>
+                            <Border Background="#142C45"
+                                    BorderBrush="{StaticResource PanelBorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="999"
+                                    Padding="10,4"
+                                    Margin="0,0,8,8">
+                                <TextBlock Text="{Binding Settings.Language, StringFormat='Language: {0}'}"
+                                           Style="{StaticResource StatusChipTextStyle}" />
+                            </Border>
+                            <Border Background="#142C45"
+                                    BorderBrush="{StaticResource PanelBorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="999"
+                                    Padding="10,4"
+                                    Margin="0,0,8,8">
+                                <TextBlock Text="{Binding HealthStatus, StringFormat='Health: {0}'}"
+                                           Style="{StaticResource StatusChipTextStyle}" />
+                            </Border>
+                        </WrapPanel>
+
+                        <TextBlock Text="{Binding UpdateStatus}"
+                                   Margin="0,6,0,0"
+                                   Style="{StaticResource SubtleTextStyle}" />
+                    </StackPanel>
+
+                    <Border Grid.Column="1"
+                            Background="#12263C"
+                            BorderBrush="{StaticResource PanelBorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="12"
+                            Padding="12">
+                        <StackPanel>
+                            <TextBlock Text="AI Advisor"
+                                       Style="{StaticResource SectionTitleTextStyle}" />
+                            <TextBlock Text="{Binding AiProviderName, StringFormat='Provider: {0}'}"
+                                       Margin="0,4,0,0"
+                                       Style="{StaticResource SubtleTextStyle}" />
+                            <Button Content="{Binding AskAiButtonText}"
+                                    Command="{Binding AskAiCommand}"
+                                    Margin="0,10,0,10"
+                                    HorizontalAlignment="Left"
+                                    Width="140" />
+                            <TextBlock Text="{Binding AiRecommendation}"
+                                       Style="{StaticResource SubtleTextStyle}"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Row="1" Margin="0,16,0,16">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="336" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="390" />
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0">
-                    <TextBlock Text="NeoOptimize"
-                               Style="{StaticResource TitleTextStyle}" />
-                    <TextBlock Text="Windows-first, offline-first optimization with AI advisor mode."
-                               Style="{StaticResource SubtleTextStyle}"
-                               Margin="0,6,0,0" />
-                    <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
-                        <TextBlock Text="Mode:"
-                                   Style="{StaticResource SubtleTextStyle}" />
-                        <TextBlock Text="{Binding Settings.ExperienceMode}"
-                                   Foreground="{StaticResource AccentBrush}"
-                                   Margin="6,0,0,0"
-                                   FontWeight="SemiBold" />
-                        <TextBlock Text="Language:"
-                                   Style="{StaticResource SubtleTextStyle}"
-                                   Margin="18,0,0,0" />
-                        <TextBlock Text="{Binding Settings.Language}"
-                                   Foreground="{StaticResource AccentBrush}"
-                                   Margin="6,0,0,0"
-                                   FontWeight="SemiBold" />
-                    </StackPanel>
-                    <TextBlock Text="{Binding UpdateStatus}"
-                               Style="{StaticResource SubtleTextStyle}"
-                               Margin="0,12,0,0" />
+                    <Border Style="{StaticResource CardBorderStyle}">
+                        <StackPanel>
+                            <TextBlock Text="System Health"
+                                       Style="{StaticResource SectionTitleTextStyle}" />
+                            <TextBlock Text="{Binding HealthStatus}"
+                                       Margin="0,5,0,12"
+                                       Foreground="{StaticResource AccentBrush}"
+                                       FontWeight="SemiBold" />
+
+                            <TextBlock Text="{Binding CpuUsagePercent, StringFormat='CPU {0:F1}%'}"
+                                       Style="{StaticResource SubtleTextStyle}" />
+                            <ProgressBar Minimum="0"
+                                         Maximum="100"
+                                         Value="{Binding CpuUsagePercent, Mode=OneWay}"
+                                         Margin="0,4,0,10" />
+
+                            <TextBlock Text="{Binding MemoryUsagePercent, StringFormat='RAM {0:F1}%'}"
+                                       Style="{StaticResource SubtleTextStyle}" />
+                            <ProgressBar Minimum="0"
+                                         Maximum="100"
+                                         Value="{Binding MemoryUsagePercent, Mode=OneWay}"
+                                         Margin="0,4,0,10" />
+
+                            <TextBlock Text="{Binding DiskUsagePercent, StringFormat='Disk {0:F1}%'}"
+                                       Style="{StaticResource SubtleTextStyle}" />
+                            <ProgressBar Minimum="0"
+                                         Maximum="100"
+                                         Value="{Binding DiskUsagePercent, Mode=OneWay}"
+                                         Margin="0,4,0,10" />
+
+                            <TextBlock Text="{Binding NetworkUsageMbps, StringFormat='Network {0:F1} Mbps'}"
+                                       Style="{StaticResource SubtleTextStyle}" />
+
+                            <Button Content="Refresh Snapshot"
+                                    Command="{Binding RefreshDashboardCommand}"
+                                    Margin="0,14,0,0" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource CardBorderStyle}" Margin="0,12,0,0">
+                        <StackPanel>
+                            <TextBlock Text="Last Action"
+                                       Style="{StaticResource SectionTitleTextStyle}" />
+                            <TextBlock Text="{Binding LastActionStatus}"
+                                       Margin="0,8,0,0"
+                                       Style="{StaticResource SubtleTextStyle}"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
 
                 <Border Grid.Column="1"
-                        Background="#0D24334A"
-                        BorderBrush="{StaticResource PanelBorderBrush}"
-                        BorderThickness="1"
-                        CornerRadius="10"
-                        Padding="12">
-                    <StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="AI Advisor"
-                                       FontWeight="SemiBold"
-                                       FontSize="14"
-                                       Foreground="{StaticResource TitleBrush}" />
-                            <TextBlock Text="{Binding AiProviderName, StringFormat=' ({0})'}"
-                                       Margin="8,0,0,0"
-                                       Style="{StaticResource SubtleTextStyle}" />
-                        </StackPanel>
-                        <Button Content="{Binding AskAiButtonText}"
-                                Command="{Binding AskAiCommand}"
-                                Margin="0,10,0,10"
-                                Padding="10,6" />
-                        <TextBlock Text="{Binding AiRecommendation}"
-                                   Foreground="{StaticResource TitleBrush}"
-                                   TextWrapping="Wrap" />
-                    </StackPanel>
+                        Style="{StaticResource CardBorderStyle}"
+                        Margin="16,0,0,0">
+                    <TabControl>
+                        <TabItem Header="Dashboard">
+                            <views:DashboardView DataContext="{Binding Dashboard}" />
+                        </TabItem>
+                        <TabItem Header="Cleaner">
+                            <views:CleanerView DataContext="{Binding Cleaner}" />
+                        </TabItem>
+                        <TabItem Header="Optimizer">
+                            <views:OptimizerView DataContext="{Binding Optimizer}" />
+                        </TabItem>
+                        <TabItem Header="System Tools">
+                            <views:SystemToolsView DataContext="{Binding SystemTools}" />
+                        </TabItem>
+                        <TabItem Header="Security">
+                            <views:SecurityView DataContext="{Binding Security}" />
+                        </TabItem>
+                        <TabItem Header="Settings">
+                            <views:SettingsView DataContext="{Binding Settings}" />
+                        </TabItem>
+                        <TabItem Header="Support">
+                            <views:SupportView DataContext="{Binding Support}" />
+                        </TabItem>
+                    </TabControl>
                 </Border>
             </Grid>
-        </Border>
 
-        <Grid Grid.Row="1" Margin="0,16,0,16">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="320" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+            <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
 
-            <StackPanel Grid.Column="0">
-                <Border Style="{StaticResource CardBorderStyle}">
-                    <StackPanel>
-                        <TextBlock Text="System Health"
-                                   FontWeight="SemiBold"
-                                   Foreground="{StaticResource TitleBrush}" />
-                        <TextBlock Text="{Binding HealthStatus}"
-                                   Foreground="{StaticResource AccentBrush}"
-                                   Margin="0,4,0,12" />
+                    <TextBlock Text="Log Center"
+                               Style="{StaticResource SectionTitleTextStyle}" />
 
-                        <TextBlock Text="{Binding CpuUsagePercent, StringFormat='CPU {0:F1}%'}"
-                                   Style="{StaticResource SubtleTextStyle}" />
-                        <ProgressBar Minimum="0"
-                                     Maximum="100"
-                                     Value="{Binding CpuUsagePercent}"
-                                     Height="9"
-                                     Margin="0,4,0,10" />
-
-                        <TextBlock Text="{Binding MemoryUsagePercent, StringFormat='RAM {0:F1}%'}"
-                                   Style="{StaticResource SubtleTextStyle}" />
-                        <ProgressBar Minimum="0"
-                                     Maximum="100"
-                                     Value="{Binding MemoryUsagePercent}"
-                                     Height="9"
-                                     Margin="0,4,0,10" />
-
-                        <TextBlock Text="{Binding DiskUsagePercent, StringFormat='Disk {0:F1}%'}"
-                                   Style="{StaticResource SubtleTextStyle}" />
-                        <ProgressBar Minimum="0"
-                                     Maximum="100"
-                                     Value="{Binding DiskUsagePercent}"
-                                     Height="9"
-                                     Margin="0,4,0,10" />
-
-                        <TextBlock Text="{Binding NetworkUsageMbps, StringFormat='Network {0:F1} Mbps'}"
-                                   Style="{StaticResource SubtleTextStyle}" />
-
-                        <Button Content="Refresh Snapshot"
-                                Command="{Binding RefreshDashboardCommand}"
-                                Margin="0,14,0,0"
-                                Padding="10,6" />
-                    </StackPanel>
-                </Border>
-
-                <Border Style="{StaticResource CardBorderStyle}" Margin="0,12,0,0">
-                    <StackPanel>
-                        <TextBlock Text="Last Action"
-                                   FontWeight="SemiBold"
-                                   Foreground="{StaticResource TitleBrush}" />
-                        <TextBlock Text="{Binding LastActionStatus}"
-                                   Style="{StaticResource SubtleTextStyle}"
-                                   Margin="0,6,0,0"
-                                   TextWrapping="Wrap" />
-                    </StackPanel>
-                </Border>
-            </StackPanel>
-
-            <Border Grid.Column="1"
-                    Style="{StaticResource CardBorderStyle}"
-                    Margin="16,0,0,0">
-                <TabControl Background="Transparent" BorderThickness="0">
-                    <TabItem Header="Dashboard">
-                        <views:DashboardView DataContext="{Binding Dashboard}" />
-                    </TabItem>
-                    <TabItem Header="Cleaner">
-                        <views:CleanerView DataContext="{Binding Cleaner}" />
-                    </TabItem>
-                    <TabItem Header="Optimizer">
-                        <views:OptimizerView DataContext="{Binding Optimizer}" />
-                    </TabItem>
-                    <TabItem Header="System Tools">
-                        <views:SystemToolsView DataContext="{Binding SystemTools}" />
-                    </TabItem>
-                    <TabItem Header="Security">
-                        <views:SecurityView DataContext="{Binding Security}" />
-                    </TabItem>
-                    <TabItem Header="Settings">
-                        <views:SettingsView DataContext="{Binding Settings}" />
-                    </TabItem>
-                    <TabItem Header="Support">
-                        <views:SupportView DataContext="{Binding Support}" />
-                    </TabItem>
-                </TabControl>
+                    <ListBox Grid.Row="1"
+                             Margin="0,10,0,0"
+                             ItemsSource="{Binding ActivityLog}" />
+                </Grid>
             </Border>
         </Grid>
-
-        <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <TextBlock Text="Log Center"
-                           FontWeight="SemiBold"
-                           Foreground="{StaticResource TitleBrush}" />
-                <ListBox Grid.Row="1"
-                         Margin="0,10,0,0"
-                         Background="Transparent"
-                         BorderThickness="0"
-                         Foreground="{StaticResource TitleBrush}"
-                         ItemsSource="{Binding ActivityLog}" />
-            </Grid>
-        </Border>
     </Grid>
 </Window>
+

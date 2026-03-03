@@ -77,3 +77,4 @@ If `NEO_GPT4ALL_CLI_ARGS` is not set, adapter probes common CLI patterns:
 - `-p {prompt}`
 
 If both adapters are unavailable, app falls back to `RuleBasedAiAdvisor`.
+

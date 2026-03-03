@@ -68,3 +68,4 @@ jobs:
           name: neooptimize-publish
           path: dotnet/out/publish/**
           if-no-files-found: error
+

@@ -39,6 +39,9 @@ public sealed class MainWindowViewModel : ViewModelBase
     private string _aiProviderName = "RuleBased";
     private string _aiRecommendation = "AI advisor siap. Tekan Ask AI untuk rekomendasi.";
     private bool _isAiBusy;
+    private bool _miniTrayAutoCleanEnabled = true;
+    private bool _miniTrayPreShutdownCleanerEnabled;
+    private string _miniTrayAiTip = "Sistem stabil. Auto Clean standby setiap 20 menit.";
 
     public MainWindowViewModel(
         CleanerEngine cleanerEngine,
@@ -169,6 +172,53 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     public string AskAiButtonText => IsAiBusy ? "Analyzing..." : "Ask AI";
 
+    public int MiniTrayAutoCleanIntervalMinutes => 20;
+
+    public bool MiniTrayAutoCleanEnabled
+    {
+        get => _miniTrayAutoCleanEnabled;
+        set
+        {
+            if (!SetProperty(ref _miniTrayAutoCleanEnabled, value)) return;
+            UpdateMiniTrayTip(Array.Empty<string>());
+            AppendAction(
+                "Mini Tray",
+                "Auto Clean Toggle",
+                OperationResult.Ok(
+                    value ? "Auto Clean 20 menit diaktifkan." : "Auto Clean dimatikan.",
+                    new Dictionary<string, string>
+                    {
+                        ["enabled"] = value ? "true" : "false",
+                        ["interval_minutes"] = MiniTrayAutoCleanIntervalMinutes.ToString()
+                    }));
+        }
+    }
+
+    public bool MiniTrayPreShutdownCleanerEnabled
+    {
+        get => _miniTrayPreShutdownCleanerEnabled;
+        set
+        {
+            if (!SetProperty(ref _miniTrayPreShutdownCleanerEnabled, value)) return;
+            UpdateMiniTrayTip(Array.Empty<string>());
+            AppendAction(
+                "Mini Tray",
+                "Pre-Shutdown Toggle",
+                OperationResult.Ok(
+                    value ? "Pre-shutdown cleaner diaktifkan." : "Pre-shutdown cleaner dimatikan.",
+                    new Dictionary<string, string>
+                    {
+                        ["enabled"] = value ? "true" : "false"
+                    }));
+        }
+    }
+
+    public string MiniTrayAiTip
+    {
+        get => _miniTrayAiTip;
+        private set => SetProperty(ref _miniTrayAiTip, value);
+    }
+
     public ICommand RefreshDashboardCommand { get; }
     public ICommand SmartCleanCommand { get; }
     public ICommand SmartOptimizeCommand { get; }
@@ -211,6 +261,8 @@ public sealed class MainWindowViewModel : ViewModelBase
         {
             LastActionStatus = $"Mini Tray AI: {string.Join(" | ", suggestions)}";
         }
+
+        UpdateMiniTrayTip(suggestions);
     }
 
     private void ExecuteSmartClean()
@@ -312,5 +364,28 @@ public sealed class MainWindowViewModel : ViewModelBase
 
         LastActionStatus = $"{module}: {result.Message}";
         Dashboard.LastQuickAction = action;
+    }
+
+    private void UpdateMiniTrayTip(IReadOnlyList<string> suggestions)
+    {
+        if (!MiniTrayAutoCleanEnabled && !MiniTrayPreShutdownCleanerEnabled)
+        {
+            MiniTrayAiTip = "Mini Tray pasif. Aktifkan Auto Clean atau Pre-Shutdown Cleaner.";
+            return;
+        }
+
+        if (suggestions.Count > 0)
+        {
+            MiniTrayAiTip = suggestions[0];
+            return;
+        }
+
+        if (CpuUsagePercent > 70)
+        {
+            MiniTrayAiTip = "CPU mulai tinggi. Jalankan Smart Optimize untuk jaga respons sistem.";
+            return;
+        }
+
+        MiniTrayAiTip = "Semua indikator stabil. Sistem dalam kondisi optimal.";
     }
 }

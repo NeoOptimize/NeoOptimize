@@ -5,6 +5,9 @@
 - `CoreFeature` (required)
 - `AiAdvisorFeature` (optional)
 
+Installer UI now includes a `WixUI_FeatureTree` flow with a mandatory MIT
+license agreement step (`License.rtf`).
+
 ## Source folders
 
 - Core publish output:
@@ -45,3 +48,4 @@ Keep code-signing enabled for both MSI and binaries.
 
 - `IncludeAi=0` -> build core-only package without AI feature.
 - `IncludeAi=1` -> include optional AI feature and AI payload directory.
+

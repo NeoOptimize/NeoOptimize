@@ -1,6 +1,0 @@
-{
-  "preferredEngine": "auto",
-  "clamscanPath": "D:\\NeoOptimize\\clamav-1.5.1\\clamav-1.5.1.win.x64\\clamscan.exe",
-  "clamDbDir": "D:\\NeoOptimize\\clamav-1.5.1\\clamav-1.5.1.win.x64\\database",
-  "kicomavPath": "D:\\NeoOptimize\\kicomav-master\\kicomav\\k2.py"
-}

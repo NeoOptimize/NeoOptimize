@@ -33,6 +33,7 @@ function Invoke-WixBuild {
     [Parameter(Mandatory = $true)][string]$WxsPath,
     [Parameter(Mandatory = $true)][string]$PublishPath,
     [Parameter(Mandatory = $true)][string]$AiPath,
+    [Parameter(Mandatory = $true)][string]$LicensePath,
     [Parameter(Mandatory = $true)][string]$OutPath,
     [Parameter(Mandatory = $true)][string]$Version
   )
@@ -41,10 +42,12 @@ function Invoke-WixBuild {
   $args = @(
     "build",
     $WxsPath,
+    "-ext", "WixToolset.UI.wixext",
     "-d", "ProductVersion=$Version",
     "-d", "CoreSourceDir=$PublishPath",
     "-d", "AiSourceDir=$AiPath",
     "-d", "IncludeAi=$IncludeAi",
+    "-d", "LicenseRtf=$LicensePath",
     "-o", $msiPath
   )
 
@@ -58,6 +61,7 @@ $dotnetRoot = Split-Path -Parent $scriptDir
 $solutionPath = Join-Path $dotnetRoot "NeoOptimize.slnx"
 $appProjectPath = Join-Path $dotnetRoot "NeoOptimize.App\NeoOptimize.App.csproj"
 $installerConfigPath = Join-Path $dotnetRoot "NeoOptimize.Installer\InstallerConfig.wxs"
+$licensePath = Join-Path $dotnetRoot "NeoOptimize.Installer\License.rtf"
 $publishDir = Join-Path $dotnetRoot "out\publish"
 $installersDir = Join-Path $dotnetRoot "out\installers"
 $aiRuntimeDir = Join-Path $dotnetRoot "runtime\ai"
@@ -90,16 +94,17 @@ if (-not $hasAiFiles) {
 
 switch ($Variant) {
   "core-only" {
-    Invoke-WixBuild -Name "CoreOnly" -IncludeAi 0 -WxsPath $installerConfigPath -PublishPath $publishDir -AiPath $aiRuntimeDir -OutPath $installersDir -Version $ProductVersion
+    Invoke-WixBuild -Name "CoreOnly" -IncludeAi 0 -WxsPath $installerConfigPath -PublishPath $publishDir -AiPath $aiRuntimeDir -LicensePath $licensePath -OutPath $installersDir -Version $ProductVersion
   }
   "core+ai" {
-    Invoke-WixBuild -Name "CorePlusAI" -IncludeAi 1 -WxsPath $installerConfigPath -PublishPath $publishDir -AiPath $aiRuntimeDir -OutPath $installersDir -Version $ProductVersion
+    Invoke-WixBuild -Name "CorePlusAI" -IncludeAi 1 -WxsPath $installerConfigPath -PublishPath $publishDir -AiPath $aiRuntimeDir -LicensePath $licensePath -OutPath $installersDir -Version $ProductVersion
   }
   "both" {
-    Invoke-WixBuild -Name "CoreOnly" -IncludeAi 0 -WxsPath $installerConfigPath -PublishPath $publishDir -AiPath $aiRuntimeDir -OutPath $installersDir -Version $ProductVersion
-    Invoke-WixBuild -Name "CorePlusAI" -IncludeAi 1 -WxsPath $installerConfigPath -PublishPath $publishDir -AiPath $aiRuntimeDir -OutPath $installersDir -Version $ProductVersion
+    Invoke-WixBuild -Name "CoreOnly" -IncludeAi 0 -WxsPath $installerConfigPath -PublishPath $publishDir -AiPath $aiRuntimeDir -LicensePath $licensePath -OutPath $installersDir -Version $ProductVersion
+    Invoke-WixBuild -Name "CorePlusAI" -IncludeAi 1 -WxsPath $installerConfigPath -PublishPath $publishDir -AiPath $aiRuntimeDir -LicensePath $licensePath -OutPath $installersDir -Version $ProductVersion
   }
 }
 
 Write-Host "Installer outputs:"
 Get-ChildItem -Path $installersDir -Filter "*.msi" | Select-Object FullName, Length, LastWriteTime | Format-Table -AutoSize
+

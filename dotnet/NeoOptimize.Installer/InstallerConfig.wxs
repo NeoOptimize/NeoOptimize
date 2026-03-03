@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
-  <?define ProductVersion = "1.0.0" ?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
   <?define UpgradeCode = "{7E7A5D0F-CB70-4E6A-9F1A-9C7EFA1BDA54}" ?>
-  <?define CoreSourceDir = "..\NeoOptimize.App\bin\Release\net8.0-windows\publish" ?>
-  <?define AiSourceDir = "..\runtime\ai" ?>
-  <?define IncludeAi = 1 ?>
 
   <Package Name="NeoOptimize"
            Manufacturer="NeoOptimize"
@@ -14,6 +11,9 @@
            Scope="perMachine">
     <MajorUpgrade DowngradeErrorMessage="A newer version of NeoOptimize is already installed." />
     <MediaTemplate EmbedCab="yes" />
+
+    <ui:WixUI Id="WixUI_FeatureTree" InstallDirectory="INSTALLFOLDER" />
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.LicenseRtf)" />
 
     <Feature Id="CompleteFeature"
              Title="NeoOptimize"
@@ -33,7 +33,6 @@
                Title="AI Advisor Runtime (Optional)"
                Description="Optional local runtime/model files for offline AI recommendations."
                Level="2"
-               Absent="allow"
                AllowAdvertise="no">
         <ComponentGroupRef Id="AiAdvisorFilesGroup" />
       </Feature>
@@ -52,15 +51,58 @@
   </Fragment>
 
   <Fragment>
-    <ComponentGroup Id="CoreFilesGroup" Directory="INSTALLFOLDER">
-      <Files Include="$(var.CoreSourceDir)\**\*"
-             Exclude="$(var.CoreSourceDir)\**\*.pdb;$(var.CoreSourceDir)\**\*.xml" />
-    </ComponentGroup>
-    <?if $(var.IncludeAi) = 1 ?>
-    <ComponentGroup Id="AiAdvisorFilesGroup" Directory="AIADVISORFOLDER">
-      <Files Include="$(var.AiSourceDir)\**\*"
-             Exclude="$(var.AiSourceDir)\**\*.tmp" />
-    </ComponentGroup>
-    <?endif?>
+    <DirectoryRef Id="INSTALLFOLDER">
+      <Component Id="cmpAppExe" Guid="*">
+        <File Id="filAppExe" Source="$(var.CoreSourceDir)\NeoOptimize.App.exe" KeyPath="yes" />
+      </Component>
+      <Component Id="cmpAppDll" Guid="*">
+        <File Id="filAppDll" Source="$(var.CoreSourceDir)\NeoOptimize.App.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmpAppDeps" Guid="*">
+        <File Id="filAppDeps" Source="$(var.CoreSourceDir)\NeoOptimize.App.deps.json" KeyPath="yes" />
+      </Component>
+      <Component Id="cmpAppRuntime" Guid="*">
+        <File Id="filAppRuntime" Source="$(var.CoreSourceDir)\NeoOptimize.App.runtimeconfig.json" KeyPath="yes" />
+      </Component>
+      <Component Id="cmpCoreDll" Guid="*">
+        <File Id="filCoreDll" Source="$(var.CoreSourceDir)\NeoOptimize.Core.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmpServicesDll" Guid="*">
+        <File Id="filServicesDll" Source="$(var.CoreSourceDir)\NeoOptimize.Services.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmpAiAdvisorDll" Guid="*">
+        <File Id="filAiAdvisorDll" Source="$(var.CoreSourceDir)\NeoOptimize.AIAdvisor.dll" KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
   </Fragment>
+
+  <?if $(var.IncludeAi) = 1 ?>
+  <Fragment>
+    <DirectoryRef Id="AIADVISORFOLDER">
+      <Component Id="cmpAiRuntimeReadme" Guid="*">
+        <File Id="filAiRuntimeReadme" Source="$(var.AiSourceDir)\README.txt" KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+  <?endif?>
+
+  <Fragment>
+    <ComponentGroup Id="CoreFilesGroup">
+      <ComponentRef Id="cmpAppExe" />
+      <ComponentRef Id="cmpAppDll" />
+      <ComponentRef Id="cmpAppDeps" />
+      <ComponentRef Id="cmpAppRuntime" />
+      <ComponentRef Id="cmpCoreDll" />
+      <ComponentRef Id="cmpServicesDll" />
+      <ComponentRef Id="cmpAiAdvisorDll" />
+    </ComponentGroup>
+  </Fragment>
+
+  <?if $(var.IncludeAi) = 1 ?>
+  <Fragment>
+    <ComponentGroup Id="AiAdvisorFilesGroup">
+      <ComponentRef Id="cmpAiRuntimeReadme" />
+    </ComponentGroup>
+  </Fragment>
+  <?endif?>
 </Wix>

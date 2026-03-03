@@ -1,23 +1,55 @@
 <UserControl x:Class="NeoOptimize.App.Views.SecurityView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <StackPanel>
-        <TextBlock Text="Security"
-                   Foreground="{StaticResource TitleBrush}"
-                   FontSize="18"
-                   FontWeight="SemiBold" />
-        <TextBlock Text="Unified scan memakai engine yang dipilih. AI hanya memberi saran, eksekusi tetap di core native."
-                   Margin="0,8,0,10"
-                   Foreground="{StaticResource MutedBrush}"
-                   TextWrapping="Wrap" />
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1.15*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-        <CheckBox Content="Use ClamAV"
-                  IsChecked="{Binding UseClamAv}" />
-        <CheckBox Content="Use KicomAV"
-                  IsChecked="{Binding UseKicomAv}" />
-        <CheckBox Content="Defender toggle integration"
-                  IsChecked="{Binding UseDefenderToggle}" />
-        <CheckBox Content="USB autorun blocker (default ON)"
-                  IsChecked="{Binding UsbAutorunBlockerEnabled}" />
-    </StackPanel>
+        <Border Grid.Column="0"
+                Style="{StaticResource CardBorderStyle}"
+                Margin="0,0,10,0">
+            <StackPanel>
+                <TextBlock Text="Security"
+                           Style="{StaticResource SectionTitleTextStyle}" />
+                <TextBlock Text="Unified scan memakai kombinasi engine yang dipilih. AI advisor hanya memberi rekomendasi."
+                           Margin="0,8,0,12"
+                           Style="{StaticResource SubtleTextStyle}"
+                           TextWrapping="Wrap" />
+
+                <CheckBox Content="Use ClamAV"
+                          IsChecked="{Binding UseClamAv}" />
+                <CheckBox Content="Use KicomAV"
+                          IsChecked="{Binding UseKicomAv}" />
+                <CheckBox Content="Defender toggle integration"
+                          IsChecked="{Binding UseDefenderToggle}" />
+                <CheckBox Content="USB autorun blocker (default ON)"
+                          IsChecked="{Binding UsbAutorunBlockerEnabled}" />
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Column="1"
+                Style="{StaticResource CardBorderStyle}"
+                Margin="10,0,0,0">
+            <StackPanel>
+                <TextBlock Text="Security Posture"
+                           Style="{StaticResource SectionTitleTextStyle}" />
+                <TextBlock Text="Recommended Baseline"
+                           Margin="0,10,0,0"
+                           Foreground="{StaticResource AccentSoftBrush}"
+                           FontWeight="SemiBold" />
+                <TextBlock Text="ClamAV + KicomAV + USB autorun blocker."
+                           Style="{StaticResource SubtleTextStyle}" />
+
+                <TextBlock Text="Advanced Option"
+                           Margin="0,12,0,0"
+                           Foreground="{StaticResource AccentBrush}"
+                           FontWeight="SemiBold" />
+                <TextBlock Text="Tambahkan Defender toggle jika kebijakan endpoint mendukung."
+                           Style="{StaticResource SubtleTextStyle}"
+                           TextWrapping="Wrap" />
+            </StackPanel>
+        </Border>
+    </Grid>
 </UserControl>
