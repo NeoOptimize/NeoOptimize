@@ -2,6 +2,176 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace NeoOptimize.Core
+{
+    public class LogFileInfo
+    {
+        public string Path { get; set; }
+        public long Size { get; set; }
+        public DateTime LastModified { get; set; }
+        public string DisplayName => System.IO.Path.GetFileName(Path);
+    }
+
+    public static class LogManager
+    {
+        private static readonly string LogDir = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
+        private static readonly long MaxFileSizeBytes = 5 * 1024 * 1024; // 5 MB
+        private static readonly int RetentionDays = 30;
+        private static readonly SemaphoreSlim _writeLock = new SemaphoreSlim(1, 1);
+
+        static LogManager()
+        {
+            try
+            {
+                if (!Directory.Exists(LogDir))
+                    Directory.CreateDirectory(LogDir);
+            }
+            catch { }
+        }
+
+        private static string GetLogFilePath(DateTime when)
+        {
+            string fileName = $"report-{when:dd-MM-yyyy}.html";
+            return Path.Combine(LogDir, fileName);
+        }
+
+        private static async Task EnsureHeaderIfNewAsync(string path)
+        {
+            if (!File.Exists(path) || new FileInfo(path).Length == 0)
+            {
+                var header = new StringBuilder();
+                header.AppendLine("<html><head><meta charset=\"utf-8\"/><title>NeoOptimize Report</title>");
+                header.AppendLine("<style>body{font-family:Segoe UI,system-ui; background:#121217;color:#fff;} p{margin:6px 0;font-size:13px;} .meta{color:#bdbdbd;font-size:12px;}</style>");
+                header.AppendLine("</head><body>");
+                header.AppendLine($"<h2>NeoOptimize Report - {DateTime.Now:dd MMM yyyy}</h2>");
+                await File.WriteAllTextAsync(path, header.ToString(), Encoding.UTF8).ConfigureAwait(false);
+            }
+        }
+
+        private static async Task AppendRawAsync(string path, string content)
+        {
+            await _writeLock.WaitAsync().ConfigureAwait(false);
+            try
+            {
+                using (var fs = new FileStream(path, FileMode.Append, FileAccess.Write, FileShare.Read, 4096, useAsync: true))
+                using (var sw = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    await sw.WriteLineAsync(content).ConfigureAwait(false);
+                }
+            }
+            finally
+            {
+                _writeLock.Release();
+            }
+        }
+
+        public static async Task AppendAsync(string message)
+        {
+            var now = DateTime.Now;
+            var path = GetLogFilePath(now);
+            await EnsureHeaderIfNewAsync(path).ConfigureAwait(false);
+
+            string entry = $"<p>[{now:HH:mm:ss}] {System.Web.HttpUtility.HtmlEncode(message)}</p>";
+            await AppendRawAsync(path, entry).ConfigureAwait(false);
+
+            await RotateIfNeededAsync(path).ConfigureAwait(false);
+            await PurgeOldLogsAsync().ConfigureAwait(false);
+        }
+
+        private static async Task RotateIfNeededAsync(string currentPath)
+        {
+            try
+            {
+                var fi = new FileInfo(currentPath);
+                if (fi.Exists && fi.Length > MaxFileSizeBytes)
+                {
+                    string rotatedName = Path.Combine(LogDir, $"report-{DateTime.Now:dd-MM-yyyy}_{DateTime.Now:HHmmss}.html");
+                    await Task.Run(() => File.Move(currentPath, rotatedName)).ConfigureAwait(false);
+                    await EnsureHeaderIfNewAsync(currentPath).ConfigureAwait(false);
+                }
+            }
+            catch { }
+        }
+
+        private static async Task PurgeOldLogsAsync()
+        {
+            try
+            {
+                var files = Directory.GetFiles(LogDir, "report-*.html");
+                var cutoff = DateTime.Now.AddDays(-RetentionDays);
+                foreach (var f in files)
+                {
+                    try
+                    {
+                        var fi = new FileInfo(f);
+                        if (fi.LastWriteTime < cutoff)
+                            await Task.Run(() => fi.Delete()).ConfigureAwait(false);
+                    }
+                    catch { }
+                }
+            }
+            catch { }
+        }
+
+        public static IEnumerable<LogFileInfo> GetAllLogs()
+        {
+            try
+            {
+                if (!Directory.Exists(LogDir))
+                    return Enumerable.Empty<LogFileInfo>();
+
+                return Directory.GetFiles(LogDir, "report-*.html")
+                    .Select(p => new LogFileInfo
+                    {
+                        Path = p,
+                        Size = new FileInfo(p).Length,
+                        LastModified = File.GetLastWriteTime(p)
+                    })
+                    .OrderByDescending(x => x.LastModified)
+                    .ToList();
+            }
+            catch
+            {
+                return Enumerable.Empty<LogFileInfo>();
+            }
+        }
+
+        public static void DeleteLog(string filePath)
+        {
+            try
+            {
+                if (File.Exists(filePath))
+                    File.Delete(filePath);
+            }
+            catch { }
+        }
+
+        public static bool ExportLog(string filePath, string destinationZipPath)
+        {
+            try
+            {
+                if (!File.Exists(filePath))
+                    return false;
+
+                using (var zip = System.IO.Compression.ZipFile.Open(destinationZipPath, System.IO.Compression.ZipArchiveMode.Create))
+                {
+                    var entryName = System.IO.Path.GetFileName(filePath);
+                    zip.CreateEntryFromFile(filePath, entryName);
+                }
+                return true;
+            }
+            catch { return false; }
+        }
+    }
+}
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Diagnostics;

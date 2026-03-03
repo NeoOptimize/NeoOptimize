@@ -6,7 +6,6 @@
         xmlns:views="clr-namespace:NeoOptimize.App.Views"
         mc:Ignorable="d"
         Title="NeoOptimize Terminal Console"
-        Icon="Assets/logo.ico"
         MinWidth="1280"
         MinHeight="820"
         Width="1500"
@@ -36,7 +35,9 @@
                             BorderThickness="1"
                             Padding="5"
                             Background="#000D07">
-                        <Image Source="Assets/logo.png" Stretch="Uniform" />
+                        <Viewbox>
+                            <TextBlock Text="N" FontSize="28" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Viewbox>
                     </Border>
                     <StackPanel Margin="10,0,0,0">
                         <TextBlock Text="NeoOptimize" FontSize="42" FontWeight="Bold" Foreground="{StaticResource TitleBrush}" />
