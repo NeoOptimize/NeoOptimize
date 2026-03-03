@@ -1,0 +1,33 @@
+trigger: none
+
+stages:
+  - stage: BuildAndSign
+    jobs:
+      - job: Build
+        pool:
+          vmImage: 'windows-latest'
+        steps:
+          - task: UseDotNet@2
+            inputs:
+              packageType: 'sdk'
+              version: '8.0.x'
+
+          - task: DotNetCoreCLI@2
+            inputs:
+              command: 'build'
+              projects: 'NeoOptimize.App/NeoOptimize.App.csproj'
+              arguments: '--configuration Release'
+
+          - task: DownloadSecureFile@1
+            name: CertFile
+            inputs:
+              secureFile: 'neooptimize_cert.pfx'
+
+          - powershell: |
+              $pfxPath = '$(Agent.TempDirectory)\$(CertFile.secureFileName)'
+              $pwd = '$(PFX_PASSWORD)'
+              $artifact = '$(Build.SourcesDirectory)\NeoOptimize.App\bin\Release\net8.0-windows\NeoOptimize.App.exe'
+              signtool sign /f $pfxPath /p $pwd /fd SHA256 /tr https://timestamp.digicert.com /td SHA256 $artifact
+            displayName: 'Sign artifact'
+            env:
+              PFX_PASSWORD: $(PFX_PASSWORD)

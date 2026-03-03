@@ -1,0 +1,25 @@
+[Version]
+Signature="$Windows NT$"
+
+[NewRequest]
+Subject = "CN=NeoOptimize, OU=Engineering, O=NeoOptimize, L=Jakarta, S=DKI Jakarta, C=ID"
+KeySpec = 1
+KeyLength = 3072
+Exportable = TRUE
+MachineKeySet = FALSE
+SMIME = FALSE
+PrivateKeyArchive = FALSE
+UserProtected = FALSE
+ProviderName = "Microsoft Software Key Storage Provider"
+ProviderType = 0
+RequestType = PKCS10
+HashAlgorithm = sha256
+KeyUsage = 0xa0
+FriendlyName = "NeoOptimize Code Signing"
+
+[Extensions]
+2.5.29.17 = "{text}"
+continue = ""  ; placeholder if SubjectAltName required
+
+[RequestAttributes]
+; Optional attributes go here

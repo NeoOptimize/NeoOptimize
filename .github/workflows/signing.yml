@@ -1,0 +1,33 @@
+name: Sign Artifacts
+
+on:
+  workflow_dispatch:
+
+jobs:
+  sign:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build (example)
+        run: |
+          dotnet build ./NeoOptimize.App/NeoOptimize.App.csproj -c Release
+
+      - name: Decode PFX from secret
+        shell: powershell
+        run: |
+          $pfx = [System.Convert]::FromBase64String("${{ secrets.PFX_BASE64 }}")
+          [System.IO.File]::WriteAllBytes("$env:GITHUB_WORKSPACE\cert.pfx", $pfx)
+
+      - name: Sign artifact
+        shell: powershell
+        run: |
+          $pfx = "$env:GITHUB_WORKSPACE\cert.pfx"
+          $pwd = "${{ secrets.PFX_PASSWORD }}"
+          $artifact = "$env:GITHUB_WORKSPACE\NeoOptimize.App\bin\Release\net8.0-windows\NeoOptimize.App.exe"
+          signtool sign /f $pfx /p $pwd /fd SHA256 /tr https://timestamp.digicert.com /td SHA256 $artifact
+
+      - name: Verify signature
+        shell: powershell
+        run: |
+          Get-AuthenticodeSignature "$env:GITHUB_WORKSPACE\NeoOptimize.App\bin\Release\net8.0-windows\NeoOptimize.App.exe" | Format-List

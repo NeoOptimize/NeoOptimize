@@ -1,0 +1,41 @@
+PERJANJIAN LICENSI PENGGUNA AKHIR (EULA) - NeoOptimize
+
+Penting — harap baca dengan seksama.
+Perjanjian ini adalah perjanjian hukum antara Anda (perorangan atau entitas) dan NeoOptimize (pemilik perangkat lunak). Dengan mengunduh, memasang, atau menggunakan perangkat lunik ini, Anda menyetujui syarat-syarat berikut.
+
+1. Lisensi
+- NeoOptimize memberikan kepada Anda lisensi non-eksklusif, tidak dapat dipindahtangankan, terbatas untuk menggunakan perangkat lunak ini pada satu atau lebih perangkat sesuai ketentuan dokumentasi resmi.
+
+2. Pembatasan Penggunaan
+- Anda tidak diperkenankan untuk menyalin, memodifikasi, menyewakan, menjual, mendistribusikan kembali, atau membuat karya turunan dari perangkat lunak ini kecuali diizinkan secara tertulis oleh NeoOptimize.
+- Dilarang menggunakan perangkat lunak untuk tujuan ilegal, penyerangan, pengintaian, atau aktivitas yang melanggar hak pihak ketiga.
+
+3. Kepemilikan
+- Semua hak, kepemilikan, dan hak kekayaan intelektual atas perangkat lunak dan dokumentasinya tetap menjadi milik NeoOptimize atau pemberi lisensinya. Lisensi ini tidak mentransfer kepemilikan apa pun kepada Anda.
+
+4. Pembaruan dan Dukungan
+- NeoOptimize dapat, atas kebijakannya, menyediakan pembaruan, perbaikan, atau layanan terkait. Pembaruan dapat dikenakan syarat tambahan.
+
+5. Privasi dan Data
+- Perangkat lunak dapat mengumpulkan data operasional yang diperlukan untuk diagnosa dan peningkatan. Pengumpulan data akan dilakukan sesuai Kebijakan Privasi yang tersedia terpisah; data pribadi tidak akan diperdagangkan.
+
+6. Jaminan Terbatas
+- PERANGKAT LUNAK DITERIMA “SEBAGAIMANA ADANYA”. NEOOPTIMIZE TIDAK MEMBERIKAN JAMINAN TERSURAT ATAU TERSIRAT (TERMASUK JAMINAN KELAYAKAN JUAL DAN KESESUIAN UNTUK TUJUAN TERTENTU).
+
+7. Batasan TANGGUNG JAWAB
+- DALAM BATAS MAKSIMAL YANG DIIJINKAN HUKUM, NEOOPTIMIZE TIDAK BERTANGGUNG JAWAB ATAS KERUSAKAN LANGSUNG, TIDAK LANGSUNG, INSIDENTAL, KHUSUS, ATAU KONSEKUENSIAL YANG TIMBUL DARI PENGGUNAAN ATAU KETIDAKMAMPUAN MENGGUNAKAN PERANGKAT LUNAK.
+
+8. Penghentian
+- Lisensi ini akan berakhir secara otomatis bila Anda melanggar syarat-syaratnya. Setelah penghentian, Anda harus menghentikan penggunaan dan menghapus perangkat lunak dari semua perangkat Anda.
+
+9. Hukum yang Mengatur
+- Perjanjian ini tunduk pada hukum Republik Indonesia (kecuali disepakati lain). Sengketa akan diselesaikan melalui jalur hukum setempat.
+
+10. Ketentuan Lain
+- Bila sebagian ketentuan dalam perjanjian ini dinyatakan tidak sah, ketentuan lain tetap berlaku.
+- Untuk pertanyaan lisensi, hubungi: legal@neooptimize.example
+
+Dengan memasang atau menjalankan perangkat lunak ini, Anda menyatakan menerima syarat-syarat EULA ini.
+
+---
+Catatan penerbit: Sertakan salinan ringkas EULA ini dalam installer dan sediakan tautan ke versi lengkap serta Kebijakan Privasi pada halaman instalasi dan di dalam aplikasi (mis. bagian About/Legal).
