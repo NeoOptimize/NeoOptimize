@@ -78,3 +78,55 @@ jobs:
           name: ${{ github.ref_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  inno-installer:
+    needs: build-test
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download publish artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: neooptimize-publish
+          path: ./publish
+
+      - name: Install Inno Setup (choco)
+        run: |
+          choco install innosetup -y
+
+      - name: Build installer
+        run: |
+          iscc scripts\\installer\\neooptimize_inno.iss
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: neooptimize-installer
+          path: "${{ github.workspace }}\\Output\\NeoOptimize-Setup-1.0.0.exe"
+
+      - name: (Optional) Azure login to fetch signing certificate
+        if: secrets.AZURE_CREDENTIALS && secrets.KEYVAULT_NAME && secrets.SIGNING_SECRET_NAME
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: (Optional) Download signing PFX from Key Vault
+        if: secrets.AZURE_CREDENTIALS && secrets.KEYVAULT_NAME && secrets.SIGNING_SECRET_NAME
+        run: |
+          $pfxB64 = az keyvault secret show --vault-name $env:KEYVAULT_NAME --name $env:SIGNING_SECRET_NAME --query value -o tsv
+          $bytes = [System.Convert]::FromBase64String($pfxB64)
+          [System.IO.File]::WriteAllBytes('signing.pfx', $bytes)
+        shell: powershell
+        env:
+          KEYVAULT_NAME: ${{ secrets.KEYVAULT_NAME }}
+          SIGNING_SECRET_NAME: ${{ secrets.SIGNING_SECRET_NAME }}
+
+      - name: (Optional) Sign installer with signtool
+        if: secrets.AZURE_CREDENTIALS && secrets.KEYVAULT_NAME && secrets.SIGNING_SECRET_NAME && secrets.SIGNING_PFX_PASSWORD
+        run: |
+          signtool sign /fd SHA256 /a /f signing.pfx /p $env:SIGNING_PFX_PASSWORD "${{ github.workspace }}\\Output\\NeoOptimize-Setup-1.0.0.exe"
+        shell: powershell
+        env:
+          SIGNING_PFX_PASSWORD: ${{ secrets.SIGNING_PFX_PASSWORD }}
