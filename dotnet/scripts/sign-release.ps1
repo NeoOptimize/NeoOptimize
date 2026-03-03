@@ -17,6 +17,11 @@ function Resolve-SignTool {
         return $cmd.Source
     }
 
+    $wackSignTool = "${env:ProgramFiles(x86)}\Windows Kits\10\App Certification Kit\signtool.exe"
+    if (Test-Path $wackSignTool) {
+        return $wackSignTool
+    }
+
     $kitRoot = "${env:ProgramFiles(x86)}\Windows Kits\10\bin"
     if (-not (Test-Path $kitRoot)) {
         throw "signtool.exe not found and Windows Kits bin path does not exist: $kitRoot"
