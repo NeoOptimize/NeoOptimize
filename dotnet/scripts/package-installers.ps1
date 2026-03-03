@@ -18,6 +18,38 @@ function Require-Command {
   }
 }
 
+function Ensure-WixUiExtension {
+  $extensionId = "WixToolset.UI.wixext"
+  $extensionRef = "WixToolset.UI.wixext/4.0.6"
+
+  $listOutput = (& wix extension list 2>&1 | Out-String)
+  $installedLine = $listOutput
+    -split "(`r`n|`n)"
+    | Where-Object { $_ -match "^\s*$([regex]::Escape($extensionId))\s+" }
+    | Select-Object -First 1
+
+  $needsInstall = $true
+  if ($installedLine) {
+    $needsInstall = $installedLine -match "\(damaged\)"
+  }
+
+  if (-not $needsInstall) {
+    return
+  }
+
+  Write-Host "Installing WiX UI extension: $extensionRef"
+  try {
+    & wix extension remove --global $extensionId | Out-Null
+  }
+  catch {
+  }
+
+  & wix extension add --global $extensionRef
+  if ($LASTEXITCODE -ne 0) {
+    throw "Failed to install WiX UI extension '$extensionRef'."
+  }
+}
+
 function Reset-Directory {
   param([Parameter(Mandatory = $true)][string]$Path)
   if (Test-Path $Path) {
@@ -68,6 +100,7 @@ $aiRuntimeDir = Join-Path $dotnetRoot "runtime\ai"
 
 Require-Command -Name "dotnet"
 Require-Command -Name "wix"
+Ensure-WixUiExtension
 
 Reset-Directory -Path $publishDir
 Reset-Directory -Path $installersDir

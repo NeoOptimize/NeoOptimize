@@ -1,6 +1,6 @@
-# NeoOptimize .NET Scaffold
+# NeoOptimize .NET
 
-Windows-first scaffold for gradual migration from Electron to native WPF.
+Native Windows implementation for NeoOptimize using WPF and .NET 8.
 
 ## Projects
 
@@ -27,6 +27,12 @@ Install WiX CLI once:
 dotnet tool install --global wix --version 4.*
 ```
 
+Install WiX UI extension once:
+
+```powershell
+wix extension add --global WixToolset.UI.wixext/4.0.6
+```
+
 Build installers:
 
 ```powershell
@@ -37,6 +43,9 @@ Outputs:
 
 - `out/installers/NeoOptimize-CoreOnly.msi`
 - `out/installers/NeoOptimize-CorePlusAI.msi`
+
+`package-installers.ps1` also verifies and installs `WixToolset.UI.wixext`
+if missing/damaged.
 
 ## AI Advisor Notes
 

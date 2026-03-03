@@ -44,6 +44,19 @@ jobs:
           }
           "$env:USERPROFILE\.dotnet\tools" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
+      - name: Install WiX UI extension
+        shell: pwsh
+        run: |
+          $env:Path += ";$env:USERPROFILE\.dotnet\tools"
+          $extensions = wix extension list | Out-String
+          if ($extensions -match "WixToolset.UI.wixext" -and $extensions -match "\(damaged\)") {
+            wix extension remove --global WixToolset.UI.wixext | Out-Null
+            $extensions = wix extension list | Out-String
+          }
+          if ($extensions -notmatch "WixToolset.UI.wixext") {
+            wix extension add --global WixToolset.UI.wixext/4.0.6
+          }
+
       - name: Seed optional AI runtime directory
         shell: pwsh
         run: |
