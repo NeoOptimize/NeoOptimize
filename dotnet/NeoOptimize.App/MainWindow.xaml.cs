@@ -22,27 +22,28 @@ public partial class MainWindow : Window
     private WinForms.ToolStripMenuItem? _preShutdownMenuItem;
     private System.Drawing.Icon? _trayIcon;
     private DispatcherTimer? _autoCleanTimer;
+    private DispatcherTimer? _aiHealthTimer;
     private bool _exitRequested;
     private bool _isSessionEnding;
+    private Gpt4AllAiAdvisor? _gpt4All;
+    private ViewModels.SettingsViewModel? _loadedSettings;
 
     public MainWindow()
     {
         InitializeComponent();
 
-        var loadedSettings = ViewModels.SettingsViewModel.Load();
 
-        var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(Math.Max(1, loadedSettings.Gpt4AllTimeoutSeconds)) };
-        var gpt4All = new Gpt4AllAiAdvisor(
-            endpoint: string.IsNullOrWhiteSpace(loadedSettings.Gpt4AllEndpoint) ? Environment.GetEnvironmentVariable("NEO_GPT4ALL_ENDPOINT") : loadedSettings.Gpt4AllEndpoint,
+        _loadedSettings = ViewModels.SettingsViewModel.Load();
+
+        var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(Math.Max(1, _loadedSettings.Gpt4AllTimeoutSeconds)) };
+        _gpt4All = new Gpt4AllAiAdvisor(
+            endpoint: string.IsNullOrWhiteSpace(_loadedSettings.Gpt4AllEndpoint) ? Environment.GetEnvironmentVariable("NEO_GPT4ALL_ENDPOINT") : _loadedSettings.Gpt4AllEndpoint,
             model: null,
-            cliPath: string.IsNullOrWhiteSpace(loadedSettings.Gpt4AllCliPath) ? Environment.GetEnvironmentVariable("NEO_GPT4ALL_CLI") : loadedSettings.Gpt4AllCliPath,
+            cliPath: string.IsNullOrWhiteSpace(_loadedSettings.Gpt4AllCliPath) ? Environment.GetEnvironmentVariable("NEO_GPT4ALL_CLI") : _loadedSettings.Gpt4AllCliPath,
             cliArgsTemplate: null,
             httpClient: httpClient);
 
-        var aiAdvisor = new CompositeAiAdvisor(
-            new RuleBasedAiAdvisor(),
-            gpt4All,
-            new RuleBasedAiAdvisor());
+        var aiAdvisor = new CompositeAiAdvisor(new RuleBasedAiAdvisor(), _gpt4All, new RuleBasedAiAdvisor());
 
         DataContext = new MainWindowViewModel(
             new CleanerEngine(),
@@ -60,17 +61,22 @@ public partial class MainWindow : Window
         // Apply loaded settings into ViewModel.Settings (copy values)
         if (DataContext is MainWindowViewModel vm)
         {
-            vm.Settings.ExperienceMode = loadedSettings.ExperienceMode;
-            vm.Settings.Theme = loadedSettings.Theme;
-            vm.Settings.Language = loadedSettings.Language;
-            vm.Settings.AiProvider = loadedSettings.AiProvider;
-            vm.Settings.Gpt4AllCliPath = loadedSettings.Gpt4AllCliPath;
-            vm.Settings.Gpt4AllEndpoint = loadedSettings.Gpt4AllEndpoint;
-            vm.Settings.Gpt4AllTimeoutSeconds = loadedSettings.Gpt4AllTimeoutSeconds;
+            vm.Settings.ExperienceMode = _loadedSettings!.ExperienceMode;
+            vm.Settings.Theme = _loadedSettings!.Theme;
+            vm.Settings.Language = _loadedSettings!.Language;
+            vm.Settings.AiProvider = _loadedSettings!.AiProvider;
+            vm.Settings.Gpt4AllCliPath = _loadedSettings!.Gpt4AllCliPath;
+            vm.Settings.Gpt4AllEndpoint = _loadedSettings!.Gpt4AllEndpoint;
+            vm.Settings.Gpt4AllTimeoutSeconds = _loadedSettings!.Gpt4AllTimeoutSeconds;
         }
 
         // Start AI health-check in background and report status to UI
-        _ = CheckAiHealthAsync(gpt4All, loadedSettings);
+        _ = CheckAiHealthAsync(_gpt4All, _loadedSettings!);
+
+        // periodic AI health checks
+        _aiHealthTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(30) };
+        _aiHealthTimer.Tick += async (_, _) => await CheckAiHealthAsync(_gpt4All, _loadedSettings!);
+        _aiHealthTimer.Start();
 
         Loaded += OnLoaded;
         StateChanged += OnStateChanged;
@@ -366,6 +372,12 @@ public partial class MainWindow : Window
         {
             _autoCleanTimer.Stop();
             _autoCleanTimer = null;
+        }
+
+        if (_aiHealthTimer is not null)
+        {
+            _aiHealthTimer.Stop();
+            _aiHealthTimer = null;
         }
 
         if (_notifyIcon is not null)
