@@ -28,11 +28,14 @@ public sealed class MainWindowViewModel : ViewModelBase
     private readonly IAiAdvisor _aiAdvisor;
     private readonly AsyncRelayCommand _askAiCommand;
     private readonly Random _random = new();
+    private readonly DateTimeOffset _sessionStartedAt = DateTimeOffset.Now;
 
     private double _cpuUsagePercent;
     private double _memoryUsagePercent;
     private double _diskUsagePercent;
     private double _networkUsageMbps;
+    private double _networkLatencyMs;
+    private string _sessionUptime = "00:00:00";
     private string _healthStatus = "Optimal";
     private string _lastActionStatus = "Ready.";
     private string _updateStatus = "Offline-first mode active.";
@@ -128,6 +131,18 @@ public sealed class MainWindowViewModel : ViewModelBase
     {
         get => _networkUsageMbps;
         private set => SetProperty(ref _networkUsageMbps, value);
+    }
+
+    public double NetworkLatencyMs
+    {
+        get => _networkLatencyMs;
+        private set => SetProperty(ref _networkLatencyMs, value);
+    }
+
+    public string SessionUptime
+    {
+        get => _sessionUptime;
+        private set => SetProperty(ref _sessionUptime, value);
     }
 
     public string HealthStatus
@@ -239,6 +254,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         MemoryUsagePercent = Math.Round(20 + (_random.NextDouble() * 70), 1);
         DiskUsagePercent = Math.Round(30 + (_random.NextDouble() * 55), 1);
         NetworkUsageMbps = Math.Round(8 + (_random.NextDouble() * 140), 1);
+        NetworkLatencyMs = Math.Round(6 + (_random.NextDouble() * 40), 1);
 
         var peak = new[] { CpuUsagePercent, MemoryUsagePercent, DiskUsagePercent }.Max();
         if (peak >= 85)
@@ -263,6 +279,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         }
 
         UpdateMiniTrayTip(suggestions);
+        UpdateSessionUptime();
     }
 
     private void ExecuteSmartClean()
@@ -364,6 +381,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
         LastActionStatus = $"{module}: {result.Message}";
         Dashboard.LastQuickAction = action;
+        UpdateSessionUptime();
     }
 
     private void UpdateMiniTrayTip(IReadOnlyList<string> suggestions)
@@ -387,5 +405,11 @@ public sealed class MainWindowViewModel : ViewModelBase
         }
 
         MiniTrayAiTip = "Semua indikator stabil. Sistem dalam kondisi optimal.";
+    }
+
+    private void UpdateSessionUptime()
+    {
+        var elapsed = DateTimeOffset.Now - _sessionStartedAt;
+        SessionUptime = $"{(int)elapsed.TotalHours:00}:{elapsed.Minutes:00}:{elapsed.Seconds:00}";
     }
 }

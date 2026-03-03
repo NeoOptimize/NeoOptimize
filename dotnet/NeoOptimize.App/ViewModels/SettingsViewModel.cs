@@ -4,7 +4,7 @@ namespace NeoOptimize.App.ViewModels;
 
 public sealed class SettingsViewModel : ViewModelBase
 {
-    private string _experienceMode = "Simple";
+    private string _experienceMode = "Advanced";
     private string _theme = "Dark";
     private string _language = "Indonesian";
 

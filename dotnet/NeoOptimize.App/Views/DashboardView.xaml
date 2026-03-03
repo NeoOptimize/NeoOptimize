@@ -3,174 +3,81 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*" />
-            <ColumnDefinition Width="350" />
+            <ColumnDefinition Width="1.8*" />
+            <ColumnDefinition Width="1.2*" />
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
 
-        <Border Grid.Row="0"
-                Grid.Column="0"
-                Style="{StaticResource CardBorderStyle}"
-                Margin="0,0,14,12">
+        <Border Grid.Column="0" Style="{StaticResource CardBorderStyle}" Margin="0,0,10,0">
             <StackPanel>
-                <TextBlock Text="Core Hub"
-                           Style="{StaticResource SectionTitleTextStyle}" />
+                <TextBlock Text="$ init_dashboard.sh --verbose"
+                           Foreground="{StaticResource AccentBrush}"
+                           FontWeight="Bold" />
                 <TextBlock Text="{Binding StatusNote}"
-                           Margin="0,8,0,0"
+                           Margin="0,8,0,10"
                            Style="{StaticResource SubtleTextStyle}"
                            TextWrapping="Wrap" />
 
-                <WrapPanel Margin="0,14,0,0">
-                    <Button Content="Smart Clean"
-                            Width="130"
-                            Command="{Binding DataContext.SmartCleanCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                            Margin="0,0,8,8" />
-                    <Button Content="Smart Optimize"
-                            Width="130"
-                            Command="{Binding DataContext.SmartOptimizeCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                            Margin="0,0,8,8" />
+                <UniformGrid Columns="2" Margin="0,0,0,10">
+                    <Button Content="Clean Now"
+                            Margin="0,0,8,8"
+                            Command="{Binding DataContext.SmartCleanCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
+                    <Button Content="Optimize Now"
+                            Margin="0,0,0,8"
+                            Command="{Binding DataContext.SmartOptimizeCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
                     <Button Content="Smart Fix"
-                            Width="130"
-                            Command="{Binding DataContext.SmartFixCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                            Margin="0,0,8,8" />
+                            Margin="0,0,8,0"
+                            Command="{Binding DataContext.SmartFixCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
                     <Button Content="Unified Scan"
-                            Width="130"
-                            Command="{Binding DataContext.UnifiedScanCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                            Margin="0,0,8,8" />
-                </WrapPanel>
+                            Command="{Binding DataContext.UnifiedScanCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
+                </UniformGrid>
 
-                <Border Margin="0,10,0,0"
-                        Padding="10,8"
-                        CornerRadius="8"
-                        Background="#17314E"
-                        BorderBrush="{StaticResource PanelBorderBrush}"
-                        BorderThickness="1">
-                    <TextBlock Text="{Binding LastQuickAction, StringFormat='Last quick action: {0}'}"
-                               Foreground="{StaticResource AccentBrush}"
-                               FontWeight="SemiBold" />
+                <Border BorderBrush="{StaticResource PanelBorderBrush}"
+                        BorderThickness="1"
+                        Background="#041A10"
+                        Padding="10">
+                    <StackPanel>
+                        <TextBlock Text="$ resource_utilization"
+                                   Foreground="{StaticResource AccentSoftBrush}"
+                                   FontWeight="Bold" />
+                        <TextBlock Text="{Binding LastQuickAction, StringFormat='last_action: {0}'}"
+                                   Margin="0,6,0,0"
+                                   Style="{StaticResource SubtleTextStyle}" />
+                    </StackPanel>
                 </Border>
             </StackPanel>
         </Border>
 
-        <Border Grid.Row="1"
-                Grid.Column="0"
-                Style="{StaticResource CardBorderStyle}"
-                Margin="0,0,14,0">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-                <Border Grid.Column="0"
-                        Margin="0,0,8,0"
-                        Background="#0F2237"
-                        BorderBrush="{StaticResource PanelBorderBrush}"
-                        BorderThickness="1"
-                        CornerRadius="10"
-                        Padding="12">
-                    <StackPanel>
-                        <TextBlock Text="Adaptive Workflow"
-                                   Style="{StaticResource SectionTitleTextStyle}" />
-                        <TextBlock Text="Simple mode menampilkan operasi inti. Advanced mode membuka kontrol detail Cleaner, Optimizer, dan Security."
-                                   Margin="0,8,0,0"
-                                   Style="{StaticResource SubtleTextStyle}"
-                                   TextWrapping="Wrap" />
-                    </StackPanel>
-                </Border>
-
-                <Border Grid.Column="1"
-                        Margin="8,0,0,0"
-                        Background="#0F2237"
-                        BorderBrush="{StaticResource PanelBorderBrush}"
-                        BorderThickness="1"
-                        CornerRadius="10"
-                        Padding="12">
-                    <StackPanel>
-                        <TextBlock Text="Execution Policy"
-                                   Style="{StaticResource SectionTitleTextStyle}" />
-                        <TextBlock Text="AI hanya memberikan rekomendasi. Semua aksi optimasi dieksekusi oleh core engine native dengan hak administrator."
-                                   Margin="0,8,0,0"
-                                   Style="{StaticResource SubtleTextStyle}"
-                                   TextWrapping="Wrap" />
-                    </StackPanel>
-                </Border>
-            </Grid>
-        </Border>
-
-        <Border Grid.Row="0"
-                Grid.RowSpan="2"
-                Grid.Column="1"
-                Style="{StaticResource CardBorderStyle}">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-
-                <TextBlock Grid.Row="0"
-                           Text="NeoOptimize MiniTray"
-                           Style="{StaticResource SectionTitleTextStyle}" />
-                <TextBlock Grid.Row="1"
-                           Margin="0,6,0,10"
-                           Text="Quick action panel ala PC Manager untuk kontrol cepat saat sistem mulai padat."
+        <Border Grid.Column="1" Style="{StaticResource CardBorderStyle}" Margin="10,0,0,0">
+            <StackPanel>
+                <TextBlock Text="NeoOptimize MiniTray"
+                           Foreground="{StaticResource AccentBrush}"
+                           FontWeight="Bold" />
+                <TextBlock Text="Threshold-based rules untuk auto clean dan pre-shutdown."
+                           Margin="0,8,0,10"
                            Style="{StaticResource SubtleTextStyle}"
                            TextWrapping="Wrap" />
 
-                <WrapPanel Grid.Row="2" Margin="0,0,0,10">
-                    <Button Content="Clean Now"
-                            Width="100"
-                            Command="{Binding DataContext.SmartCleanCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                            Margin="0,0,8,8" />
-                    <Button Content="Optimize Now"
-                            Width="100"
-                            Command="{Binding DataContext.SmartOptimizeCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                            Margin="0,0,8,8" />
-                    <Button Content="Smart Fix"
-                            Width="100"
-                            Command="{Binding DataContext.SmartFixCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                            Margin="0,0,8,8" />
-                </WrapPanel>
+                <CheckBox Content="{Binding DataContext.MiniTrayAutoCleanIntervalMinutes, RelativeSource={RelativeSource AncestorType=Window}, StringFormat='Auto Clean ({0} min)'}"
+                          IsChecked="{Binding DataContext.MiniTrayAutoCleanEnabled, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay}" />
+                <CheckBox Content="Pre-Shutdown Cleaner"
+                          IsChecked="{Binding DataContext.MiniTrayPreShutdownCleanerEnabled, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay}" />
 
-                <Border Grid.Row="3"
-                        Margin="0,0,0,10"
-                        Background="#0F2237"
-                        BorderBrush="{StaticResource PanelBorderBrush}"
-                        BorderThickness="1"
-                        CornerRadius="8"
-                        Padding="10">
-                    <StackPanel>
-                        <CheckBox Content="{Binding DataContext.MiniTrayAutoCleanIntervalMinutes, RelativeSource={RelativeSource AncestorType=Window}, StringFormat='Auto Clean ({0} min)'}"
-                                  IsChecked="{Binding DataContext.MiniTrayAutoCleanEnabled, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay}" />
-                        <CheckBox Content="Pre-Shutdown Cleaner"
-                                  IsChecked="{Binding DataContext.MiniTrayPreShutdownCleanerEnabled, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay}" />
-                    </StackPanel>
-                </Border>
-
-                <Border Grid.Row="4"
-                        Background="#193755"
+                <Border Margin="0,10,0,0"
                         BorderBrush="{StaticResource AccentBrush}"
                         BorderThickness="1"
-                        CornerRadius="8"
-                        Padding="10">
+                        Padding="10"
+                        Background="#072617">
                     <StackPanel>
-                        <TextBlock Text="AI Tip"
+                        <TextBlock Text="AI TIP"
                                    Foreground="{StaticResource AccentBrush}"
-                                   FontWeight="SemiBold" />
+                                   FontWeight="Bold" />
                         <TextBlock Margin="0,6,0,0"
                                    Text="{Binding DataContext.MiniTrayAiTip, RelativeSource={RelativeSource AncestorType=Window}}"
                                    Style="{StaticResource SubtleTextStyle}"
                                    TextWrapping="Wrap" />
                     </StackPanel>
                 </Border>
-            </Grid>
+            </StackPanel>
         </Border>
     </Grid>
 </UserControl>

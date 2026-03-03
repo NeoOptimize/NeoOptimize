@@ -10,5 +10,5 @@ public sealed class DashboardViewModel : ViewModelBase
         set => SetProperty(ref _lastQuickAction, value);
     }
 
-    public string StatusNote => "Progressive disclosure: mode simple menampilkan kontrol inti, mode advanced membuka modul lanjutan.";
+    public string StatusNote => "Core hub active. Gunakan quick actions untuk clean/optimize/fix, lalu monitor hasil di log stream.";
 }
