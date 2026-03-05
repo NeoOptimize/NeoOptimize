@@ -1,0 +1,30 @@
+name: Windows Build
+
+on:
+  push:
+    branches: [ main, feat/** ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup .NET 8
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore NuGet packages
+      run: dotnet restore NeoOptimize/NeoOptimize.sln
+
+    - name: Build solution (MSBuild)
+      run: msbuild NeoOptimize\NeoOptimize.sln /m /p:Configuration=Release
+
+    - name: Run unit tests
+      run: |
+        dotnet test NeoOptimize.sln --configuration Release --no-restore --verbosity normal

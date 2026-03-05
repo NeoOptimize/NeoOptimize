@@ -1,0 +1,103 @@
+************************************* Invoked: Thu Mar 5 01:52:09 2026
+[0] Arguments: D:\FILE DOWNLOAD\gpt4all-installer-win64.exe
+[14] Operations sanity check succeeded.
+[31] Using metadata cache from "C:/Users/Hello World/AppData/Local/cache\\qt-installer-framework\\9c11e018-d3aa-3c3a-9118-829c9ab85b1c"
+[31] Found 1 cached items.
+[32] Language: en-ID
+[185] Loaded control script ":/metadata/installer-config/installer_control_qs.qs"
+[185] Using control script: ":/metadata/installer-config/installer_control_qs.qs"
+[15173] Fetching latest update information...
+[15190] Downloading 1 items to cache.
+[15191] Retrieving information from remote repositories...
+[16192] Loading component scripts...
+[23989] OverwriteTargetDirectory : Warning : You have selected an existing, non-empty directory for installation.
+Note that it will be completely wiped on uninstallation of this application.
+It is not advisable to install into this directory as installation might fail.
+Do you want to continue? Yes|No
+[31419] Loading component scripts...
+[44647] Selected components without dependencies:
+gpt4all
+[44648] Installation space required: "2.02 GB" Temporary space required: "933.97 MB" Local repository size: "0.00 bytes"
+[44655] Cache is on a different volume than the installation directory. Cache volume mount point: "C:\\" Free space available: "53.95 GB" Install volume mount point: "D:\\" Free space available: "733.50 GB"
+[47696] backup  operation: Mkdir
+[47696] 	- arguments: D:/NeoOptimize
+[47696] Done
+[47696] perform  operation: Mkdir
+[47696] 	- arguments: D:/NeoOptimize
+[47697] Done
+[47697] Preparing the installation...
+[47697] Install size: 1 components
+[47698] Downloading packages...
+[47699] Downloading archive "3.10.0bin.7z.sha1" for component gpt4all.
+[48187] Downloading archive "3.10.0bin.7z" for component gpt4all.
+[60916] Downloading archive "3.10.0lib.7z.sha1" for component gpt4all.
+[61845] Downloading archive "3.10.0lib.7z" for component gpt4all.
+[152217] Downloading archive "3.10.0resources.7z.sha1" for component gpt4all.
+[152691] Downloading archive "3.10.0resources.7z" for component gpt4all.
+[205551] Downloading archive "3.10.0content.7z.sha1" for component gpt4all.
+[206077] Downloading archive "3.10.0content.7z" for component gpt4all.
+[206576] Preparing to unpack components...
+[206588] backup gpt4all concurrent operation: Extract
+[206588] 	- arguments: installer://gpt4all/3.10.0bin.7z, D:/NeoOptimize
+[206588] Started
+[206588] backup gpt4all concurrent operation: Extract
+[206588] 	- arguments: installer://gpt4all/3.10.0content.7z, D:/NeoOptimize
+[206588] Started
+[206588] backup gpt4all concurrent operation: Extract
+[206588] 	- arguments: installer://gpt4all/3.10.0lib.7z, D:/NeoOptimize
+[206588] Started
+[206591] backup gpt4all concurrent operation: Extract
+[206591] 	- arguments: installer://gpt4all/3.10.0resources.7z, D:/NeoOptimize
+[206591] Started
+[206678] Unpacking components...
+[206680] perform gpt4all concurrent operation: Extract
+[206680] 	- arguments: installer://gpt4all/3.10.0lib.7z, D:/NeoOptimize
+[206680] Started
+[206680] perform gpt4all concurrent operation: Extract
+[206680] 	- arguments: installer://gpt4all/3.10.0resources.7z, D:/NeoOptimize
+[206680] Started
+[206682] perform gpt4all concurrent operation: Extract
+[206683] 	- arguments: installer://gpt4all/3.10.0bin.7z, D:/NeoOptimize
+[206683] Started
+[206683] perform gpt4all concurrent operation: Extract
+[206683] 	- arguments: installer://gpt4all/3.10.0content.7z, D:/NeoOptimize
+[206683] Started
+[296399] Installing component gpt4all
+[296402] backup gpt4all operation: CreateShortcut
+[296402] 	- arguments: D:/NeoOptimize/bin/chat.exe, C:\Users\Hello World/Desktop/GPT4All.lnk, workingDirectory=D:/NeoOptimize/bin, iconPath=D:/NeoOptimize/gpt4all.ico, iconId=0, description=Open GPT4All
+[296403] Done
+[296403] perform gpt4all operation: CreateShortcut
+[296403] 	- arguments: D:/NeoOptimize/bin/chat.exe, C:\Users\Hello World/Desktop/GPT4All.lnk
+[296427] Done
+[296427] backup gpt4all operation: CreateShortcut
+[296427] 	- arguments: D:/NeoOptimize/bin/chat.exe, C:\Users\Hello World\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\GPT4All/GPT4All.lnk, workingDirectory=D:/NeoOptimize/bin, iconPath=D:/NeoOptimize/gpt4all.ico, iconId=0, description=Open GPT4All
+[296428] Done
+[296428] perform gpt4all operation: CreateShortcut
+[296428] 	- arguments: D:/NeoOptimize/bin/chat.exe, C:\Users\Hello World\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\GPT4All/GPT4All.lnk
+[296445] Done
+[296445] backup gpt4all operation: License
+[296445] 	- arguments:
+[296445] Done
+[296446] perform gpt4all operation: License
+[296446] 	- arguments:
+[296448] Done
+[296458] Writing maintenance tool: "D:/NeoOptimize/maintenancetool.exe.new"
+[296459] Writing maintenance tool.
+[296604] Wrote permissions for maintenance tool.
+[296762] Maintenance tool hard restart: false.
+[296766] Installation finished!
+************************************* Invoked: Thu Mar 5 02:20:44 2026
+[0] Arguments: D:\NeoOptimize\maintenancetool.exe
+[75] Operations sanity check succeeded.
+[102] Using metadata cache from "C:/Users/Hello World/AppData/Local/cache\\qt-installer-framework\\9c11e018-d3aa-3c3a-9118-829c9ab85b1c"
+[102] Found 1 cached items.
+[102] Language: en-ID
+[176] Loaded control script ":/metadata/installer-config/installer_control_qs.qs"
+[176] Using control script: ":/metadata/installer-config/installer_control_qs.qs"
+[6648] Fetching latest update information...
+[6655] Downloading 1 items to cache.
+[6655] Retrieving information from remote repositories...
+[11553] Fetching latest update information...
+[11553] Downloading 0 items to cache.
+[11562] Loading component scripts...
+[17199] cancelInstallation : GPT4All Installer Question : Do you want to quit the maintenance application? Yes|No

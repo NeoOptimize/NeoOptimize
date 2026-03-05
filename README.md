@@ -1,70 +1,46 @@
-# NeoOptimize (Windows Offline)
+# NeoOptimize — Scaffold
 
-NeoOptimize is a native Windows optimization application built with C# WPF
-(.NET 8). The active codebase is under `dotnet/`.
+This workspace contains a minimal scaffold for NeoOptimize V1.0.
 
-## Scope
+What was added:
+- `NeoOptimize.Engine` — C++ DLL skeleton with simple exported functions (`NO_GetVersion`, `NO_StartScan`, `NO_Stop`).
+- `NeoOptimize.UI.ConsoleTest` — .NET console application that P/Invokes into the engine to demonstrate interop.
 
-- Windows-only native desktop app (offline-first).
-- AI module is advisor-only (no direct system mutation).
-- System execution remains in native core engine with admin context.
+Next steps:
+- Open the folder in Visual Studio (recommended) and create a `NeoOptimize.UI` WinUI 3 project using the Windows App SDK templates, then integrate the `CleanerService` P/Invoke wrappers with `NeoOptimize.Engine` exports.
+- Replace engine stubs with real scanning/cleanup implementations from the blueprint attachments.
 
-## Repository Layout
 
-- `dotnet/NeoOptimize.slnx` - main .NET solution
-- `dotnet/NeoOptimize.App` - WPF UI
-- `dotnet/NeoOptimize.Core` - cleaner/optimizer/system/security core logic
-- `dotnet/NeoOptimize.Services` - update/localization/remote assist services
-- `dotnet/NeoOptimize.AIAdvisor` - Ollama/GPT4All/rule-based adapters
-- `dotnet/NeoOptimize.Installer` - WiX MSI installer assets
-- `.github/workflows/dotnet-installer.yml` - CI build/test/installer workflow
+Troubleshooting native DLL load
+ - If you see: "Unable to load DLL 'NeoOptimize.Engine.dll' or one of its dependencies" then the native DLL is not present
+	in the managed app probing paths or a native dependency is missing.
+ - Quick checks:
+	1. Build the engine: open an x64 Developer PowerShell and run:
 
-## Prerequisites
-
-- Windows 10/11/12
-- .NET SDK 8.x
-- PowerShell 7+
-- WiX CLI 4.x (`dotnet tool install --global wix --version 4.*`)
-
-## Build, Test, Run
-
-```powershell
-dotnet build .\dotnet\NeoOptimize.slnx
-dotnet test .\dotnet\NeoOptimize.slnx
-dotnet run --project .\dotnet\NeoOptimize.App\NeoOptimize.App.csproj
+```
+.\build-engine.ps1
 ```
 
-## Build MSI Installer (v1.0.0)
+	2. Verify the produced `NeoOptimize.Engine.dll` is copied into the managed app output, for example:
 
-```powershell
-.\dotnet\scripts\package-installers.ps1 -Variant both -ProductVersion 1.0.0
+```
+dir NeoOptimize.UI.ConsoleTest\bin\Debug\net8.0\NeoOptimize.Engine.dll
 ```
 
-Outputs:
+	3. Use the included `NeoOptimize.DllLoadTester` to try loading the DLL from common locations and get `GetLastError` codes:
 
-- `dotnet/out/installers/NeoOptimize-CoreOnly.msi`
-- `dotnet/out/installers/NeoOptimize-CorePlusAI.msi`
+```
+dotnet run --project NeoOptimize.DllLoadTester
+```
 
-## Install Notes (Windows)
+	4. If the DLL still fails to load, common causes:
+	  - Platform mismatch (build the native DLL for x64 if running 64-bit .NET host).
+	  - Missing Visual C++ runtime for the toolset used to build the DLL. Install the Visual C++ Redistributable or build with static CRT.
+	  - DLL is present but depends on another DLL that's missing; use tools like `dumpbin /dependents` or `Dependencies` (third-party) to inspect.
 
-- Run MSI with administrator privileges (app is `perMachine` and app manifest uses
-  `requireAdministrator`).
-- Desktop and Start Menu shortcuts are created automatically.
-- SmartScreen reputation warnings can still appear on unsigned binaries. To reduce
-  this for end users, sign both `.exe` and `.msi` with an Authenticode certificate
-  before publishing release artifacts.
+Next steps
+ - Run `build-engine.ps1`, then run the `NeoOptimize.DllLoadTester` and the console test. If you paste the `DllLoadTester` output here I will interpret the `GetLastError` codes and advise next steps.
 
-## Release Checklist
+This scaffold is intentionally minimal to provide a safe starting point for iterative development.
 
-See `RELEASE_CHECKLIST_v1.0.md` for final validation, tagging, and GitHub
-release steps.
-
-## SmartScreen Readiness
-
-To minimize SmartScreen warnings on distributed installers:
-
-1. Provide a trusted Authenticode certificate.
-2. Configure GitHub secrets:
-   - `WIN_SIGN_CERT_BASE64` (base64-encoded `.pfx`)
-   - `WIN_SIGN_CERT_PASSWORD`
-3. Publish from tag `v*` so CI signs `NeoOptimize.App.exe` and both MSI files.
+See `NeoOptimize/Blueprints` for design docs and feature lists.

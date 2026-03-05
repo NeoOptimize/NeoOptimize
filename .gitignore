@@ -2,7 +2,7 @@
 logs/
 *.log
 
-# Editor directories and files
+# Editor folders/files
 .vscode/*
 !.vscode/extensions.json
 .idea/
@@ -11,21 +11,30 @@ logs/
 *.ntvs*
 *.njsproj
 *.sw?
+.vs/
 
-# .NET build artifacts
+# Build artifacts
+**/bin/
+**/obj/
 dotnet/**/bin/
 dotnet/**/obj/
 dotnet/out/
 dotnet/runtime/ai/
 
-# Local runtime and release artifacts
+# Local release/build outputs
 release/
 upload_release_output.txt
-msert x32.exe
-msert x64.exe
 NeoOptimize.rar
 
-# Local AI runtime/model artifacts
-gpt4all-installer-win64.exe
-OllamaSetup.exe
+# Local model and heavy runtime dependencies
 *.gguf
+lib/
+clamav-1.5.1.win.x64/
+clamav-1.5.1.win.win32/
+
+# Installer/runtime cache artifacts
+installer.dat
+maintenancetool.dat
+maintenancetool.exe
+maintenancetool.ini
+vs_BuildTools.exe

@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="NeoOptimize.UI.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:NeoOptimize.UI"
+    Title="NeoOptimize V1.0 · Super God Mode">
+
+    <Grid Padding="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel>
+                <TextBlock Text="NeoOptimize V1.0 · Super God Mode" FontSize="24" FontWeight="SemiBold" />
+                <TextBlock Text="Engine:" FontSize="12" Opacity="0.8" />
+                <TextBlock Text="{Binding EngineVersion}" FontSize="12" Opacity="0.8" />
+            </StackPanel>
+
+            <Button Grid.Column="1" Content="Refresh Engine" Width="120" Height="36" Margin="12,0,0,0" Command="{Binding RefreshEngineVersionCommand}" />
+        </Grid>
+
+        <TabView Grid.Row="1" Margin="0,12,0,0">
+            <TabView.TabItems>
+                <TabViewItem Header="Dashboard">
+                    <ScrollViewer>
+                        <Grid Padding="8">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Column="0" Margin="6" Padding="12" CornerRadius="12" BorderThickness="1">
+                                    <StackPanel>
+                                        <TextBlock Text="CPU" FontWeight="SemiBold" />
+                                        <TextBlock Text="{Binding Dashboard.CpuUsageText}" FontSize="28" />
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="1" Margin="6" Padding="12" CornerRadius="12" BorderThickness="1">
+                                    <StackPanel>
+                                        <TextBlock Text="RAM" FontWeight="SemiBold" />
+                                        <TextBlock Text="{Binding Dashboard.RamUsageText}" FontSize="28" />
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="2" Margin="6" Padding="12" CornerRadius="12" BorderThickness="1">
+                                    <StackPanel>
+                                        <TextBlock Text="DISK (C:)" FontWeight="SemiBold" />
+                                        <TextBlock Text="{Binding Dashboard.DiskUsageText}" FontSize="28" />
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="3" Margin="6" Padding="12" CornerRadius="12" BorderThickness="1">
+                                    <StackPanel>
+                                        <TextBlock Text="LATENCY" FontWeight="SemiBold" />
+                                        <TextBlock Text="{Binding Dashboard.LatencyText}" FontSize="28" />
+                                        <TextBlock Text="{Binding Dashboard.LastUpdatedText}" FontSize="11" Opacity="0.7" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+
+                            <Grid Grid.Row="1" Margin="0,12,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Column="0" Margin="6" Padding="12" CornerRadius="12" BorderThickness="1">
+                                    <StackPanel>
+                                        <TextBlock Text="Quick Actions" FontWeight="SemiBold" Margin="0,0,0,8" />
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <Button Content="Start Cleaner" Command="{Binding Cleaner.StartCommand}" />
+                                            <Button Content="Start Optimizer" Command="{Binding Optimizer.StartCommand}" />
+                                            <Button Content="Run App Ops" Command="{Binding AppManager.RunMaintenanceCommand}" />
+                                            <Button Content="Refresh Metrics" Command="{Binding Dashboard.RefreshMetricsCommand}" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Grid.Column="1" Margin="6" Padding="12" CornerRadius="12" BorderThickness="1">
+                                    <StackPanel>
+                                        <TextBlock Text="Progress" FontWeight="SemiBold" Margin="0,0,0,8" />
+                                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                            <TextBlock Text="Cleaner" Width="70" />
+                                            <ProgressBar Width="180" Value="{Binding Cleaner.Progress}" Maximum="100" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Margin="0,8,0,0">
+                                            <TextBlock Text="Optimizer" Width="70" />
+                                            <ProgressBar Width="180" Value="{Binding Optimizer.Progress}" Maximum="100" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Margin="0,8,0,0">
+                                            <TextBlock Text="AppMgr" Width="70" />
+                                            <ProgressBar Width="180" Value="{Binding AppManager.Progress}" Maximum="100" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Margin="0,8,0,0">
+                                            <TextBlock Text="Security" Width="70" />
+                                            <ProgressBar Width="180" Value="{Binding Security.Progress}" Maximum="100" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Margin="0,8,0,0">
+                                            <TextBlock Text="Scheduler" Width="70" />
+                                            <ProgressBar Width="180" Value="{Binding Scheduler.Progress}" Maximum="100" />
+                                        </StackPanel>
+                                        <TextBlock Text="{Binding Dashboard.Status}" Margin="0,10,0,0" FontSize="11" Opacity="0.8" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+
+                            <Grid Grid.Row="2" Margin="0,12,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Column="0" Margin="6" Padding="12" CornerRadius="12" BorderThickness="1">
+                                    <StackPanel>
+                                        <TextBlock Text="NeoAI · GPT4All" FontWeight="SemiBold" Margin="0,0,0,8" />
+                                        <ListView Height="200" ItemsSource="{Binding Dashboard.AiMessages}">
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Margin="0,4">
+                                                        <TextBlock Text="{Binding Role}" FontWeight="SemiBold" FontSize="11" />
+                                                        <TextBlock Text="{Binding Text}" TextWrapping="WrapWholeWords" />
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </ListView>
+                                        <Grid Margin="0,8,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBox Grid.Column="0" Text="{Binding Dashboard.AiInput, Mode=TwoWay}" PlaceholderText="Ask AI..." />
+                                            <ProgressRing Grid.Column="1" Margin="8,0,0,0" Width="24" Height="24" IsActive="{Binding Dashboard.IsAiBusy}" />
+                                            <Button Grid.Column="2" Margin="8,0,0,0" Content="Send" Width="80" Command="{Binding Dashboard.SendAiCommand}" />
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="1" Margin="6" Padding="12" CornerRadius="12" BorderThickness="1">
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <TextBlock Text="Activity Log" FontWeight="SemiBold" Margin="0,0,0,8" />
+                                            <Button Content="Generate HTML Report" Width="170" Command="{Binding Dashboard.GenerateReportCommand}" />
+                                            <Button Content="Open Log Folder" Width="130" Command="{Binding Dashboard.OpenLogsFolderCommand}" />
+                                        </StackPanel>
+                                        <ListView Height="230" ItemsSource="{Binding Dashboard.ActivityLogs}" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </Grid>
+                    </ScrollViewer>
+                </TabViewItem>
+
+                <TabViewItem Header="Cleaner">
+                    <Grid Padding="8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Button Content="Analyze" Width="110" Command="{Binding Cleaner.StartCommand}" />
+                            <Button Content="Clean Now" Width="110" Command="{Binding Cleaner.ExecuteCommand}" />
+                            <Button Content="Stop" Width="90" Command="{Binding Cleaner.StopCommand}" />
+                            <TextBlock Text="Progress" VerticalAlignment="Center" Margin="12,0,0,0" />
+                            <ProgressBar Width="220" Height="12" Value="{Binding Cleaner.Progress}" Maximum="100" Margin="0,6,0,0" />
+                        </StackPanel>
+
+                        <TextBlock Grid.Row="1" Text="Categories" FontWeight="SemiBold" Margin="0,12,0,6" />
+
+                        <Grid Grid.Row="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <ListView Grid.Column="0" ItemsSource="{Binding Cleaner.Categories}" Margin="0,0,6,0">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,2">
+                                            <TextBlock Text="{Binding Name}" Width="150" />
+                                            <ProgressBar Width="180" Value="{Binding Progress}" Maximum="100" />
+                                            <TextBlock Text="{Binding Progress}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+
+                            <ListView Grid.Column="1" ItemsSource="{Binding Cleaner.Logs}" Margin="6,0,0,0" />
+                        </Grid>
+                    </Grid>
+                </TabViewItem>
+
+                <TabViewItem Header="Optimizer">
+                    <Grid Padding="8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Button Content="Run Optimizer" Width="130" Command="{Binding Optimizer.StartCommand}" />
+                            <Button Content="Stop" Width="90" Command="{Binding Optimizer.StopCommand}" />
+                            <TextBlock Text="Progress" VerticalAlignment="Center" Margin="12,0,0,0" />
+                            <ProgressBar Width="240" Height="12" Value="{Binding Optimizer.Progress}" Maximum="100" Margin="0,6,0,0" />
+                        </StackPanel>
+
+                        <ListView Grid.Row="1" Margin="0,12,0,0" ItemsSource="{Binding Optimizer.Logs}" />
+                    </Grid>
+                </TabViewItem>
+
+                <TabViewItem Header="App Manager">
+                    <Grid Padding="8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Button Content="List Apps" Width="100" Command="{Binding AppManager.ListAppsCommand}" />
+                            <Button Content="Run App Ops" Width="120" Command="{Binding AppManager.RunMaintenanceCommand}" />
+                            <Button Content="Uninstall Selected" Width="140" Command="{Binding AppManager.UninstallCommand}" />
+                            <TextBlock Text="Progress" VerticalAlignment="Center" Margin="12,0,0,0" />
+                            <ProgressBar Width="220" Height="12" Value="{Binding AppManager.Progress}" Maximum="100" Margin="0,6,0,0" />
+                        </StackPanel>
+
+                        <Grid Grid.Row="1" Margin="0,12,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <ListView Grid.Column="0" ItemsSource="{Binding AppManager.Apps}" SelectedItem="{Binding AppManager.SelectedApp, Mode=TwoWay}" Margin="0,0,6,0">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Name}" />
+                                            <TextBlock Text="{Binding Publisher}" FontSize="11" Opacity="0.7" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+
+                            <ListView Grid.Column="1" ItemsSource="{Binding AppManager.Logs}" Margin="6,0,0,0" />
+                        </Grid>
+
+                        <TextBlock Grid.Row="2" Text="Scheduler Actions" FontWeight="SemiBold" Margin="0,12,0,6" />
+                        <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="8">
+                            <Button Content="Startup Delay" Width="110" Command="{Binding Scheduler.StartupDelayCommand}" />
+                            <Button Content="Periodic 30m" Width="110" Command="{Binding Scheduler.Periodic30Command}" />
+                            <Button Content="Before Shutdown" Width="120" Command="{Binding Scheduler.CleanBeforeShutdownCommand}" />
+                        </StackPanel>
+                    </Grid>
+                </TabViewItem>
+
+                <TabViewItem Header="Security">
+                    <Grid Padding="8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Button Content="Quick Scan" Width="110" Command="{Binding Security.QuickScanCommand}" />
+                            <Button Content="Full Scan" Width="100" Command="{Binding Security.FullScanCommand}" />
+                            <Button Content="KicomAV Scan" Width="120" Command="{Binding Security.KicomavScanCommand}" />
+                            <Button Content="Realtime" Width="90" Command="{Binding Security.ToggleRealtimeCommand}" />
+                            <Button Content="Stop" Width="80" Command="{Binding Security.StopCommand}" />
+                            <TextBlock Text="Progress" VerticalAlignment="Center" Margin="12,0,0,0" />
+                            <ProgressBar Width="220" Height="12" Value="{Binding Security.Progress}" Maximum="100" Margin="0,6,0,0" />
+                        </StackPanel>
+
+                        <ListView Grid.Row="1" Margin="0,12,0,0" ItemsSource="{Binding Security.Logs}" />
+                    </Grid>
+                </TabViewItem>
+
+                <TabViewItem Header="Scheduler">
+                    <Grid Padding="8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Button Content="AI Recommended" Width="120" Command="{Binding Scheduler.ApplyRecommendedCommand}" />
+                            <Button Content="Startup Delay" Width="110" Command="{Binding Scheduler.StartupDelayCommand}" />
+                            <Button Content="Periodic 5m" Width="100" Command="{Binding Scheduler.Periodic5Command}" />
+                            <Button Content="Periodic 10m" Width="100" Command="{Binding Scheduler.Periodic10Command}" />
+                            <Button Content="Periodic 30m" Width="110" Command="{Binding Scheduler.Periodic30Command}" />
+                            <Button Content="Periodic 60m" Width="110" Command="{Binding Scheduler.Periodic60Command}" />
+                            <Button Content="Before Shutdown" Width="120" Command="{Binding Scheduler.CleanBeforeShutdownCommand}" />
+                            <Button Content="Stop" Width="80" Command="{Binding Scheduler.StopCommand}" />
+                            <TextBlock Text="Progress" VerticalAlignment="Center" Margin="12,0,0,0" />
+                            <ProgressBar Width="220" Height="12" Value="{Binding Scheduler.Progress}" Maximum="100" Margin="0,6,0,0" />
+                        </StackPanel>
+
+                        <ListView Grid.Row="1" Margin="0,12,0,0" ItemsSource="{Binding Scheduler.Logs}" />
+                    </Grid>
+                </TabViewItem>
+
+                <TabViewItem Header="Settings">
+                    <ScrollViewer>
+                        <Grid Padding="8">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <Border Grid.Row="0" Margin="6" Padding="12" CornerRadius="12" BorderThickness="1">
+                                <StackPanel Spacing="12">
+                                    <TextBlock Text="Appearance" FontWeight="SemiBold" />
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="140" />
+                                            <ColumnDefinition Width="260" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="Theme" VerticalAlignment="Center" />
+                                        <ComboBox Grid.Column="1"
+                                                  ItemsSource="{Binding Settings.ThemeOptions}"
+                                                  SelectedItem="{Binding Settings.Theme, Mode=TwoWay}" />
+                                    </Grid>
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="140" />
+                                            <ColumnDefinition Width="260" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="Language" VerticalAlignment="Center" />
+                                        <ComboBox Grid.Column="1"
+                                                  ItemsSource="{Binding Settings.LanguageOptions}"
+                                                  SelectedItem="{Binding Settings.Language, Mode=TwoWay}" />
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Row="1" Margin="6" Padding="12" CornerRadius="12" BorderThickness="1">
+                                <StackPanel Spacing="12">
+                                    <TextBlock Text="Updates" FontWeight="SemiBold" />
+                                    <CheckBox Content="Auto Update" IsChecked="{Binding Settings.AutoUpdate, Mode=TwoWay}" />
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="140" />
+                                            <ColumnDefinition Width="260" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="Current version" VerticalAlignment="Center" />
+                                        <TextBox Grid.Column="1" Text="{Binding Settings.CurrentVersion, Mode=TwoWay}" />
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Row="2" Margin="6" Padding="12" CornerRadius="12" BorderThickness="1">
+                                <StackPanel Spacing="12">
+                                    <TextBlock Text="Engine Configuration" FontWeight="SemiBold" />
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="140" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="ClamAV path" VerticalAlignment="Center" />
+                                        <TextBox Grid.Column="1" Text="{Binding Settings.ClamAvPath, Mode=TwoWay}" />
+                                    </Grid>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="140" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="GPT4All model" VerticalAlignment="Center" />
+                                        <TextBox Grid.Column="1" Text="{Binding Settings.Gpt4AllModel, Mode=TwoWay}" />
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <StackPanel Grid.Row="3" Margin="6,12,6,0" Orientation="Horizontal" Spacing="8">
+                                <Button Content="Load" Width="100" Command="{Binding Settings.LoadCommand}" />
+                                <Button Content="Save" Width="100" Command="{Binding Settings.SaveCommand}" />
+                                <TextBlock Text="{Binding Settings.Status}" VerticalAlignment="Center" Margin="8,0,0,0" />
+                            </StackPanel>
+                        </Grid>
+                    </ScrollViewer>
+                </TabViewItem>
+
+                <TabViewItem Header="About">
+                    <Grid Padding="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Margin="6" Padding="12" CornerRadius="12" BorderThickness="1">
+                            <StackPanel>
+                                <TextBlock Text="Developer" FontWeight="SemiBold" Margin="0,0,0,8" />
+                                <TextBlock Text="Sigit profesional IT" />
+                                <TextBlock Text="WhatsApp: 087889911030" />
+                                <TextBlock Text="Email: neooptimizeofficial@gmail.com" />
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="1" Margin="6" Padding="12" CornerRadius="12" BorderThickness="1">
+                            <StackPanel>
+                                <TextBlock Text="Support" FontWeight="SemiBold" Margin="0,0,0,8" />
+                                <HyperlinkButton Content="BuyMeACoffee" NavigateUri="https://buymeacoffee.com/nol.eight" />
+                                <HyperlinkButton Content="Saweria" NavigateUri="https://saweria.co/dtechtive" />
+                                <HyperlinkButton Content="Dana" NavigateUri="https://ik.imagekit.io/dtechtive/Dana" />
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </TabViewItem>
+            </TabView.TabItems>
+        </TabView>
+    </Grid>
+</Window>

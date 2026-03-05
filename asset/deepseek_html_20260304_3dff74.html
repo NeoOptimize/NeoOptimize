@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TransDeep · Mock UI</title>
+  <!-- Font & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #0a0c0f;
+      font-family: 'Inter', sans-serif;
+      color: #e9edf2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+
+    /* mockup card */
+    .app-container {
+      max-width: 1360px;
+      width: 100%;
+      background: #12161b;
+      border-radius: 2rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(66, 153, 225, 0.2) inset;
+      backdrop-filter: blur(2px);
+      overflow: hidden;
+    }
+
+    /* header */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 2rem;
+      background: #1a1f26;
+      border-bottom: 1px solid #2a313c;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .logo-icon {
+      background: linear-gradient(145deg, #2b6ef0, #00c2ff);
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white;
+      box-shadow: 0 6px 12px rgba(0, 194, 255, 0.3);
+    }
+
+    .logo-text {
+      font-weight: 600;
+      font-size: 1.4rem;
+      letter-spacing: -0.02em;
+      background: linear-gradient(to right, #ffffff, #bdd3ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .badge {
+      background: #232a33;
+      padding: 0.2rem 0.8rem;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #8f9eb5;
+      border: 1px solid #314159;
+      margin-left: 0.8rem;
+    }
+
+    .connection-status {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #1e242c;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      border: 1px solid #2c3541;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #27e8a7;
+      box-shadow: 0 0 10px #27e8a7;
+    }
+    .dot.warning {
+      background: #f4b740;
+      box-shadow: 0 0 10px #f4b740;
+    }
+
+    /* main grid */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 300px 1fr 320px;
+      gap: 1px;
+      background: #1e242c;
+    }
+
+    /* panel kiri (devices & history) */
+    .panel-left {
+      background: #141a21;
+      padding: 1.5rem 1rem;
+    }
+    .panel-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #778aa3;
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .device-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-bottom: 2rem;
+    }
+    .device-item {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      background: #1f2832;
+      padding: 0.7rem 1rem;
+      border-radius: 14px;
+      border: 1px solid #2b3542;
+      transition: 0.15s;
+      cursor: default;
+    }
+    .device-item:hover {
+      background: #26313e;
+      border-color: #3c4b5d;
+    }
+    .device-icon {
+      width: 32px;
+      height: 32px;
+      background: #2b3542;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #73b2ff;
+    }
+    .device-info {
+      flex: 1;
+    }
+    .device-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    .device-meta {
+      font-size: 0.7rem;
+      color: #8599b3;
+      display: flex;
+      gap: 0.6rem;
+      margin-top: 2px;
+    }
+    .tag {
+      background: #2e3b4a;
+      padding: 0.15rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: #b3c7e0;
+    }
+
+    .history-item {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.5rem;
+      border-radius: 12px;
+      background: #1b222b;
+      margin-bottom: 0.3rem;
+      font-size: 0.8rem;
+    }
+    .history-icon {
+      color: #5e7a9c;
+    }
+
+    /* panel tengah (transfer utama) */
+    .panel-center {
+      background: #0f151c;
+      padding: 1.5rem;
+    }
+
+    .drop-zone {
+      background: #1a212a;
+      border: 2px dashed #2f3c4b;
+      border-radius: 32px;
+      padding: 2.5rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      margin-bottom: 2rem;
+      transition: 0.2s;
+    }
+    .drop-zone:hover {
+      border-color: #2b6ef0;
+      background: #1e2732;
+    }
+    .drop-zone i {
+      font-size: 3rem;
+      color: #4f6f97;
+    }
+    .drop-zone .main-action {
+      background: #2b6ef0;
+      color: white;
+      border: none;
+      padding: 0.8rem 2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: default;
+      box-shadow: 0 8px 18px #2b6ef040;
+    }
+
+    .active-transfer {
+      background: #1a212a;
+      border-radius: 24px;
+      padding: 1.2rem;
+      border: 1px solid #293542;
+    }
+    .transfer-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .file-info {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    .file-icon {
+      background: #25303e;
+      padding: 0.6rem;
+      border-radius: 14px;
+    }
+    .file-details .filename {
+      font-weight: 600;
+    }
+    .file-details .meta {
+      font-size: 0.75rem;
+      color: #7d95b3;
+    }
+    .speed-badge {
+      background: #1f2a36;
+      border-radius: 40px;
+      padding: 0.2rem 1rem;
+      font-weight: 700;
+      color: #27e8a7;
+      border: 1px solid #3b4d62;
+      font-size: 0.8rem;
+    }
+    .progress-section {
+      margin: 1rem 0 0.5rem;
+    }
+    .progress-bar {
+      height: 8px;
+      background: #262f3b;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+    }
+    .progress-fill {
+      width: 78%;
+      height: 100%;
+      background: linear-gradient(90deg, #2b6ef0, #00c2ff);
+      border-radius: 20px;
+      box-shadow: 0 0 10px #2b6ef0;
+    }
+    .progress-stats {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: #99aec9;
+    }
+
+    /* panel kanan (stat & control) */
+    .panel-right {
+      background: #141a21;
+      padding: 1.5rem 1.2rem;
+    }
+
+    .god-mode-panel {
+      background: #1e2833;
+      border-radius: 20px;
+      padding: 1.2rem;
+      border: 1px solid #2b6ef0;
+      box-shadow: 0 0 20px rgba(43, 110, 240, 0.2);
+      margin-bottom: 1.5rem;
+    }
+    .god-mode-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      color: #b0d0ff;
+      margin-bottom: 1rem;
+    }
+    .god-mode-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+    }
+    .stat-card {
+      background: #1f2a37;
+      border-radius: 16px;
+      padding: 0.8rem;
+    }
+    .stat-label {
+      font-size: 0.7rem;
+      color: #748aa8;
+    }
+    .stat-value {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+    .unit {
+      font-size: 0.7rem;
+      color: #a3bbd9;
+    }
+    .encrypt-badge {
+      background: #1f2e41;
+      border-radius: 30px;
+      padding: 0.3rem 1rem;
+      font-size: 0.75rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      border: 1px solid #3b506a;
+    }
+
+    .quick-send {
+      margin-top: 1.5rem;
+    }
+    .quick-send h4 {
+      font-size: 0.8rem;
+      color: #8da1bd;
+      margin-bottom: 0.8rem;
+    }
+    .recent-files {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .recent-file-item {
+      background: #1f2937;
+      border-radius: 16px;
+      padding: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 60px;
+      font-size: 0.65rem;
+      text-align: center;
+      border: 1px solid #2e3d4e;
+    }
+
+    /* footer kecil */
+    .app-footer {
+      background: #0f151c;
+      border-top: 1px solid #202731;
+      padding: 0.7rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #5f748e;
+    }
+    .footer-links span {
+      margin-right: 1.5rem;
+      cursor: default;
+    }
+
+    /* utility */
+    i {
+      color: #7795b8;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Navbar -->
+    <div class="navbar">
+      <div class="logo-area">
+        <div class="logo-icon">TD</div>
+        <span class="logo-text">TransDeep</span>
+        <span class="badge">SUPER GOD MODE</span>
+      </div>
+      <div class="connection-status">
+        <div class="status-item"><span class="dot"></span> LAN 10G</div>
+        <div class="status-item"><span class="dot warning"></span> VPN off</div>
+        <div class="status-item"><i class="fas fa-shield-hal"></i> Enkripsi AES-256</div>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="main-grid">
+      <!-- Panel Kiri: Perangkat & Riwayat -->
+      <div class="panel-left">
+        <div class="panel-title">
+          <span><i class="fas fa-network-wired" style="margin-right: 6px;"></i> PERANGKAT JARINGAN</span>
+          <span class="tag">6 aktif</span>
+        </div>
+        <div class="device-list">
+          <div class="device-item">
+            <div class="device-icon"><i class="fas fa-laptop"></i></div>
+            <div class="device-info">
+              <div class="device-name">DESKTOP-X9</div>
+              <div class="device-meta"><span>10 GbE</span> <span>• 192.168.1.12</span></div>
+            </div>
+            <i class="fas fa-bolt" style="color: #f0b32b;"></i>
+          </div>
+          <div class="device-item">
+            <div class="device-icon"><i class="fas fa-server"></i></div>
+            <div class="device-info">
+              <div class="device-name">WORKSTATION-PRO</div>
+              <div class="device-meta"><span>10 GbE</span> <span>• 192.168.1.15</span></div>
+            </div>
+            <i class="fas fa-check-circle" style="color: #27e8a7;"></i>
+          </div>
+          <div class="device-item">
+            <div class="device-icon"><i class="fas fa-mobile-alt"></i></div>
+            <div class="device-info">
+              <div class="device-name">PHONE-14</div>
+              <div class="device-meta"><span>WiFi 6</span> <span>• 192.168.1.32</span></div>
+            </div>
+          </div>
+          <div class="device-item">
+            <div class="device-icon"><i class="fas fa-tv"></i></div>
+            <div class="device-info">
+              <div class="device-name">SMART-TV</div>
+              <div class="device-meta"><span>1 GbE</span> <span>• 192.168.1.40</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-title" style="margin-top: 1.5rem;">
+          <span><i class="fas fa-history"></i> TRANSFER TERAKHIR</span>
+        </div>
+        <div class="history-item">
+          <i class="fas fa-video history-icon"></i>
+          <div style="flex:1">project_4k.mp4</div>
+          <span style="color:#83a9e0;">10.2 GB</span>
+        </div>
+        <div class="history-item">
+          <i class="fas fa-archive history-icon"></i>
+          <div style="flex:1">backup_db.zip</div>
+          <span style="color:#83a9e0;">4.8 GB</span>
+        </div>
+        <div class="history-item">
+          <i class="fas fa-image history-icon"></i>
+          <div style="flex:1">textures.rar</div>
+          <span style="color:#83a9e0;">2.3 GB</span>
+        </div>
+      </div>
+
+      <!-- Panel Tengah: Transfer Utama -->
+      <div class="panel-center">
+        <!-- Drop Zone -->
+        <div class="drop-zone">
+          <i class="fas fa-cloud-upload-alt"></i>
+          <div style="font-weight: 500; color: #cdddec;">Seret file atau folder ke sini</div>
+          <button class="main-action"><i class="fas fa-plus-circle" style="margin-right: 8px;"></i>Pilih File</button>
+          <div style="font-size: 0.75rem; color: #62748c;">mendukung file hingga 1TB • multi-sesi paralel</div>
+        </div>
+
+        <!-- Transfer Aktif -->
+        <div class="active-transfer">
+          <div class="transfer-header">
+            <div class="file-info">
+              <div class="file-icon"><i class="fas fa-database" style="color: #90caf9;"></i></div>
+              <div class="file-details">
+                <div class="filename">10GB_testfile.bin</div>
+                <div class="meta">dari DESKTOP-X9 • 10.0 GB (Biner)</div>
+              </div>
+            </div>
+            <div class="speed-badge"><i class="fas fa-gauge-high" style="margin-right: 5px;"></i>1.98 GB/s</div>
+          </div>
+          <div class="progress-section">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 78%;"></div>
+            </div>
+            <div class="progress-stats">
+              <span><i class="far fa-clock"></i> 2.1 dtk tersisa</span>
+              <span>7.8 GB / 10.0 GB</span>
+            </div>
+          </div>
+          <div style="display: flex; gap: 1rem; margin-top: 1rem; font-size: 0.8rem; color: #9fb1cc;">
+            <span><i class="fas fa-shield"></i> Enkripsi端到端 aktif</span>
+            <span><i class="fas fa-cube"></i> 16 koneksi paralel</span>
+          </div>
+        </div>
+
+        <!-- Antrian (opsional) -->
+        <div style="margin-top: 1.5rem;">
+          <div style="display: flex; gap: 1rem; color: #7f96b3; font-size: 0.75rem; margin-bottom: 0.5rem;">
+            <span><i class="fas fa-hourglass-half"></i> Antrian (2)</span>
+          </div>
+          <div style="background: #1a212a; border-radius: 18px; padding: 0.8rem;">
+            <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 0.5rem;">
+              <i class="fas fa-file-zipper"></i>
+              <span style="flex:1; font-size: 0.9rem;">source_code.tar.gz</span>
+              <span style="color:#8aa9d6;">1.2 GB</span>
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+              <i class="fas fa-film"></i>
+              <span style="flex:1; font-size: 0.9rem;">demo_day.mp4</span>
+              <span style="color:#8aa9d6;">4.5 GB</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel Kanan: God Mode & Quick Send -->
+      <div class="panel-right">
+        <div class="god-mode-panel">
+          <div class="god-mode-title">
+            <i class="fas fa-bolt" style="color: #ffd966;"></i> GOD MODE · REAL TIME
+          </div>
+          <div class="god-mode-stats">
+            <div class="stat-card">
+              <div class="stat-label">Kecepatan</div>
+              <div class="stat-value">1.98 <span class="unit">GB/s</span></div>
+              <div style="font-size: 0.6rem; color: #45e6b7;">🔥 98% link 10G</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Paket</div>
+              <div class="stat-value">0.3<span class="unit">ms</span></div>
+              <div style="font-size: 0.6rem;">latency</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Enkripsi</div>
+              <div class="stat-value">TLS 1.3</div>
+              <div style="font-size: 0.6rem;">CHACHA20</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Koneksi</div>
+              <div class="stat-value">16 <span class="unit">streams</span></div>
+              <div style="font-size: 0.6rem;">multi-path</div>
+            </div>
+          </div>
+          <div style="margin-top: 1rem; display: flex; justify-content: space-between;">
+            <span class="encrypt-badge"><i class="fas fa-lock"></i> End-to-End encrypted</span>
+            <span class="encrypt-badge"><i class="fas fa-fingerprint"></i> OTP ready</span>
+          </div>
+        </div>
+
+        <!-- Quick send (recent files) -->
+        <div class="quick-send">
+          <h4><i class="far fa-clock" style="margin-right: 5px;"></i> KIRIM CEPAT</h4>
+          <div class="recent-files">
+            <div class="recent-file-item">
+              <i class="fas fa-file-pdf" style="font-size: 1.2rem; margin-bottom: 4px; color: #f28b82;"></i>
+              <span>laporan.pdf</span>
+              <span style="color: #7f96b3;">2.1 MB</span>
+            </div>
+            <div class="recent-file-item">
+              <i class="fas fa-file-image" style="font-size: 1.2rem; margin-bottom: 4px; color: #81c995;"></i>
+              <span>foto.jpg</span>
+              <span style="color: #7f96b3;">4.8 MB</span>
+            </div>
+            <div class="recent-file-item">
+              <i class="fas fa-file-zipper" style="font-size: 1.2rem; margin-bottom: 4px; color: #ffb77c;"></i>
+              <span>data.zip</span>
+              <span style="color: #7f96b3;">312 MB</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Info tambahan -->
+        <div style="margin-top: 1.5rem; background: #1b232e; border-radius: 16px; padding: 1rem;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 0.5rem;">
+            <i class="fas fa-microchip"></i>
+            <span style="font-weight: 600; font-size: 0.9rem;">System</span>
+          </div>
+          <div style="font-size: 0.75rem; color: #97acc9;">
+            <div>TCP/UDP custom • window 1G</div>
+            <div>Zero-copy • NUMA aware</div>
+            <div>RDMA support (jika ada)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer (keterangan) -->
+    <div class="app-footer">
+      <div>© TransDeep — super god mode prototype</div>
+      <div class="footer-links">
+        <span><i class="fas fa-shield-alt"></i> enkripsi wajib</span>
+        <span><i class="fas fa-infinity"></i> tak terbatas ukuran</span>
+        <span><i class="fas fa-chart-line"></i> 10GB / 5 detik**</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Catatan kecil: ini hanya mock UI, tidak ada fungsionalitas sebenarnya -->
+  <div style="position: fixed; bottom: 10px; right: 10px; background: #1f2937; padding: 6px 12px; border-radius: 40px; font-size: 0.7rem; color: #aaa; border: 1px solid #334155;">
+    ⚡ Mock UI TransDeep — konsep visual
+  </div>
+</body>
+</html>

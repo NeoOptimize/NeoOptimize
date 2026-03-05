@@ -1,7 +1,0 @@
-<Solution>
-  <Project Path="NeoOptimize.AIAdvisor/NeoOptimize.AIAdvisor.csproj" />
-  <Project Path="NeoOptimize.App/NeoOptimize.App.csproj" />
-  <Project Path="NeoOptimize.Core/NeoOptimize.Core.csproj" />
-  <Project Path="NeoOptimize.Services/NeoOptimize.Services.csproj" />
-  <Project Path="NeoOptimize.Tests/NeoOptimize.Tests.csproj" />
-</Solution>
