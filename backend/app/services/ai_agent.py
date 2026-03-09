@@ -23,7 +23,7 @@ Keep answers concise, operational, and focused on Windows 10/11/12 performance, 
 ACTION_RULES = (
     {
         "command_name": "smart_booster",
-        "keywords": ("boost", "booster", "optimize", "lag", "slow", "lemot"),
+        "keywords": ("boost", "booster", "optimize", "lag", "slow", "lemot", "lambat", "startup"),
         "reason": "Run RAM cleanup, DNS flush, temp cleanup, and process reprioritization.",
         "payload": {"profile": "balanced"},
         "priority": 70,
@@ -37,7 +37,7 @@ ACTION_RULES = (
     },
     {
         "command_name": "health_check",
-        "keywords": ("health check", "diagnostic", "sfc", "dism", "integrity"),
+        "keywords": ("health check", "diagnostic", "sfc", "dism", "integrity", "cek kesehatan", "scan", "rusak"),
         "reason": "Run OS diagnostics including SFC, DISM, and integrity validation.",
         "payload": {"deep_scan": True},
         "priority": 80,
