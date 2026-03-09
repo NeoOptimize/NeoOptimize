@@ -67,23 +67,9 @@ class SupabaseRepository:
 
         if existing.data:
             client_id = existing.data[0]["id"]
-            (
-                self.client.table("clients")
-                .update(base_record)
-                .eq("id", client_id)
-                .execute()
-            )
+            self.client.table("clients").update(base_record).eq("id", client_id).execute()
         else:
-            (
-                self.client.table("clients")
-                .insert(
-                    {
-                        "id": client_id,
-                        **base_record,
-                    }
-                )
-                .execute()
-            )
+            self.client.table("clients").insert({"id": client_id, **base_record}).execute()
 
         self.log_action(
             client_id=client_id,
@@ -147,17 +133,12 @@ class SupabaseRepository:
                 detail=f"Client status '{record['status']}' is not allowed",
             )
 
-        (
-            self.client.table("clients")
-            .update(
-                {
-                    "last_seen_at": utcnow_iso(),
-                    "last_heartbeat_at": utcnow_iso(),
-                }
-            )
-            .eq("id", client_id)
-            .execute()
-        )
+        self.client.table("clients").update(
+            {
+                "last_seen_at": utcnow_iso(),
+                "last_heartbeat_at": utcnow_iso(),
+            }
+        ).eq("id", client_id).execute()
 
         return AuthenticatedClient(
             client_id=UUID(record["id"]),
@@ -178,23 +159,16 @@ class SupabaseRepository:
         snapshot = record.pop("snapshot")
         top_processes = record.pop("top_processes")
 
-        (
-            self.client.table("telemetry_logs")
-            .insert(
-                {
-                    "client_id": str(client.client_id),
-                    **record,
-                    "alert_state": "alert" if alerts else "normal",
-                    "alert_reasons": alerts,
-                    "snapshot": {
-                        **snapshot,
-                        "top_processes": top_processes,
-                    },
-                    "recorded_at": utcnow_iso(),
-                }
-            )
-            .execute()
-        )
+        self.client.table("telemetry_logs").insert(
+            {
+                "client_id": str(client.client_id),
+                **record,
+                "alert_state": "alert" if alerts else "normal",
+                "alert_reasons": alerts,
+                "snapshot": {**snapshot, "top_processes": top_processes},
+                "recorded_at": utcnow_iso(),
+            }
+        ).execute()
 
         if alerts:
             self.log_action(
@@ -212,17 +186,13 @@ class SupabaseRepository:
         client: AuthenticatedClient,
         payload: SystemHealthPayload,
     ) -> None:
-        (
-            self.client.table("system_health")
-            .insert(
-                {
-                    "client_id": str(client.client_id),
-                    **payload.model_dump(),
-                    "recorded_at": utcnow_iso(),
-                }
-            )
-            .execute()
-        )
+        self.client.table("system_health").insert(
+            {
+                "client_id": str(client.client_id),
+                **payload.model_dump(),
+                "recorded_at": utcnow_iso(),
+            }
+        ).execute()
 
         self.log_action(
             client_id=str(client.client_id),
@@ -241,9 +211,7 @@ class SupabaseRepository:
                 {
                     "client_id": str(payload.client_id),
                     "requested_by_user_id": (
-                        str(payload.requested_by_user_id)
-                        if payload.requested_by_user_id
-                        else None
+                        str(payload.requested_by_user_id) if payload.requested_by_user_id else None
                     ),
                     "source": payload.source,
                     "command_name": payload.command_name,
@@ -264,9 +232,7 @@ class SupabaseRepository:
             action_type=payload.command_name,
             status_value="queued",
             summary=f"Queued remote command '{payload.command_name}'",
-            requested_by_user_id=(
-                str(payload.requested_by_user_id) if payload.requested_by_user_id else None
-            ),
+            requested_by_user_id=(str(payload.requested_by_user_id) if payload.requested_by_user_id else None),
             correlation_id=str(correlation_id),
             details=payload.payload,
         )
@@ -288,17 +254,12 @@ class SupabaseRepository:
             return None
 
         command = response.data[0]
-        (
-            self.client.table("remote_commands")
-            .update(
-                {
-                    "status": "dispatched",
-                    "claimed_at": utcnow_iso(),
-                }
-            )
-            .eq("id", command["id"])
-            .execute()
-        )
+        self.client.table("remote_commands").update(
+            {
+                "status": "dispatched",
+                "claimed_at": utcnow_iso(),
+            }
+        ).eq("id", command["id"]).execute()
         command["status"] = "dispatched"
         return command
 
@@ -326,19 +287,14 @@ class SupabaseRepository:
                 detail="Command does not belong to client",
             )
 
-        (
-            self.client.table("remote_commands")
-            .update(
-                {
-                    "status": payload.status,
-                    "completed_at": utcnow_iso(),
-                    "result_payload": payload.output,
-                    "error_message": payload.error_message,
-                }
-            )
-            .eq("id", str(payload.command_id))
-            .execute()
-        )
+        self.client.table("remote_commands").update(
+            {
+                "status": payload.status,
+                "completed_at": utcnow_iso(),
+                "result_payload": payload.output,
+                "error_message": payload.error_message,
+            }
+        ).eq("id", str(payload.command_id)).execute()
 
         self.log_action(
             client_id=str(client.client_id),
@@ -380,6 +336,123 @@ class SupabaseRepository:
             "latest_health": health.data[0] if health.data else {},
         }
 
+    def search_memory(
+        self,
+        *,
+        query_embedding: list[float],
+        client_id: str | None,
+        match_threshold: float = 0.18,
+        match_count: int = 3,
+    ) -> list[dict[str, Any]]:
+        last_error: Exception | None = None
+        for vector_payload in self._vector_payload_candidates(query_embedding):
+            try:
+                response = self.client.rpc(
+                    "match_memory",
+                    {
+                        "query_embedding": vector_payload,
+                        "match_threshold": match_threshold,
+                        "match_count": match_count,
+                        "client_id_filter": client_id,
+                    },
+                ).execute()
+                return response.data or []
+            except Exception as exc:
+                last_error = exc
+
+        self.log_action(
+            client_id=client_id,
+            source="ai",
+            action_type="memory_retrieval",
+            status_value="failed",
+            summary="Failed to query AI memory matches",
+            details={"match_count": match_count, "match_threshold": match_threshold},
+            error_message=str(last_error) if last_error else "unknown error",
+        )
+        return []
+
+    def store_memory(
+        self,
+        *,
+        user_message: str,
+        ai_response: str,
+        embedding: list[float],
+        client_id: str | None,
+    ) -> str | None:
+        last_error: Exception | None = None
+        base_record = {
+            "user_message": user_message,
+            "ai_response": ai_response,
+            "client_id": client_id,
+            "created_at": utcnow_iso(),
+        }
+
+        for vector_payload in self._vector_payload_candidates(embedding):
+            try:
+                response = self.client.table("memory").insert(
+                    {**base_record, "embedding": vector_payload}
+                ).execute()
+                if response.data:
+                    return response.data[0].get("id")
+            except Exception as exc:
+                last_error = exc
+
+        self.log_action(
+            client_id=client_id,
+            source="ai",
+            action_type="memory_store",
+            status_value="failed",
+            summary="Failed to persist AI conversation memory",
+            details={"user_message_preview": user_message[:160]},
+            error_message=str(last_error) if last_error else "unknown error",
+        )
+        return None
+
+    def memory_exists(self, message_id: str) -> bool:
+        response = self.client.table("memory").select("id").eq("id", message_id).limit(1).execute()
+        return bool(response.data)
+
+    def store_feedback(
+        self,
+        *,
+        message_id: str,
+        rating: int,
+        comment: str | None,
+        client_id: str | None,
+        requested_by_user_id: str | None,
+    ) -> dict[str, Any]:
+        if not self.memory_exists(message_id):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Memory message not found",
+            )
+
+        response = self.client.table("feedback").insert(
+            {
+                "message_id": message_id,
+                "rating": rating,
+                "comment": comment,
+                "created_at": utcnow_iso(),
+            }
+        ).execute()
+
+        feedback = response.data[0]
+        self.log_action(
+            client_id=client_id,
+            source="user",
+            action_type="ai_feedback",
+            status_value="recorded",
+            summary="Recorded AI feedback",
+            requested_by_user_id=requested_by_user_id,
+            details={
+                "message_id": message_id,
+                "feedback_id": feedback.get("id"),
+                "rating": rating,
+                "comment": comment,
+            },
+        )
+        return feedback
+
     def log_action(
         self,
         *,
@@ -407,6 +480,12 @@ class SupabaseRepository:
                 "created_at": utcnow_iso(),
             }
         ).execute()
+
+    @staticmethod
+    def _vector_payload_candidates(embedding: list[float]) -> list[list[float] | str]:
+        normalized = [round(float(value), 6) for value in embedding]
+        vector_literal = "[" + ",".join(f"{value:.6f}" for value in normalized) + "]"
+        return [normalized, vector_literal]
 
 
 @lru_cache

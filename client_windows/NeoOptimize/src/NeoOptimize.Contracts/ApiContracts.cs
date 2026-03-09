@@ -164,6 +164,21 @@ public sealed class PlannedAction
     public bool Dispatched { get; init; }
 }
 
+public sealed class MemoryMatch
+{
+    [JsonPropertyName("message_id")]
+    public required string MessageId { get; init; }
+
+    [JsonPropertyName("user_message")]
+    public string? UserMessage { get; init; }
+
+    [JsonPropertyName("ai_response")]
+    public string? AiResponse { get; init; }
+
+    [JsonPropertyName("similarity")]
+    public double? Similarity { get; init; }
+}
+
 public sealed class AIChatRequest
 {
     [JsonPropertyName("message")]
@@ -184,9 +199,39 @@ public sealed class AIChatResponse
     [JsonPropertyName("correlation_id")]
     public required string CorrelationId { get; init; }
 
+    [JsonPropertyName("memory_id")]
+    public string? MemoryId { get; init; }
+
     [JsonPropertyName("planned_actions")]
     public List<PlannedAction> PlannedActions { get; init; } = new();
 
+    [JsonPropertyName("memory_hits")]
+    public List<MemoryMatch> MemoryHits { get; init; } = new();
+
     [JsonPropertyName("context_summary")]
     public Dictionary<string, object?> ContextSummary { get; init; } = new();
+}
+
+public sealed class AIFeedbackRequest
+{
+    [JsonPropertyName("message_id")]
+    public required string MessageId { get; init; }
+
+    [JsonPropertyName("client_id")]
+    public string? ClientId { get; init; }
+
+    [JsonPropertyName("rating")]
+    public int Rating { get; init; }
+
+    [JsonPropertyName("comment")]
+    public string? Comment { get; init; }
+}
+
+public sealed class AIFeedbackResponse
+{
+    [JsonPropertyName("status")]
+    public required string Status { get; init; }
+
+    [JsonPropertyName("feedback_id")]
+    public required string FeedbackId { get; init; }
 }

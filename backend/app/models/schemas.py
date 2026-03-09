@@ -105,6 +105,13 @@ class PlannedAction(BaseModel):
     dispatched: bool = False
 
 
+class MemoryMatch(BaseModel):
+    message_id: UUID
+    user_message: str | None = None
+    ai_response: str | None = None
+    similarity: float | None = None
+
+
 class AIChatRequest(BaseModel):
     message: str | None = None
     voice_transcript: str | None = None
@@ -127,5 +134,20 @@ class AIChatRequest(BaseModel):
 class AIChatResponse(BaseModel):
     reply: str
     correlation_id: UUID
+    memory_id: UUID | None = None
     planned_actions: list[PlannedAction] = Field(default_factory=list)
+    memory_hits: list[MemoryMatch] = Field(default_factory=list)
     context_summary: dict[str, Any] = Field(default_factory=dict)
+
+
+class AIFeedbackRequest(BaseModel):
+    message_id: UUID
+    client_id: UUID | None = None
+    user_id: UUID | None = None
+    rating: int = Field(ge=1, le=5)
+    comment: str | None = Field(default=None, max_length=1000)
+
+
+class AIFeedbackResponse(BaseModel):
+    status: Literal["recorded"]
+    feedback_id: UUID

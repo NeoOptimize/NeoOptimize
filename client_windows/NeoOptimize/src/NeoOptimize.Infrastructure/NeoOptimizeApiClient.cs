@@ -111,6 +111,23 @@ public sealed class NeoOptimizeApiClient(
             ?? throw new InvalidOperationException("AI response is empty.");
     }
 
+    public async Task<AIFeedbackResponse> SubmitAiFeedbackAsync(string messageId, int rating, string? comment, CancellationToken cancellationToken)
+    {
+        var registration = await EnsureRegistrationAsync(cancellationToken);
+        var payload = new AIFeedbackRequest
+        {
+            MessageId = messageId,
+            ClientId = registration.ClientId,
+            Rating = rating,
+            Comment = comment,
+        };
+
+        using var response = await _httpClient.PostAsJsonAsync("api/v1/ai/feedback", payload, cancellationToken);
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<AIFeedbackResponse>(cancellationToken: cancellationToken)
+            ?? throw new InvalidOperationException("AI feedback response is empty.");
+    }
+
     private static HttpRequestMessage CreateAuthenticatedRequest<TPayload>(
         HttpMethod method,
         string relativeUrl,
