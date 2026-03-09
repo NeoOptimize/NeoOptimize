@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from functools import lru_cache
-from typing import Iterable
+from typing import Any, Iterable
 from uuid import uuid4
 
 from huggingface_hub import InferenceClient
@@ -56,19 +56,11 @@ class NeoAIAgent:
     def __init__(self) -> None:
         self.settings = get_settings()
         self.repository = get_repository()
-        self.client = (
-            InferenceClient(token=self.settings.hf_token)
-            if self.settings.hf_token
-            else None
-        )
+        self.client = InferenceClient(token=self.settings.hf_token) if self.settings.hf_token else None
 
     def handle_chat(self, payload: AIChatRequest) -> AIChatResponse:
         correlation_id = uuid4()
-        client_context = (
-            self.repository.get_client_context(str(payload.client_id))
-            if payload.client_id
-            else {}
-        )
+        client_context = self.repository.get_client_context(str(payload.client_id)) if payload.client_id else {}
         planned_actions = self.plan_actions(payload.effective_message)
 
         if payload.dispatch_actions and payload.client_id:
@@ -90,6 +82,7 @@ class NeoAIAgent:
             message=payload.effective_message,
             context=client_context,
             planned_actions=planned_actions,
+            dispatch_actions=payload.dispatch_actions,
         )
 
         self.repository.log_action(
@@ -137,52 +130,150 @@ class NeoAIAgent:
         message: str,
         context: dict[str, object],
         planned_actions: list[PlannedAction],
+        dispatch_actions: bool,
     ) -> str:
-        prompt = self._build_prompt(message, context, planned_actions)
+        if self.client:
+            try:
+                response = self.client.chat_completion(
+                    model=self.settings.hf_model_id,
+                    messages=self._build_messages(message, context, planned_actions, dispatch_actions),
+                    max_tokens=384,
+                    temperature=0.2,
+                )
+                content = response.choices[0].message.content if response.choices else ""
+                if content:
+                    return content.strip()
+            except Exception as exc:
+                return self._generate_local_reply(
+                    message=message,
+                    context=context,
+                    planned_actions=planned_actions,
+                    dispatch_actions=dispatch_actions,
+                    failure_reason=str(exc),
+                )
 
-        if not self.client:
-            return (
-                "Neo AI backend aktif. HF_TOKEN belum diatur, jadi respons ini memakai fallback lokal. "
-                "Tetapkan HF_TOKEN dan HF_MODEL_ID untuk mengaktifkan generasi dari Hugging Face Inference."
-            )
+        return self._generate_local_reply(
+            message=message,
+            context=context,
+            planned_actions=planned_actions,
+            dispatch_actions=dispatch_actions,
+            failure_reason=None,
+        )
 
-        try:
-            return self.client.text_generation(
-                prompt=prompt,
-                model=self.settings.hf_model_id,
-                max_new_tokens=384,
-                temperature=0.2,
-                return_full_text=False,
-            ).strip()
-        except Exception as exc:
-            return (
-                "Model Hugging Face tidak merespons. "
-                f"Fallback aktif dengan error: {exc}"
-            )
-
-    def _build_prompt(
+    def _build_messages(
         self,
         message: str,
         context: dict[str, object],
         planned_actions: list[PlannedAction],
+        dispatch_actions: bool,
+    ) -> list[dict[str, str]]:
+        return [
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {
+                "role": "user",
+                "content": "\n".join(
+                    [
+                        f"Permintaan pengguna: {message}",
+                        f"Konteks klien terbaru: {json.dumps(context, default=str)}",
+                        "Planned actions: "
+                        f"{json.dumps([action.model_dump() for action in planned_actions], default=str)}",
+                        f"Dispatch actions sekarang: {dispatch_actions}",
+                        "Balas dalam Bahasa Indonesia dengan analisis ringkas, langkah aman, dan catatan risiko bila perlu.",
+                    ]
+                ),
+            },
+        ]
+
+    def _generate_local_reply(
+        self,
+        *,
+        message: str,
+        context: dict[str, object],
+        planned_actions: list[PlannedAction],
+        dispatch_actions: bool,
+        failure_reason: str | None,
     ) -> str:
-        return "\n".join(
+        telemetry = self._coerce_dict(context.get("latest_telemetry"))
+        health = self._coerce_dict(context.get("latest_health"))
+        observations: list[str] = []
+        recommendations: list[str] = []
+
+        cpu = self._safe_float(telemetry.get("cpu_percent"))
+        ram = self._safe_float(telemetry.get("ram_percent"))
+        disk = self._safe_float(telemetry.get("disk_usage_percent"))
+        temp = self._safe_float(telemetry.get("temperature_celsius"))
+        health_state = str(health.get("health_state") or health.get("disk_health") or "unknown")
+        integrity_status = str(health.get("integrity_status") or "unknown")
+
+        if cpu is not None:
+            observations.append(f"CPU terakhir {cpu:.1f}%.")
+            if cpu >= 85:
+                recommendations.append("CPU tinggi. Jalankan Smart Booster dan cek proses latar belakang paling berat.")
+        if ram is not None:
+            observations.append(f"RAM terakhir {ram:.1f}%.")
+            if ram >= 90:
+                recommendations.append("RAM sudah kritis. Tutup proses non-esensial dan lakukan cleanup temp/cache.")
+        if disk is not None:
+            observations.append(f"Disk usage {disk:.1f}%.")
+            if disk >= 90:
+                recommendations.append("Storage hampir penuh. Bersihkan temp files dan audit folder terbesar.")
+        if temp is not None:
+            observations.append(f"Temperatur {temp:.1f}C.")
+            if temp >= 80:
+                recommendations.append("Temperatur tinggi. Kurangi beban proses dan cek pendingin perangkat.")
+
+        if health_state != "unknown":
+            observations.append(f"Status kesehatan sistem: {health_state}.")
+        if integrity_status != "unknown":
+            observations.append(f"Status integritas: {integrity_status}.")
+
+        if not observations:
+            observations.append("Belum ada telemetry lengkap, jadi analisis memakai sinyal terbatas dari permintaan pengguna.")
+
+        if planned_actions:
+            if dispatch_actions:
+                recommendations.append(
+                    "Tindakan sudah diantrikan: "
+                    + ", ".join(action.command_name for action in planned_actions)
+                    + "."
+                )
+            else:
+                recommendations.append(
+                    "Tindakan yang layak dijalankan: "
+                    + ", ".join(action.command_name for action in planned_actions)
+                    + "."
+                )
+
+        if not recommendations:
+            recommendations.append("Lakukan Health Check jika gejala berulang, lalu cek log action terbaru untuk pola error.")
+
+        note = ""
+        if failure_reason:
+            note = " Mode AI cloud tidak tersedia, jadi Neo AI memakai analisis lokal operasional."
+
+        return " ".join(
             [
-                SYSTEM_PROMPT,
-                "",
-                f"User request: {message}",
-                f"Latest client context: {json.dumps(context, default=str)}",
-                "Planned actions: "
-                f"{json.dumps([action.model_dump() for action in planned_actions], default=str)}",
-                "",
-                "Respond in Bahasa Indonesia with operational guidance and risk notes if needed.",
-                "Assistant:",
+                f"Analisis Neo AI untuk permintaan '{message}':",
+                " ".join(observations),
+                "Rekomendasi utama: " + " ".join(recommendations),
+                note,
             ]
-        )
+        ).strip()
 
     @staticmethod
     def _matches_rule(message: str, keywords: Iterable[str]) -> bool:
         return any(keyword in message for keyword in keywords)
+
+    @staticmethod
+    def _coerce_dict(value: Any) -> dict[str, Any]:
+        return value if isinstance(value, dict) else {}
+
+    @staticmethod
+    def _safe_float(value: Any) -> float | None:
+        try:
+            return None if value is None else float(value)
+        except (TypeError, ValueError):
+            return None
 
 
 @lru_cache

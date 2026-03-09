@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/NeoOptimize.App/NeoOptimize.App.csproj" />
     <Project Path="src/NeoOptimize.Contracts/NeoOptimize.Contracts.csproj" />
     <Project Path="src/NeoOptimize.Infrastructure/NeoOptimize.Infrastructure.csproj" />
     <Project Path="src/NeoOptimize.Service/NeoOptimize.Service.csproj" />

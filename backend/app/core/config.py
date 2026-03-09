@@ -1,6 +1,6 @@
 from functools import lru_cache
 
-from pydantic import Field, field_validator
+from pydantic import AliasChoices, Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -15,7 +15,9 @@ class Settings(BaseSettings):
     allowed_origins: list[str] | str = Field(default="*")
 
     supabase_url: str = Field(validation_alias="SUPABASE_URL")
-    supabase_service_role_key: str = Field(validation_alias="SUPABASE_SERVICE_ROLE_KEY")
+    supabase_service_role_key: str = Field(
+        validation_alias=AliasChoices("SUPABASE_SERVICE_ROLE_KEY", "SUPABASE_KEY")
+    )
     supabase_anon_key: str | None = Field(default=None, validation_alias="SUPABASE_ANON_KEY")
 
     hf_token: str | None = Field(default=None, validation_alias="HF_TOKEN")

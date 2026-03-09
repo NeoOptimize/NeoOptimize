@@ -28,3 +28,5 @@ bin/
 obj/
 *.user
 *.suo
+
+DB admin supabase.txt

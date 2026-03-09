@@ -145,3 +145,48 @@ public sealed class CommandResultRequest
     [JsonPropertyName("error_message")]
     public string? ErrorMessage { get; init; }
 }
+
+public sealed class PlannedAction
+{
+    [JsonPropertyName("command_name")]
+    public required string CommandName { get; init; }
+
+    [JsonPropertyName("reason")]
+    public required string Reason { get; init; }
+
+    [JsonPropertyName("payload")]
+    public Dictionary<string, object?> Payload { get; init; } = new();
+
+    [JsonPropertyName("priority")]
+    public int Priority { get; init; }
+
+    [JsonPropertyName("dispatched")]
+    public bool Dispatched { get; init; }
+}
+
+public sealed class AIChatRequest
+{
+    [JsonPropertyName("message")]
+    public required string Message { get; init; }
+
+    [JsonPropertyName("client_id")]
+    public string? ClientId { get; init; }
+
+    [JsonPropertyName("dispatch_actions")]
+    public bool DispatchActions { get; init; }
+}
+
+public sealed class AIChatResponse
+{
+    [JsonPropertyName("reply")]
+    public required string Reply { get; init; }
+
+    [JsonPropertyName("correlation_id")]
+    public required string CorrelationId { get; init; }
+
+    [JsonPropertyName("planned_actions")]
+    public List<PlannedAction> PlannedActions { get; init; } = new();
+
+    [JsonPropertyName("context_summary")]
+    public Dictionary<string, object?> ContextSummary { get; init; } = new();
+}
