@@ -36,6 +36,7 @@ end $$;
 create or replace function public.set_updated_at()
 returns trigger
 language plpgsql
+set search_path = public
 as $$
 begin
     new.updated_at = timezone('utc', now());
@@ -152,9 +153,11 @@ create index if not exists idx_clients_last_seen_at on public.clients (last_seen
 
 create index if not exists idx_telemetry_logs_client_recorded_at on public.telemetry_logs (client_id, recorded_at desc);
 create index if not exists idx_action_logs_client_created_at on public.action_logs (client_id, created_at desc);
+create index if not exists idx_action_logs_requested_by_user_id on public.action_logs (requested_by_user_id);
 create index if not exists idx_action_logs_correlation_id on public.action_logs (correlation_id);
 create index if not exists idx_system_health_client_recorded_at on public.system_health (client_id, recorded_at desc);
 create index if not exists idx_remote_commands_client_status on public.remote_commands (client_id, status, priority desc, requested_at asc);
+create index if not exists idx_remote_commands_requested_by_user_id on public.remote_commands (requested_by_user_id);
 
 drop trigger if exists trg_users_updated_at on public.users;
 create trigger trg_users_updated_at
@@ -199,12 +202,13 @@ create or replace function public.user_owns_client(target_client_id uuid)
 returns boolean
 language sql
 stable
+set search_path = public
 as $$
     select exists (
         select 1
         from public.clients c
         where c.id = target_client_id
-          and c.owner_user_id = auth.uid()
+          and c.owner_user_id = (select auth.uid())
     );
 $$;
 
@@ -220,20 +224,20 @@ drop policy if exists "users can read their own profile" on public.users;
 create policy "users can read their own profile"
 on public.users for select
 to authenticated
-using (id = auth.uid());
+using (id = (select auth.uid()));
 
 drop policy if exists "users can update their own profile" on public.users;
 create policy "users can update their own profile"
 on public.users for update
 to authenticated
-using (id = auth.uid())
-with check (id = auth.uid());
+using (id = (select auth.uid()))
+with check (id = (select auth.uid()));
 
 drop policy if exists "users can read their own clients" on public.clients;
 create policy "users can read their own clients"
 on public.clients for select
 to authenticated
-using (owner_user_id = auth.uid());
+using (owner_user_id = (select auth.uid()));
 
 drop policy if exists "users can read telemetry for owned clients" on public.telemetry_logs;
 create policy "users can read telemetry for owned clients"
