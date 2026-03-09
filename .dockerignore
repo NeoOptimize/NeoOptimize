@@ -1,0 +1,15 @@
+.git/
+.gitignore
+.env
+backend/.env
+__pycache__/
+*.pyc
+client_windows/
+docs/
+database/
+docker-compose.yml
+dockerfile.txt
+backend/tests/
+app/
+frontend/
+scripts/

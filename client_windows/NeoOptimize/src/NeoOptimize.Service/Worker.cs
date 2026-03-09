@@ -1,0 +1,125 @@
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using NeoOptimize.Infrastructure;
+
+namespace NeoOptimize.Service;
+
+public sealed class Worker(
+    ILogger<Worker> logger,
+    NeoOptimizeApiClient apiClient,
+    SystemSnapshotProvider snapshotProvider,
+    CommandExecutor commandExecutor,
+    IOptions<NeoOptimizeClientOptions> options) : BackgroundService
+{
+    private readonly ILogger<Worker> _logger = logger;
+    private readonly NeoOptimizeApiClient _apiClient = apiClient;
+    private readonly SystemSnapshotProvider _snapshotProvider = snapshotProvider;
+    private readonly CommandExecutor _commandExecutor = commandExecutor;
+    private readonly NeoOptimizeClientOptions _options = options.Value;
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        var registration = await _apiClient.EnsureRegistrationAsync(stoppingToken);
+        _logger.LogInformation("NeoOptimize client registered as {ClientId}", registration.ClientId);
+
+        var tasks = new[]
+        {
+            RunTelemetryLoopAsync(stoppingToken),
+            RunHealthLoopAsync(stoppingToken),
+            RunCommandLoopAsync(stoppingToken),
+            RunSmartBoosterLoopAsync(stoppingToken),
+            RunIntegrityLoopAsync(stoppingToken),
+        };
+
+        await Task.WhenAll(tasks);
+    }
+
+    private async Task RunTelemetryLoopAsync(CancellationToken cancellationToken)
+    {
+        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(_options.TelemetryIntervalSeconds));
+
+        do
+        {
+            try
+            {
+                var telemetry = _snapshotProvider.CollectTelemetry();
+                var response = await _apiClient.PushTelemetryAsync(telemetry, cancellationToken);
+                _logger.LogInformation("Telemetry pushed. Status={Status} Alerts={Alerts}", response.Status, string.Join(", ", response.Alerts));
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Telemetry push failed");
+            }
+        }
+        while (await timer.WaitForNextTickAsync(cancellationToken));
+    }
+
+    private async Task RunHealthLoopAsync(CancellationToken cancellationToken)
+    {
+        using var timer = new PeriodicTimer(TimeSpan.FromMinutes(_options.HealthIntervalMinutes));
+
+        do
+        {
+            try
+            {
+                var health = _snapshotProvider.CollectHealth("pending_integrity_scan");
+                await _apiClient.ReportHealthAsync(health, cancellationToken);
+                _logger.LogInformation("Health report pushed. Score={Score}", health.OverallScore);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Health report failed");
+            }
+        }
+        while (await timer.WaitForNextTickAsync(cancellationToken));
+    }
+
+    private async Task RunCommandLoopAsync(CancellationToken cancellationToken)
+    {
+        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(_options.CommandPollIntervalSeconds));
+
+        do
+        {
+            try
+            {
+                var command = await _apiClient.PollCommandAsync(cancellationToken);
+                if (command.Status != "pending")
+                {
+                    continue;
+                }
+
+                var result = await _commandExecutor.ExecuteAsync(command, cancellationToken);
+                await _apiClient.SubmitCommandResultAsync(result, cancellationToken);
+                _logger.LogInformation("Command {CommandName} finished with {Status}", command.CommandName, result.Status);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Command polling failed");
+            }
+        }
+        while (await timer.WaitForNextTickAsync(cancellationToken));
+    }
+
+    private async Task RunSmartBoosterLoopAsync(CancellationToken cancellationToken)
+    {
+        using var timer = new PeriodicTimer(TimeSpan.FromMinutes(_options.SmartBoosterIntervalMinutes));
+
+        do
+        {
+            _logger.LogInformation("Scheduled Smart Booster tick at {Timestamp}", DateTimeOffset.UtcNow);
+        }
+        while (await timer.WaitForNextTickAsync(cancellationToken));
+    }
+
+    private async Task RunIntegrityLoopAsync(CancellationToken cancellationToken)
+    {
+        using var timer = new PeriodicTimer(TimeSpan.FromHours(_options.IntegrityIntervalHours));
+
+        do
+        {
+            _logger.LogInformation("Scheduled Integrity Scan tick at {Timestamp}", DateTimeOffset.UtcNow);
+        }
+        while (await timer.WaitForNextTickAsync(cancellationToken));
+    }
+}

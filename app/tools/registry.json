@@ -1,0 +1,34 @@
+{
+  "tools": {
+    "cleaner": {
+      "description": "Cleanup system cache and temp files",
+      "required_params": ["category"],
+      "optional_params": ["subcategory"],
+      "timeout": 120
+    },
+    "optimizer": {
+      "description": "System optimization routines",
+      "required_params": ["category"],
+      "timeout": 180
+    },
+    "system_info": {
+      "description": "Get current system metrics",
+      "required_params": [],
+      "timeout": 30
+    },
+    "clear_memory_cache": {
+      "description": "Free up RAM by clearing caches",
+      "required_params": [],
+      "timeout": 60
+    },
+    "check_driver_updates": {
+      "description": "Scan for outdated drivers",
+      "required_params": [],
+      "timeout": 120
+    }
+  },
+  "categories": {
+    "cleaner": ["CAT_TEMP_FILES", "CAT_BROWSER_CACHE_CHROME", "CAT_LOG_SYSTEM"],
+    "optimizer": ["CAT_SFC_SCANNOW", "CAT_DISM_RESTOREHEALTH"]
+  }
+}
