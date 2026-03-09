@@ -16,10 +16,9 @@
       <Link>WebApp\%(RecursiveDir)%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\..\..\..\icon.png">
+    <Resource Include="..\..\..\..\icon.png">
       <Link>Assets\icon.png</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </Resource>
     <None Update="appsettings*.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

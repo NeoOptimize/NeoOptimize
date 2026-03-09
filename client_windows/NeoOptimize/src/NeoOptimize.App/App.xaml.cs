@@ -18,6 +18,7 @@ public partial class App : Application
         var builder = Host.CreateApplicationBuilder();
         builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
         builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
+        builder.Configuration.AddEnvironmentVariables();
 
         builder.Services.AddOptions<NeoOptimizeClientOptions>()
             .Bind(builder.Configuration.GetSection(NeoOptimizeClientOptions.SectionName));
