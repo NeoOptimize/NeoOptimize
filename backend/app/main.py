@@ -1,55 +1,25 @@
-"""
-NeoAI Main Application Entry Point
-FastAPI Server with Gradio Interface & REST API
-"""
-
 import os
-import sys
-from contextlib import asynccontextmanager
-from fastapi import FastAPI, Request, Depends, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+import gradio as gr
+from dotenv import load_dotenv
 
-# Ensure app path is in sys.path
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+load_dotenv()
 
-from app.core.config import settings
-from app.core.logger import setup_logging
-from app.core.security import SecurityService
+from app.api.v1.endpoints import auth, commands, telemetry, websocket
+from app.core.agent import agent_executor
+from app.core.memory import retrieve_relevant_context, store_interaction
+from app.core.monitor import AutonomousMonitor
+from app.services.supabase_client import get_supabase
+from app.utils.logger import setup_logging
+from typing import List
+import logging
 
-# Import Routers (Placeholders for now, will connect to real routers later)
-from app.api.v1.routers import commands_router, voice_router, telemetry_router
+setup_logging()
+logger = logging.getLogger(__name__)
 
-logger = setup_logging()
+app = FastAPI(title="Neo AI Backend", version="1.0.0")
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """Manage application lifecycle (startup/shutdown)."""
-    logger.info("=" * 50)
-    logger.info(f"🚀 NeoAI Backend v{settings.VERSION} Starting...")
-    logger.info(f"📍 Device: {settings.DEVICE}")
-    logger.info(f"🤖 Model: {settings.MODEL_NAME}")
-    
-    # Initialize Database Connection (Lazy load in supabase_client)
-    try:
-        from app.services.supabase_client import get_supabase_client
-        await get_supabase_client()
-        logger.info("✅ Supabase Connected Successfully")
-    except Exception as e:
-        logger.error(f"❌ Database Connection Failed: {e}")
-
-    yield
-
-    logger.info("🛑 NeoAI Backend Shutting down...")
-
-app = FastAPI(
-    title="NeoOptimasi AI API",
-    description="AI-Powered Windows System Optimization Platform",
-    version=settings.VERSION,
-    lifespan=lifespan
-)
-
-# Configure CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -58,42 +28,73 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Add Headers dependency to check API Key globally or per endpoint
-async def verify_api_key(request: Request):
-    auth_header = request.headers.get("X-API-Key")
-    if not auth_header or auth_header != settings.CLIENT_API_KEY:
-        raise HTTPException(status_code=401, detail="Invalid API Key")
+app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
+app.include_router(commands.router, prefix="/api/v1/commands", tags=["commands"])
+app.include_router(telemetry.router, prefix="/api/v1/telemetry", tags=["telemetry"])
+app.include_router(websocket.router, prefix="/api/v1/ws", tags=["websocket"])
 
-# Mount API Routers
-app.include_router(commands_router, prefix="/api/v1", tags=["Commands"])
-app.include_router(voice_router, prefix="/api/v1", tags=["Voice"])
-app.include_router(telemetry_router, prefix="/api/v1", tags=["Telemetry"])
+@app.get("/")
+async def root():
+    return {"message": "Neo AI Backend is running"}
 
-@app.get("/health")
-async def health_check():
-    """Basic health check for load balancers or monitoring."""
-    return {
-        "status": "healthy",
-        "timestamp": "2024-01-01T00:00:00Z", # Update dynamically
-        "version": settings.VERSION,
-        "service": "NeoAI Backend"
-    }
+# ========== GRADIO CHAT INTERFACE ==========
+def chat_with_memory(message: str, history: List[List[str]], client_id: str = None) -> str:
+    try:
+        context = retrieve_relevant_context(message, client_id=client_id)
+        if context:
+            context_str = "\n".join(context)
+            message_with_context = f"Konteks dari percakapan sebelumnya:\n{context_str}\n\nPertanyaan: {message}"
+        else:
+            message_with_context = message
 
-# Placeholder for direct usage without routes
-class ToolInput(BaseModel):
-    tool: str
-    params: dict
+        # Untuk sementara, client_id tidak digunakan di agent karena tools memerlukannya di input.
+        # Kita bisa menambahkan client_id ke dalam prompt atau menggunakan cara lain.
+        # Untuk demo, kita asumsikan client_id disertakan dalam input pengguna.
+        # Dalam production, client_id harus didapat dari sesi/login.
+        response = agent_executor.run(input=message_with_context)
+        store_interaction(message, response, client_id=client_id)
+        return response
+    except Exception as e:
+        logger.exception("Chat error")
+        return f"Terjadi kesalahan: {str(e)}"
 
-@app.post("/command/direct")
-async def execute_direct_tool(data: ToolInput):
-    """Direct tool execution helper (bypasses queue)."""
-    logger.info(f"Executing direct command: {data.tool}")
-    return {"status": "executed", "tool": data.tool}
+def respond_text(message, chat_history):
+    if not message.strip():
+        return "", chat_history
+    # Di sini kita bisa mengambil client_id dari suatu tempat (misal dari sesi)
+    # Untuk sementara hardcode None
+    bot_message = chat_with_memory(message, chat_history, client_id=None)
+    chat_history.append((message, bot_message))
+    return "", chat_history
 
-if __name__ == "__main__":
-    import uvicorn
-    host = "0.0.0.0"
-    port = int(os.getenv("PORT", 7860))
-    
-    logger.info(f"Starting server on {host}:{port}")
-    uvicorn.run(app, host=host, port=port)
+with gr.Blocks(title="Neo AI Super Cerdas", theme=gr.themes.Soft()) as demo:
+    gr.Markdown("# 🤖 Neo AI - Asisten Sistem Windows Super Cerdas")
+    chatbot = gr.Chatbot()
+    msg = gr.Textbox(label="Pesan Anda", placeholder="Ketik perintah...")
+    clear = gr.Button("Hapus Percakapan")
+
+    msg.submit(respond_text, [msg, chatbot], [msg, chatbot])
+    clear.click(lambda: None, None, chatbot, queue=False)
+
+app = gr.mount_gradio_app(app, demo, path="/")
+
+# ========== STARTUP / SHUTDOWN ==========
+monitor = None
+
+@app.on_event("startup")
+async def startup_event():
+    global monitor
+    try:
+        supabase = get_supabase()
+        supabase.table("clients").select("id").limit(1).execute()
+        logger.info("Supabase connection successful")
+    except Exception as e:
+        logger.error(f"Supabase connection failed: {e}")
+
+    monitor = AutonomousMonitor(check_interval=60)
+    logger.info("AutonomousMonitor started")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    if monitor:
+        monitor.stop()

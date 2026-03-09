@@ -23,10 +23,3 @@ logs/
 *.bin
 *.pt
 *.pth
-# .NET
-bin/
-obj/
-*.user
-*.suo
-
-DB admin supabase.txt
