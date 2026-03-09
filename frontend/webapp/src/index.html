@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NeoOptimize Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
+  <link rel="stylesheet" href="./styles.css" />
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <div class="ambient ambient-left"></div>
+  <div class="ambient ambient-right"></div>
+  <main class="shell">
+    <header class="topbar panel reveal">
+      <div class="brand">
+        <img src="./assets/icon.png" alt="NeoOptimize mascot" class="brand-mark" />
+        <div>
+          <p class="eyebrow">Neo AI System Console</p>
+          <h1>NeoOptimize</h1>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <div class="chip-group" id="themeGroup">
+          <button data-theme="system" class="chip is-active">System</button>
+          <button data-theme="light" class="chip">Light</button>
+          <button data-theme="night" class="chip">Night</button>
+        </div>
+        <div class="chip-group" id="langGroup">
+          <button data-lang="id" class="chip is-active">ID</button>
+          <button data-lang="en" class="chip">EN</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="hero-grid reveal">
+      <article class="hero-card panel">
+        <div class="hero-copy">
+          <p class="eyebrow" id="connectionStatus">Menghubungkan ke backend...</p>
+          <h2 id="heroTitle">Windows optimization cockpit dengan AI, telemetry, dan execution loop real-time.</h2>
+          <p id="heroSubtitle">Client akan register ke Hugging Face Space, memantau kondisi lokal, lalu mendorong insight dan command execution ke Supabase.</p>
+        </div>
+        <div class="hero-meta">
+          <div class="hero-id-card">
+            <span class="muted">Client ID</span>
+            <strong id="clientId">Belum terdaftar</strong>
+          </div>
+          <div class="hero-id-card">
+            <span class="muted">Backend</span>
+            <strong id="backendUrl">-</strong>
+          </div>
+        </div>
+      </article>
+
+      <aside class="ai-card panel reveal">
+        <div class="section-head compact">
+          <div>
+            <p class="eyebrow">Neo AI</p>
+            <h3 id="aiPanelTitle">Copilot siap memberi analisis</h3>
+          </div>
+          <span class="status-pill" id="aiStatus">Standby</span>
+        </div>
+        <form id="aiForm" class="ai-form">
+          <textarea id="aiPrompt" rows="5" placeholder="Contoh: PC terasa lambat saat startup, analisa dan sarankan tindakan aman."></textarea>
+          <label class="toggle-row">
+            <input type="checkbox" id="dispatchActions" />
+            <span id="dispatchLabel">Eksekusi tindakan yang disarankan</span>
+          </label>
+          <button type="submit" class="primary-btn" id="aiSubmit">Analisa dengan Neo AI</button>
+        </form>
+        <div class="ai-output" id="aiOutput">
+          <p class="muted">Balasan AI akan tampil di sini.</p>
+        </div>
+        <div class="plan-list" id="plannedActions"></div>
+      </aside>
+    </section>
+
+    <section class="stats-grid reveal" id="statsGrid"></section>
+
+    <section class="content-grid reveal">
+      <article class="panel command-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Quick Actions</p>
+            <h3 id="actionsTitle">Eksekusi lokal</h3>
+          </div>
+          <button class="ghost-btn" id="refreshButton">Refresh</button>
+        </div>
+        <div class="actions-grid">
+          <button class="action-card" data-action="smartBoost">
+            <span class="action-kicker">Quick</span>
+            <strong>Smart Boost</strong>
+            <small>Bersihkan temp, flush DNS, dan refresh stack ringan.</small>
+          </button>
+          <button class="action-card" data-action="smartOptimize">
+            <span class="action-kicker">AI Ready</span>
+            <strong>Smart Optimize</strong>
+            <small>Gabungkan cleanup, observasi proses, dan rekomendasi berikutnya.</small>
+          </button>
+          <button class="action-card" data-action="healthCheck">
+            <span class="action-kicker">Diagnostics</span>
+            <strong>Health Check</strong>
+            <small>Kumpulkan health summary, status SFC/DISM, dan kondisi runtime.</small>
+          </button>
+          <button class="action-card" data-action="integrityScan">
+            <span class="action-kicker">Security</span>
+            <strong>Integrity Scan</strong>
+            <small>Hash folder aplikasi dan catat perubahan yang terdeteksi.</small>
+          </button>
+        </div>
+        <div class="toast-zone" id="toastZone"></div>
+      </article>
+
+      <article class="panel activity-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Recent Activity</p>
+            <h3 id="activityTitle">Execution timeline</h3>
+          </div>
+        </div>
+        <div class="activity-list" id="activityList"></div>
+      </article>
+    </section>
+
+    <section class="panel reports-panel reveal">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Reports</p>
+          <h3 id="reportsTitle">Laporan lokal</h3>
+        </div>
+        <button class="ghost-btn" id="reloadReports">Reload</button>
+      </div>
+      <div class="reports-grid" id="reportsGrid"></div>
+    </section>
+
+    <footer class="footer panel reveal">
+      <div>
+        <p class="eyebrow">Support</p>
+        <h3>NeoOptimize support channels</h3>
+      </div>
+      <div class="footer-links">
+        <a href="https://wa.me/6287889911030" target="_blank" rel="noreferrer">WhatsApp</a>
+        <a href="mailto:neooptimizeofficial@gmail.com">Email</a>
+        <a href="https://buymeacoffee.com/nol.eight" target="_blank" rel="noreferrer">BuyMeACoffee</a>
+        <a href="https://saweria.co/dtechtive" target="_blank" rel="noreferrer">Saweria</a>
+      </div>
+    </footer>
+  </main>
+</body>
+</html>
