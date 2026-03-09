@@ -1,28 +1,43 @@
+from fastapi import HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials
+from functools import wraps
 import hashlib
 import hmac
-import secrets
-from uuid import uuid4
+from typing import Optional
 
+class SecurityService:
+    """Handles authentication and hardware fingerprinting."""
 
-CLIENT_ID_HEADER = "X-Client-ID"
-CLIENT_API_KEY_HEADER = "X-Client-API-Key"
-HARDWARE_FINGERPRINT_HEADER = "X-Hardware-Fingerprint"
+    @staticmethod
+    def verify_client_auth(request_headers: dict, api_key: str) -> bool:
+        """Verify X-API-Key header matches configured key."""
+        provided_key = request_headers.get("X-API-Key", "")
+        # Simple timing-safe comparison could be added here
+        if provided_key != api_key:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid Client API Key"
+            )
+        return True
 
+    @staticmethod
+    def generate_fingerprint(hardware_info: dict) -> str:
+        """Generate a unique hash from hardware details."""
+        data = f"{hardware_info.get('cpu_id', '')}{hardware_info.get('mac', '')}"
+        return hashlib.sha256(data.encode()).hexdigest()
 
-def hash_hardware_fingerprint(fingerprint: str) -> str:
-    return hashlib.sha256(fingerprint.strip().encode("utf-8")).hexdigest()
+    @staticmethod
+    async def extract_bearer_token(token: str) -> Optional[str]:
+        """Extract token from Bearer header."""
+        if token.startswith("Bearer "):
+            return token[7:]
+        return None
 
-
-def hash_api_key(api_key: str) -> str:
-    return hashlib.sha256(api_key.encode("utf-8")).hexdigest()
-
-
-def constant_time_equals(left: str, right: str) -> bool:
-    return hmac.compare_digest(left or "", right or "")
-
-
-def generate_client_credentials() -> tuple[str, str, str]:
-    client_id = str(uuid4())
-    client_api_key = f"neo_{secrets.token_urlsafe(32)}"
-    client_api_key_hash = hash_api_key(client_api_key)
-    return client_id, client_api_key, client_api_key_hash
+    @staticmethod
+    def validate_command_params(params: dict, allowed_keys: list) -> dict:
+        """Sanitize incoming parameters against allowed keys."""
+        cleaned = {}
+        for key in params:
+            if key in allowed_keys:
+                cleaned[key] = params[key]
+        return cleaned

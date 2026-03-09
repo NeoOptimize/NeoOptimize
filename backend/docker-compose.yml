@@ -1,8 +1,9 @@
 version: '3.8'
 
 services:
-  backend:
+  neoai-backend:
     build: .
+    container_name: neoai-backend
     ports:
       - "7860:7860"
     environment:
@@ -10,6 +11,10 @@ services:
       - SUPABASE_URL=${SUPABASE_URL}
       - SUPABASE_KEY=${SUPABASE_KEY}
       - CLIENT_API_KEY=${CLIENT_API_KEY}
+      - LOG_LEVEL=INFO
     volumes:
       - ./logs:/app/logs
     restart: unless-stopped
+
+volumes:
+  logs:

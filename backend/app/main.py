@@ -1,83 +1,99 @@
-import logging
+"""
+NeoAI Main Application Entry Point
+FastAPI Server with Gradio Interface & REST API
+"""
+
+import os
+import sys
 from contextlib import asynccontextmanager
-
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
-from app.api.v1.endpoints import ai, auth, commands, health, telemetry, websocket
-from app.core.config import get_settings
-from app.services.supabase_client import get_supabase
+# Ensure app path is in sys.path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+from app.core.config import settings
+from app.core.logger import setup_logging
+from app.core.security import SecurityService
 
-def configure_logging() -> None:
-    settings = get_settings()
-    level = getattr(logging, settings.log_level.upper(), logging.INFO)
-    logging.basicConfig(
-        level=level,
-        format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
-    )
+# Import Routers (Placeholders for now, will connect to real routers later)
+from app.api.v1.routers import commands_router, voice_router, telemetry_router
 
+logger = setup_logging()
 
 @asynccontextmanager
-async def lifespan(_: FastAPI):
-    configure_logging()
-    logger = logging.getLogger("neooptimize.startup")
-
+async def lifespan(app: FastAPI):
+    """Manage application lifecycle (startup/shutdown)."""
+    logger.info("=" * 50)
+    logger.info(f"🚀 NeoAI Backend v{settings.VERSION} Starting...")
+    logger.info(f"📍 Device: {settings.DEVICE}")
+    logger.info(f"🤖 Model: {settings.MODEL_NAME}")
+    
+    # Initialize Database Connection (Lazy load in supabase_client)
     try:
-        get_supabase()
-        logger.info("Supabase client initialized")
-    except Exception as exc:
-        logger.warning("Supabase initialization skipped: %s", exc)
+        from app.services.supabase_client import get_supabase_client
+        await get_supabase_client()
+        logger.info("✅ Supabase Connected Successfully")
+    except Exception as e:
+        logger.error(f"❌ Database Connection Failed: {e}")
 
     yield
 
+    logger.info("🛑 NeoAI Backend Shutting down...")
 
-def create_app() -> FastAPI:
-    settings = get_settings()
-    app = FastAPI(
-        title=settings.app_name,
-        version=settings.app_version,
-        debug=settings.debug,
-        lifespan=lifespan,
-    )
+app = FastAPI(
+    title="NeoOptimasi AI API",
+    description="AI-Powered Windows System Optimization Platform",
+    version=settings.VERSION,
+    lifespan=lifespan
+)
 
-    allow_credentials = settings.allowed_origins != ["*"]
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=settings.allowed_origins,
-        allow_credentials=allow_credentials,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-    app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
-    app.include_router(ai.router, prefix="/api/v1/ai", tags=["ai"])
-    app.include_router(telemetry.router, prefix="/api/v1/telemetry", tags=["telemetry"])
-    app.include_router(health.router, prefix="/api/v1/health", tags=["health"])
-    app.include_router(commands.router, prefix="/api/v1/commands", tags=["commands"])
-    app.include_router(websocket.router, prefix="/api/v1/ws", tags=["websocket"])
+# Add Headers dependency to check API Key globally or per endpoint
+async def verify_api_key(request: Request):
+    auth_header = request.headers.get("X-API-Key")
+    if not auth_header or auth_header != settings.CLIENT_API_KEY:
+        raise HTTPException(status_code=401, detail="Invalid API Key")
 
-    @app.get("/", summary="Backend info")
-    async def root() -> dict[str, object]:
-        return {
-            "service": settings.app_name,
-            "version": settings.app_version,
-            "environment": settings.app_env,
-            "features": [
-                "client-registration",
-                "telemetry-ingestion",
-                "system-health",
-                "remote-commands",
-                "neo-ai-assistant",
-                "websocket-monitoring",
-            ],
-        }
+# Mount API Routers
+app.include_router(commands_router, prefix="/api/v1", tags=["Commands"])
+app.include_router(voice_router, prefix="/api/v1", tags=["Voice"])
+app.include_router(telemetry_router, prefix="/api/v1", tags=["Telemetry"])
 
-    @app.get("/healthz", summary="Liveness probe")
-    async def healthz() -> dict[str, str]:
-        return {"status": "ok"}
+@app.get("/health")
+async def health_check():
+    """Basic health check for load balancers or monitoring."""
+    return {
+        "status": "healthy",
+        "timestamp": "2024-01-01T00:00:00Z", # Update dynamically
+        "version": settings.VERSION,
+        "service": "NeoAI Backend"
+    }
 
-    return app
+# Placeholder for direct usage without routes
+class ToolInput(BaseModel):
+    tool: str
+    params: dict
 
+@app.post("/command/direct")
+async def execute_direct_tool(data: ToolInput):
+    """Direct tool execution helper (bypasses queue)."""
+    logger.info(f"Executing direct command: {data.tool}")
+    return {"status": "executed", "tool": data.tool}
 
-app = create_app()
+if __name__ == "__main__":
+    import uvicorn
+    host = "0.0.0.0"
+    port = int(os.getenv("PORT", 7860))
+    
+    logger.info(f"Starting server on {host}:{port}")
+    uvicorn.run(app, host=host, port=port)
