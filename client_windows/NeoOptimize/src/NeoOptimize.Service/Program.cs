@@ -15,6 +15,7 @@ builder.Services.AddOptions<NeoOptimizeClientOptions>()
 
 builder.Services.AddSingleton<HardwareFingerprintService>();
 builder.Services.AddSingleton<RegistrationStore>();
+builder.Services.AddSingleton<ConsentStore>();
 builder.Services.AddSingleton<SystemSnapshotProvider>();
 builder.Services.AddSingleton<WindowsMaintenanceToolkit>();
 builder.Services.AddSingleton<CommandExecutor>();

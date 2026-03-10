@@ -1,0 +1,1720 @@
+Tweaking.com - Windows Repair Change Log.
+
+v4.14.0
+Updated default registry and file permissions for Windows 10 and 11 as of June 1st, 2023.
+
+v4.13.1
+Updated default registry and file permissions for Windows 10 and 11 as of Sept 5th, 2022.
+
+v4.13.0
+Updated default registry and file permissions for Windows 10 and 11 as of June 20th, 2022.
+
+v4.12.4
+Updated default registry and file permissions for Windows 10 and 11 as of Feb 20th, 2022.
+
+v4.12.3
+Updated default registry and file permissions for Windows 10 and 11 as of Jan 16th, 2022.
+
+v4.12.2
+Updated default registry and file permissions for Windows 8.1, 10 and 11 as of Dec 28th, 2021.
+
+v4.12.1
+Minor bug fixes
+
+v4.12.0
+Added Windows 11 support
+Updated default registry and file permissions for Windows 8.1, 10 and 11
+Restored the Repair App store. The repair has been redone from scratch and is enabled in the repairs again.
+Multiple small bug fixes and a lot of code improvements.
+
+v4.11.7
+Bug fixes and updates
+
+v4.11.6
+Updated default registry and file permissions for Windows 10 as of Aug 12th 2021.
+
+v4.11.5
+Updated default registry and file permissions for Windows 10 as of July 22nd 2021.
+
+v4.11.4
+Updated default registry and file permissions for Windows 10 as of June 22nd 2021.
+Added new warning message if running on a Windows server as Servers are not supported because of permissions.
+
+v4.11.3
+Updated default registry and file permissions for Windows 10 as of May 4th 2021.
+Fixed bug in set trusted installer permissions when adding a file that was read only.
+
+v4.11.2
+Updated Tweaking.com - Registry Backup to v4.0.0
+Updated create restore point code to give error messages if creating a restore point fails.
+Updated default registry and file permissions for Windows 10 as of March 18th 2021.
+
+v4.11.1
+Fixed a bug where you couldn't start the repairs if you didn't use English. This is now fixed.
+
+v4.11.0
+Add 3 translations to the program. French, German and Italian.
+Updated default registry and file permissions for Windows 10 as of Jan 19th 2021.
+
+v4.10.3
+Minor fixes and tweaks
+
+v4.10.2
+Fixed bug where the repair info drop down list was blank and not showing info on the repairs.
+
+v4.10.1
+Minor fixes and tweaks
+
+4.10.0
+Major update, added the registry files and service startup commands to support Windows 10 build 2009.
+Updated default registry and file permissions for Windows 10 as of Oct 22nd 2020.
+
+4.9.6
+Updated default registry and file permissions for Windows 7, 8.1 and 10 as of Oct. 19th 2020
+
+4.9.5
+Updated default registry and file permissions for Windows 7, 8.1 and 10 as of Sept. 2020
+Updated Codejock Controls to v19.3.0
+Multiple updates and bug fixes.
+
+4.9.0
+Major update, added the registry files and service startup commands to support Windows 10 build 2004.
+Updated default registry and file permissions for Windows 10 as of June 8th 2020.
+
+v4.8.1
+Updated default registry and file permissions for Windows 10 as of June 3rd 2020.
+Support for Windows 10 2004 will be added to the program once Microsoft fully releases it.
+
+v4.8.0
+Updated default registry and file permissions for Windows 7, 8.1 and 10 as of April 14th 2020
+
+v4.7.2
+Updated default registry and file permissions for Windows 7, 8.1 and 10 as of Feb 29th 2020
+
+v4.7.1
+Minor fixes and tweaks
+
+v4.7.0
+Major update, added the registry files and service startup commands to support Windows 10 build 1909.
+
+Updated default registry and file permissions for Windows 7, 8.1 and 10 as of Nov 14th 2019
+
+v4.6.1
+Minor fixes and tweaks
+
+v4.6.0
+Multiple bug fixes and program name update
+
+v4.5.5
+Fixed bug where in windows 10 and booting into safe mode Credential Manager (VaultSvc) service wasnt starting.
+
+v4.5.4
+Updated default registry and file permissions for Windows 7, 8.1 and 10 as of Aug 20th 2019
+
+v4.5.3
+Minor bug fixes
+
+v4.5.2
+Updated default registry and file permissions for Windows 7, 8.1 and 10 as of June 12th 2019
+
+v4.5.1
+Fixed major bug in permissions repair for Windows 10.
+
+v4.5.0
+Major update, added the registry files and service startup commands to support Windows 10 build 1903.
+
+Updated default registry and file permissions for Windows 10 as of May 27th 2019
+
+v4.4.9
+Speed improvements and spelling corrections.
+
+v4.4.8
+Updated default registry and file permissions for Windows 7, 8.1 and 10 as of May 3rd 2019
+
+v4.4.7
+Minor bug fixes and performance improvements.
+
+v4.4.6
+Updated default registry and file permissions for Windows 7, 8.1 and 10 as of March 13th 2019
+
+v4.4.5
+Updated default registry and file permissions for Windows 7, 8.1 and 10 as of Feb 19th 2019
+
+v4.4.4
+Microsoft keeps changing the path for windows defender in windows 10, so when restoring the service from the repairs windows defender would no longer work because it would point to the old path.
+For now the windefend service for windows 10 has been removed from the repairs to keep from breaking windows defender in Windows 10.
+
+v4.4.3
+Fixed bug causing windows defender to stop working in the latest version of windows 10.
+If you had this bug happen to you just run the repairs again and windows defender will work again.
+
+v4.4.2
+Updated default registry and file permissions for Windows 7, 8.1 and 10 as of Jan 22nd 2019
+
+Small code changes and tweaks
+
+v4.4.1
+Updated default registry and file permissions for Windows 7, 8.1 and 10 as of Jan 1st 2019
+
+V4.4.0
+***Critical Update***
+There is a bug in Windows 10 build 1809 where using the bcdedit command to reboot the system into safe mode doesn't clear the registry keys for the safe boot option after the command has been removed.
+Because of this when you reboot into normal mode many services wont start because Windows thinks it is still in safe mode even though it isn't. This kept almost everything from working correctly.
+The program has been updated to auto remove these keys so Windows doesn't get stuck thinking it is in safe mode.
+I have also added the file "remove_stuck_safemode.reg" under the program folder, files\regfiles folder. You can use this file manually if needed.
+
+v4.3.1
+Updated default registry and file permissions for Windows 7, 8.1 and 10 as of Nov 7th 2018
+
+Fixed bug that caused the program to crash on Windows XP.
+
+Multiple code changes and improvements.
+
+v4.3.0
+Major update, added the registry files and service startup commands to support Windows 10 build 1809.
+
+Updated default registry and file permissions for Windows 10 as of Oct 2nd 2018
+
+Fixed bug that caused the program to crash on Windows XP.
+
+Fixed bug where the proper mouse icon didn't show when over the resize window section on the resizable windows in the program.
+
+Updated the window borders of the program with better graphics.
+
+Multiple other small changes and fixes.
+
+v4.2.0
+Major update, enabled repairs for Windows 10 that had been previously disabled.
+With each new version of Windows 10 the services with their registry keys and startup values kept changing.
+As of this version Windows 10 versions of 1507, 1511, 1607, 1703, 1709 and 1803 are supported.
+
+Updated default registry and file permissions for Windows 7, 8.1 and 10 as of Sept 19th 2018
+
+Program now shows the windows 10 version build such as 1803 and such.
+
+v4.1.1
+Minor bug fixes and performance improvements.
+
+v4.1.0
+Updated default registry and file permissions for Windows 10 as of Aug 15th 2018.
+
+Minor bug fixes and performance improvements.
+
+v4.0.25
+Minor bug fixes and performance improvements.
+
+v4.0.24
+Minor bug fixes and spelling corrections.
+
+v4.0.23
+Updated default registry and file permissions for Windows 7, 8.1 and 10 as of July 11th 2018
+
+v4.0.22
+Fixed major bug where repair windows updates would break the app store and windows updates.
+This was due to a change MS made to the services and the program was putting old entries back, this has been corrected and updated.
+If you ran WR and it broke windows updates just run this version and choose repair windows updates and it will fix it :-)
+
+v4.0.21
+Minor bug fixes and updates
+
+v4.0.20
+Updated default registry and file permissions for Windows 10 as of June 12th 2018.
+
+v4.0.19
+Updated default registry and file permissions for Windows 10 as of May 17th 2018.
+
+Minor bug fixes and code changes.
+
+v4.0.18
+Updated to support Windows 10 build 1803
+
+Updated default registry and file permissions for Windows 10 build 1803 as of April 30th 2018
+
+v4.0.17
+Updated default registry and file permissions for Windows 7, 8.1 and 10 as of April 17th 2018
+
+Improved the registry and files permissions repairs.
+
+v4.0.16
+Program now displays a warning on the repair window if the system is not running in windows safe mode.
+If the antivirus or any other third party program interferes with the repairs it can break the system, safe mode is a must. 
+
+Added to the repair logs if the system is running in safe mode or not.
+
+v4.0.15
+Updated default registry and file permissions for Windows 7, 8.1 and 10 as of March 14th 2018
+
+v4.0.14
+Updated default registry and file permissions for Windows 10 as of Feb 27th 2018
+
+Multiple small bug fixes.
+
+v4.0.13
+Updated default registry and file permissions for Windows 7, 8.1 and 10 as of Jan 29th 2018
+
+v4.0.12
+Multiple small bug fixes.
+
+For now the program will auto skip the repair app store repairs on Windows 10 current build because the app store is constantly changing and the commands to repair the app store only work part of the time.
+
+Updated Codejock Controls to v18.2.0
+
+v4.0.11
+Updated default registry and file permissions for Windows 7, 8.1 and 10 as of Dec 21st 2017
+
+v4.0.10
+Updated default registry and file permissions for Windows 7, 8.1 and 10 as of Nov 20th 2017
+
+v4.0.9
+Updated default registry and file permissions for Windows 10 (Fall Creators Update) as of Oct 19th 2017
+
+Added more services to be allowed to run in safe mode in order for the Windows 10 fall creators update apps to be able to be reinstalled during the repairs.
+
+Blocked two repairs from running on the Windows 10 fall creators update till I have a chance to get them updated, otherwise they cause a infinite black screen. Restore Important Windows Services and Set Windows Services To Default Startup.
+If you select these repairs, the program will auto skip them if running the 16299 build so dont worry is you select them. Seems Microsoft changed some of the services registry keys and default startups and so need time to go through them and get them updated while still supporting the ones before the fall creators update.
+
+v4.0.8
+Updated default registry and file permissions for Windows 7, 8.1 and 10 as of Oct 17th 2017
+
+Increased the time the program can be offline and stay pro.
+
+v4.0.7
+Multiple small bug fixes.
+
+Updated and changed hundreds more controls to the Codejock controls to handle the up coming support of multiple languages.
+
+v4.0.6
+Multiple small bug fixes.
+
+Spelling corrections.
+
+Updated Codejock Controls to v18.0.1
+
+v4.0.5
+Updated default registry and file permissions for Windows 7, 8.1 and 10 as of Sept 12th 2017
+
+v4.0.4
+Minor bug fixes reported by users.
+
+v4.0.3
+Fixed bug with repair wmi not exporting out the antivirus info for the security center.
+
+Fixed bug in repair wmi not running needed commands in windows 10.
+
+v4.0.2
+Fixed Repair Volume Shadow Copy asking for a yes to stop the service and holding up the repair.
+
+Updated default registry and file permissions for Windows 7, 8.1 and 10 as of Aug 8th 2017.
+
+v4.0.1
+Bug fixes and changes reported by users.
+
+v4.0.0
+Massive new update, over 1 year worth of work and code, to many changes to list but will list some of the more important ones.
+
+v3 pro users will still have all the pro features from v3 unlocked and only the new v4 pro features will be locked and the program will give them the option of upgrading to v4 pro at a discount. This will update your key to work with v4 so no new key is needed.
+
+Updated the tray icon program with more tools and options and the ability to reboot into safe mode right from the tray icon.
+
+User interface and controls have all been redone and updated. The program better supports high dpi systems.
+
+Added a new help file that has help on every section in the program.
+
+Updated a lot of repairs, also increasing the speed of the repairs.
+
+Added a new repairs preset feature, you can easily choose a preset to choose which repairs to run.
+
+Added a new pro feature where you can create your own custom repair presets.
+
+Added new pro feature where you can backup and restore permissions. (More info in the help file)
+
+Added new pro feature, Windows Firewall Cleanup. (More info in the help file)
+
+Added new pro feature, Missing Package Files - Reg Cleanup. (More info in the help file)
+
+Added new pro feature, Unhide Hidden Files. (More info in the help file)
+
+Added new pro feature, Restore Default Printer Ports. (More info in the help file)
+
+Added new pro feature, TrustedInstaller (Owner/Permissions). (More info in the help file)
+
+Added new pro feature, Run As System Account. (More info in the help file)
+
+Added new pro feature, Windows Services (Advanced). (More info in the help file)
+
+The system tweaks pro feature has been redone.
+
+Many, many bug fixes, changes and improvements across the entire program.
+
+v3.9.36
+Updated default registry and file permissions for Windows 7, 8.1 and 10 as of July 11th 2017.
+
+v3.9.35
+Bug fixes and code changes reported from users.
+
+v3.9.34
+Updated default registry and file permissions for Windows 7, 8, 8.1 and 10 as of June 13th 2017.
+
+Updated Codejock Controls to v18.0.0
+
+v3.9.33
+Updated default registry and file permissions for Windows 10 as of June 7th 2017.
+
+v3.9.32
+Updated default registry and file permissions for Windows 7, 8, 8.1 and 10 as of May 22nd 2017.
+
+Added better error handling at program startup.
+
+v3.9.31
+Updated default registry and file permissions for Windows 10 as of May 16th 2017.
+
+v3.9.30
+Updated default registry and file permissions for Windows 10 as of May 8th 2017.
+
+v3.9.29
+Minor fixes and spelling corrections. I can barley adult, let alone spell very well :-)
+
+v3.9.28
+Updated default registry and file permissions for Windows 7, 8.1 and 10 as of April 25th 2017.
+
+Updated "Set Windows Services To Default Startup" with the services of the latest windows 10 build which went from 221 services to 465!
+
+v3.9.27
+Updated default registry and file permissions for Windows 7, 8.1 and 10 as of March 14th 2017.
+
+v3.9.26
+Bug fix & improvement in all permission repairs and commands.
+When the program sets default permissions it changes the account and machine SID in the default values for the machine it is running on.
+It got the machine SID based off the account SID. Problem was if you where on a domain and logged into a domain account the account SID as different that what the machine SID should have been. So the improper permissions would be set. This only happened on machines that where on a domain.
+The program now pulls the machine SID from one of the local accounts on the system and not the account it is running under. This will make sure the proper permissions are set on a domain computer.
+
+Updated file permissions repair to run under the system account.
+
+v3.9.25
+Multiple bug fixes in the "Repair Environment Variables" tool.
+
+Fixed internal bug when removing duplicate items from a list if the text case was different it didn't treat it as a duplicate. This effected multiple areas of the program.
+
+Other small fixes and changes that were found as I was working on the code.
+
+v3.9.24
+Fixed bug where "Restore UAC Settings" wasn't working on Windows 10.
+
+Fixed bug where the name of the repair wasn't added to the log file if the repair was skipped.
+
+Multiple other small bug fixes reported by users.
+
+v3.9.23
+Updated default registry and file permissions for Windows 7, 8, 8.1 and 10 as of January 15th, 2017
+
+Updated "Enhanced Windows Disk Cleanup" with one new script and updated two scripts.
+
+v3.9.22
+Updated Repair WMI
+
+Added new Pink and Black color theme, submitted by a user, to the color options.
+
+Multiple small bug fixes and code changes.
+
+v3.9.21
+Complete redo of the registry and file permissions repairs on 7, 8, 8.1 and 10. These two repairs would normally go and set owner and permissions on all registry, file and folders on the system, then go and set the default permissions on the default items on a system.
+This had pros and cons. A pro was that permissions that might be messed up on something not normally in windows would get fixed, a con is some things not part of windows that don't like their permissions touched would break. Windows 10 is also extremely fragile to what permissions are set to.
+The program also had to set the owner first to make sure it had permission to restore the defaults, it now sets the owner only on the items that are being restore to default and not to anything else on the system.
+This speeds up the two repairs dramatically and also makes administrators happy since any locked down items wont be touched.
+
+Do to the new change of the file permissions, on windows 7 and newer no drive letters will show under the repair as it now only sets the permissions for the defaults and nothing else.
+
+Updated ManageACL_32 and ManageACL_64 to v1.7.0
+
+Multiple small bug fixes and code changes.
+
+v3.9.20
+Updated default registry and file permissions for Windows 7, 8.1 and 10 as of December 27th, 2016
+
+Multiple small bug fixes and code changes.
+
+v3.9.19
+Multiple small bug fixes and code changes.
+
+v3.9.18
+Updated default registry and file permissions for Windows 7, 8, 8.1 and 10 as of December 6th, 2016
+
+Updated Codejock Controls to v17.3.0
+
+v3.9.17
+Updated default registry and file permissions for Windows 7, 8.1 and 10 as of November 16th, 2016
+
+Updated Tweaking.com - Registry Backup to v3.5.3
+
+Updated ManageACL_32 and ManageACL_64 to v1.5.0
+
+Major update and bug fixes to the permissions repairs.
+New windows updates have changed some of the api calls to setting permissions, these changes cause the program to report a lot of access denied in the log file when setting permissions, but the permissions where still being set, this is now fixed.
+When setting permissions, the inherit from parent option kept getting set any time setting permissions. This was due to a bug in the manage acl program. It was one bit that was set that was causing it. Now when setting permissions the inheritable option is no longer changed when it isnt suppose to.
+
+v3.9.16
+Fixed and adjusted multiple areas of the user interface to better handle systems with high DPI enabled. Many new laptops are coming with HD screens that have a very large resolution and so their DPI is set very high to make programs and text readable. When this increase DPI was set many parts of the program didn't draw correctly. There are still a few areas that need adjusting but all the major ones have been fixed.
+
+Fixed a bug where users who bought the pro version and then went offline would go back to the free version.
+
+Multiple other code changes and improvements.
+
+v3.9.15
+Updated default registry and file permissions for Windows 7, 8, 8.1 and 10 as of October 31st, 2016
+
+Multiple code changes and fixes.
+
+v3.9.14
+Fixed bug where program wouldn't switch to pro on some systems.
+
+Updated Repair Windows Updates
+
+Updated Repair MDAC
+
+Updated Repair Icons, this repair now checks and removes all thumbs.db files as well.
+
+Multiple code changes and fixes.
+
+v3.9.13
+Updated Remove Policies Set By Infections
+
+Updated Repair Windows Updates
+
+Updated ManageACL_32 and ManageACL_64 to v1.4.0
+
+ManageACL_32 is now complied to not use SSE2 so it will run on older cpus.
+
+Updated Tweaking.com - Registry Backup to v3.5.2
+
+v3.9.12
+Updated default permissions for Windows 10 as of October 1st, 2016
+
+Updated and changed the code for multiple repairs and commands.
+
+Bug fixes.
+
+v3.9.11
+Added text on the main window of the program to let users know that if they buy the pro version from v3.9.10 onward they will get v4 for free, once v4 is released in the future.
+
+Fixed bug in the program where in safe mode on some systems the border of the program would be messed up.
+
+Fixed bug with the windows 10 default permissions not being correct.
+
+Updated Restore Windows 8/10 COM+ Unmarshalers
+
+Updated default permissions for Windows 10 as of September 13th, 2016
+
+Updated Tweaking.com - Registry Backup to v3.5.1
+
+Many other minor changes and fixes in the code.
+
+v3.9.10
+Improved startup speed of the program.
+
+Updated default permissions for Windows 7,8, 8.1 & 10 with all updates as of Aug 26, 2016.
+
+Multiple bug fixes.
+
+v3.9.9
+Quick bug fix from v3.9.8, if the computer wasn't on the internet then the program would never fully open. This was due to the change I made to the code to grab the update info, when calling the connection and waiting for the "still executing" to finish, it never would (since the system wasn't online), even though it was suppose to time out in cases like that.
+I instead built in my own time out and so now the program will run when not online.
+
+v3.9.8
+Updated default permissions for Windows 10 from windows build anniversary version 1607 update build 14393.
+
+Fixed bug where repair rephrase points wouldn't work when starting it from the pre-scan window.
+
+Multiple small bug fixes.
+
+v3.9.7
+Fixed bug where you couldn't run the program from a network drive. Even though you shouldn't run the repairs from a network drive due to windows api security, you could still run the program from a network to do other things besides the repairs, this bug has been fixed and the program can run from a network drive again.
+
+Fixed bug with the run chkdsk at next boot.
+
+Other small code changes and improvements.
+
+v3.9.6
+New repair added - Repair Recycle Bin.
+Corrupt recycle bins and/or items that are not able to be removed from the recycle bin are fixed by this repair.
+All items in the recycle bin are removed.
+This repair will delete the contents of the recycle bin. First setting and correcting the permissions for the recycle bin and all sub items.
+It is also able to remove items with more than 255 character path length.
+
+Fixed bug when saving custom scripts would append to the file instead of replacing it.
+
+Fixed bug where the system variables returned back wouldn't be correct. This was due to a bug with the ExpandEnvironmentStrings call.
+
+Code improvement, all Unicode API calls have been updated to handle paths larger that 255 characters
+
+v3.9.5
+Major bug fix and improvement. On Windows 8, 8.1 and 10 after you applied any repairs, when you would create a new user the apps would be broken for that new user.
+This was because the registry key "HKEY_Current_User\Software\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppModel\Repository\Packages" had Administrators set as the owner instead of the System account (This shows how fragile the Windows Apps are) simply changing the owner back to System would fix the apps for the user.
+After spending 6 days non stop working on this and why it happened, I thought it was permissions related since the owner of the key was different.
+Turns out having the SYSTEM account added to the administrators group was the trigger. For some reason when Windows would create a new user it would set the owner based off the group instead of the account, very odd I know.
+The program normally added the system account to the administrators group as it was a fix from xp and windows 7 where sometimes the system account wouldn't have full access (Before the repairs where applied). The program no longer does this for Windows 7 and newer and even now removes system from the administrators group, so if you ran Windows repair on a system before and run it again it will remove it for you.
+
+Creating New users on Windows 8, 8.1 and 10 after running all repairs have been tested and confirmed working just fine after this update.
+
+Bug fix and improvement. When restoring the default registry permissions to HKEY_USERS, if any other user hives, other than the current user, where loaded their permissions would got messed up (Their defaults where never restored). Yet another reason to run the repairs in safe mode is to make sure no other user hives are loaded.
+Well just in case other user hives are loaded, the program now applies the defaults properly for each loaded user hive.
+So not only will this keep from messing up the permissions it will now even fix the permissions for any loaded users as well.
+
+Bug fix and improvement. Some users who are still on Windows 8 and not 8.1 reported problems after running the repairs. It appears the default permissions from 8 to 8.1 have changed a lot and so the 8.1 defaults can no longer be used with 8.
+So I have now added the default permissions for Windows 8 up to all updates MS has put out for 8 before requiring the user to update to 8.1 to get new updates.
+While this makes the program a little bigger having the default permissions for 8 stored as well, it now makes sure Windows 8 users get the proper permissions set (Which even helps them update to 8.1 if they where having trouble)
+
+Increased the speed of the pre scan tool. Also removed the text telling the user to post in the forums if they needed help getting missing cat or mum files. There are millions of these files, myself and my forum moderators simply cant keep up with so many. A guide will be written soon to help users get the files they need themselves.
+
+Improved the permissions repairs greatly. In my task to find the cause of another problem, I was determined to get the default permissions applied back as close as possible. Microsoft gives you a lot of different ways to set the permissions, each one with its own pros and cons. Before this update on the same machine I would take the defaults from, there would be a few hundreds registry keys where the permissions where not identical in the SDDL string format after restoring the default permissions. This was because of how the Windows API was applying the permissions it would combine permissions, so even though the permissions where still technically correct, they where not identical to the defaults. After this update the differences where now down to under 15, much much better :-)
+
+Updated default permissions for Windows 7,8, 8.1 & 10 with all updates as of July 13, 2016.
+
+Updated Tweaking.com - ManageACL to v1.3.0
+
+Updated Tweaking.com - Registry Backup to v3.5.0
+
+Large amounts of code changes, improvements and bug fixes.
+
+v3.9.4
+Added new button to the main window title bar to open the about window for the program.
+
+Added Current Windows Version and Registered user to the bottom of the main window of the program.
+
+Added registered user to the main repairs window.
+
+Multiple user interface changes.
+
+Multiple small bug fixes.
+
+A large amount of code changes and cleanup.
+
+v3.9.3
+Massive code changes to the core of the program for the upcoming v4. These code changes and improvements affect the repairs and the user interface. Many more changes to come in future updates, making the program leaner and meaner :-D
+
+v3.9.2
+Updated default permissions for Windows 7,8 & 10 with all updates as of June 14, 2016.
+
+v3.9.1
+Multiple Minor bug fixes reported by users.
+
+v3.9.0
+The Repair Windows 8/10 App Store has been re-enabled for Windows 10! In the May 2016 update to Windows 10 Microsoft finally fixed the 7 month old bug where calling the powershell commands to install the apps would break a large portion of them. Now that this has been fixed I have enabled the repair for Windows 10 again. The minimum build number Windows 10 must have for the repair to work is 10586.318 or higher, anything lower and the program will skip the repair.
+
+Updated the repair list to have the current version of windows in top of the list. While this doesn't change any repairs it is more for information on what version of Windows the program is currently on so the user can see it. In this case needing to know what current build Windows 10 is, this can be helpful.
+
+Updated default permissions for Windows 7,8 & 10 with all updates as of May 16, 2016.
+
+Updated Codejock Controls to v17.2.0
+
+Large amount of code changes and updates.
+
+v3.8.7
+Updated Repair Proxy Settings. The repair now puts the check on Auto Detect settings under the lan settings in internet options.
+On systems that have any programs that use wininet.dll to connect to the net would fail if auto detect settings is unchecked, including my own programs.
+This is change will fix that.
+
+Updated default permissions for Windows 7,8 & 10 with all updates as of April 25, 2016.
+
+v3.8.6
+Fixed bug where controls would resize improperly on the repair window and any other resizable window when the window was minimized.
+
+Other minor bug fixes and code improvements.
+
+v3.8.5
+Updated default permissions for Windows 7,8 & 10 with all updates as of March 27, 2016.
+
+Updated Tweaking.com - Registry Backup v3.4.1
+
+Multiple code changes and tweaks.
+
+v3.8.4
+Updated and improved "Repair Icons"
+
+Updated Codejock Controls to v17.1.0
+
+
+v3.8.3
+Updated and improved the built in pre-scan tool.
+
+The option "Add .CAT Files (Security Catalog) To Windows Catalog Database" in the pre scan tool is now check marked by default. The reason for this is that if a user had deleted and rebuilt their catroot folder and database then a lot of the cat files would be missing, returning a LOT of bad signatures in the pre-scan.
+By having the option checked by default the program will always try to add the cat files back, as long as their signatures are good, back to the database, preventing any false bad signatures.
+
+Updated default permissions for Windows 7,8 & 10 with all updates as of Feb 16, 2016.
+
+Multiple code changes and tweaks.
+
+v3.8.2
+Fixes to the interface.
+
+Code fixes and cleanup.
+
+v3.8.1
+Updated the tree view control on the main repair window to the new controls. This control will size properly for users who have a higher DPI setting or have their fonts set about 100% on their systems.
+
+Added a new item to the top of the repair list, this way you can just click or unclick the check box there to select or unselect all the repairs. This allows me to get rid of the two buttons I had for that, freeing up a little more space.
+
+Updated all the permissions repairs and removed the "Users" group from being set to full. Only administrators, the system and such need full access, the "Users" group isn't touch by the repair unless it is part of the default permissions that are put back.
+
+Added the ability for the taskbar icon to display a progress bar during the repairs, this is for systems that support it.
+
+Fixed a very odd bug in Windows Vista when a user ran the register system files and no other repairs. This bug would cause VSS to break and thus system restore or windows backup would stop as well. But if you ran all the repairs and ran the Repair Volume Shadow Copy it would fix it. I traced it down to the fact of the order that the files are registered in. For some reason if you register a dll with the /i command and then after registered the same file like you would any normal file is where something in vista didn't like it. After that happened none of the vss writers would show up. BUT if you register the file normal first and then call the /i command it would work fine and not break VSS. This bug seems to only be in vista.
+
+v3.8.0
+Major new update and bug fix. The program would crash on systems that had DEP set to always on, then when you opened any resizable window in the program it would crash. Thanks to very helpful users, I was able to replicate the bug and trace it down to the subclassing in the resize control. The control has now been replaced and this bug is fixed, which also brings me to the big part of the update.
+
+Given the countless hours programming and updating my own custom controls, and not being able to test them on as many machines as possible, I would hit bugs that didn't show up on my machines, such as some old bugs that where fixed with the tab control and the current bug fixed from the resize control and many others. I hate bugs and I will go without food or sleep to get them fixed. (Been up 3 days as I type this)
+Well, I am tired of all that and would rather focus on adding new features and repairs and updating all the other programs on the site. So I am now starting to use the codejock controls which have a great reputation, are used by some of the biggest companies and are stable and very well coded. I have used a few of the controls in this update, but replacing the controls is a very big project and so I will be replacing all the controls for v4 of the program coming out in the few months.
+
+Completely redid the color options and controls in the program. If you want to see a picture of the new changes versus the old here is a screen shot.
+http://tweaking.com/files/wr_v3.8.0_new_color_controls.png
+
+A ton of code changes, cleanup and improvements.
+
+v3.7.4
+Updated Windows 10 Default permissions to all updates installed as of 01-04-2016.
+
+Minor changes to the user interface.
+
+v3.7.3
+Fixed bug where the reset registry permissions didn't run on Windows Vista. This was caused by a simple typing mistake on my part, where an "OR" should have been an "AND", math is picky like that.
+
+Fixed bug where only part of the reset file permissions ran on Windows Vista. The first part of the repair would run but the 3rd part to run on the profiles did not. This was caused by the same bug that was fixed above.
+
+Made a few spelling corrections. Spelling is my Achilles heel after all....... long live spell check!
+
+Some more code tweaks and cleanup, no bugs with these, just improvements. But it is amazing how much more you can find when you finally get some sleep.
+
+Updated default registry and file permissions for Windows 7, 8 and 10 with all updates as of Dec. 21, 2015.
+
+v3.7.2
+Updated Windows 10 Default permissions to all updates installed as of 12-14-2015.
+
+Updated 7-zip extract file "7za.dll" to v15.12
+
+Updated safe mode code in the program to allow a few more services to run in safe mode with networking.
+
+v3.7.1
+Updated "Repair CD/DVD Missing/Not Working" to now check for both iTunes and "\System32\drivers\GEARAspiWDM.sys" if both are found GEARAspiWDM.sys is added to the UpperFilters registry key, if either are missing it is removed.
+
+Multiple small code changes and tweaks.
+
+v3.7.0
+Built and added a new tool for booting out of Windows Safe mode. Currently the main program calls the bcdedit command to set the safe mode with networking boot option. Once the main program is ran in safe mode it would run the command to remove safe boot.
+But if a user couldn't get logged in for some reason, or they didn't run the main program in safe mode they would always boot into safe mode. One way out of safe mode was to use msconfig.exe to remove it. but if the user couldn't get logged in then they where stuck.
+So I have built a new service that is installed when you tell the main program to boot into safe mode. The new files (TweakingRemoveSafeBoot_32.exe and TweakingRemoveSafeBoot_64.exe) will install as a service and when they run (Services can run at the login screen) they will run the "bcdedit /deletevalue {current} safeboot" command and then remove itself as a service. (They do NOT stay installed as a service on the system, they run once and then are removed)
+This should now keep any users from getting stuck in safe mode :-)
+
+Updated Default Permissions for Windows 10 to the newest Windows Updates. Microsoft seems to be pushing out updates almost every day or so.
+
+v3.6.5
+Due to a bug in the Windows 10 build 10586 the powershell command used to reinstall the apps and app store instead breaks them and deletes their install folders. Till Microsoft fixes this bug the repair app store is skipped for this version of Windows.
+
+Updated the default registry and file permissions with all the latest Windows updates for Windows 7, 8 and 10.
+
+v3.6.4
+Updated Default Permissions for Windows 10 to the newest Windows version Released in Nov 2015.
+
+Added a "Remove License" button to the about screen in the program. This is for techs who use the pro version of the program on a users computer and want to remove their license after.
+
+v3.6.3
+Interface changes based on user feedback and requests.
+
+v3.6.2
+Updated Tweaking.com - Manage ACL to v1.2.0
+
+Updated default permissions for Windows 7, 8 and 10 up to 10-30-2015
+
+Small code changes.
+
+v3.6.1
+Fixed a bug where on some systems that where on a domain the program wasn't able to pull the domain name properly. This was due to a bug with the call to get the domain name from Windows. When called the first time Windows reports it back as blank. If a 2nd call is made the domain name is returned. Instead of doing it this way I have changed the code that pulls to domain name to an API call to windows to return the dns domain name. This also is much faster than the old call.
+
+Updated tab control to v2, you can now mouse scroll the tabs and performance improvements over the v1 controls.
+
+Multiple small code changes and tweaks.
+
+Updated Tweaking.com - Registry Backup v3.3.1
+
+v3.6.0
+This is a huge update.
+
+New Pro feature has been added. "Manage Windows Users and Groups".
+This is very similar to the users and groups tool only available in Windows pro or higher and that is missing from Windows Home versions. This gives you much more control over the users and groups they belong to then the very cut down version in the control panel, also makes it far easier to add local accounts to Windows 8 and 10 systems.
+However more has been done to improve on that. Aside from finally being able to select multiple users or groups at once, but there is also a bulk admin tool allowing you to set certain settings on any number of users. This tool does work on domains and servers and even on Windows home versions from XP all the way to 10.
+
+The main repairs window has been changed. The size of the window can not be over 800x600 so that it will fit on screen in Windows safe mode. This is why that window had no free space to add or change anything on it. Also wanted to increase the size of the font of the log window and make it bigger and easier to read.
+The answer was to move the repairs onto a tab of its own and use tabs to help create more space on the window.
+The new layout was done to be less cluttered, easier for users to read and follow, all while still having all the same information as before.
+
+Now, only in the free version, when you close the main repairs window, a small screen will come up to say thanks for using the program and to consider buying pro. The screen goes away automatically after 30 sec if the user doesnt close it, and of course you can close it any time you want without waiting. The screen doesn't block anything and never ever comes up other than when the main repairs are closed. The goal is to let users know they can help support the program, and it tries to do that in a respectful, non intrusive or annoying way.
+
+Huge amount of code clean up, changes and improvements, all while adding a ton more code in its place. Windows Repair hit the 50,000+ lines of code mark on this update (This doesn't count the code in the custom controls)
+
+Nearly all the program controls (Buttons, text boxes, lists and so on) have been updated and improved.
+
+Progress bars and the system monitors on the Repairs window have been updated to be able to allow users to control their colors as well.
+
+New color options added to the color settings window.
+
+Improved the looks of the progress bars and monitors.
+
+A Windows Repair Loading Status window is now shown after the program does the pre startup check of the files. This status window is to let users know that the main program window is loading and how far along it is. On some systems it could take the main windows anywhere from 4 to 10 sec to open, depending on the system. This is because it is doing a lot at its startup, such as pulling system info, loading files and so on. Now users will see a startup progress and wont get confused and wonder if the program didn't open.
+
+Increased the font size and changed the font type in the Pre-Scan log window.
+
+Changed the formatting and layout of the Pre-Scan log Window to both look better and be easier to read.
+
+Repair Reparse Points tool now shows a very detailed log when you have it do any repairs, if any are needed. Not only does this new log record any errors but it also logs everything it is doing, that way we can better help users who are unable to get a point fixed.
+
+Tweaking.com - ManageACL has been updated to v1.1.0. Improved the speed of setting permissions even more. Also changed the progress text in the cmd window to be more static and not moving all over, making it far easier to read. Multiple code changes and error handling. Code cleanup and changes to make the program smaller and faster.
+
+Tweaking.com - Registry Backup updated to v3.2.3.
+
+v3.5.1
+Updated Tweaking.com - ManageACL to v1.0.1 - Code cleanup and tweaks, improved the progress text during setting permissions and much more.
+
+Updated Repair Windows App Store - Added new commands to repair that App Store for both Windows 8 & 10.
+
+Updated "Reset Service Permissions" - The repair now lists the service it is currently on so that users can see if it is working and moving forward. The repair also now creates a log file of any errors it might encounter.
+
+Updated "Set Windows Services To Default Startup" - The program normally set the service NetLogon to Auto. NetLogon is required when you are part of a domain. When you are not part of a domain the service will stop itself and make a entry in the event viewer. To keep the event viewer from having junk entries, the program will now check if the computer is part of a domain, if it isn't it will set NetLogon to manual instead of auto.
+
+Fixed bug where "Repair Windows App Store" wouldn't work in Safe mode (A needed service wasn't getting enabled) so the repair wasn't able to run.
+
+Removed 2 commands from the "Repair Network".
+While almost every machine I have ran this repair on has never had any trouble, I have had a handful of users report their network stops working after (Normally wireless).
+Until I can connect to one of the users to dig in and find out what is different on their machines, the following two commands have been removed:
+Removal of "HKLM\SYSTEM\CurrentControlSet\Control\Network"  and then the "Config" value. This is a normal repair as Windows rebuilds the config after a reboot.
+Removal of "HKCR\CLSID\{988248f3-a1ad-49bf-9170-676cbbc36ba3}" this is a known fix for Windows 10 not having working wireless after an upgrade. Caused by a bad vpn driver.
+Until I can pinpoint the unknown variables causing the problem for these few machines, these commands will be removed until I can make sure they are 100% safe to use.
+
+Multiple code changes and improvements through multiple sections of the program.
+
+Updated Tweaking.com - Registry Backup to v3.2.2
+
+v3.5.0
+Major update and major bug fix. The 3rd party program used to set permissions had to many bugs, such as it would crash at random times and didn't set permissions correctly like it was suppose to or would even corrupt them.
+So the program has been replaced with one that I have written. Now the default permissions are put back exactly as they should be, including being in the right order.
+This in turn also fixes known bugs with Windows 10 and the start menu not showing program icons or the right click menu not having any options in the start menu. Now with the default permissions being applied correctly these Windows 10 bugs are repaired.
+
+Log files are now able to be created of any errors from setting permissions.
+
+The new set permissions tool now has a progress indicator so now users can see it working, including the speed of how many items it is setting per minute.
+
+Multiple code changes and some small bug fixes in the program with the changing of the permissions program.
+
+Removed the "Everyone" group from the permissions repairs (Unless it is part of any of the defaults). It use to be set with full access to fix odd bugs. but it was a security hole as on some systems you can enable an anonymous user to be part of the everyone group, and thus have full access.
+
+Added new registry permissions exclude list.
+
+Updated Tweaking.com - Registry Backup to v3.2.1
+
+v3.4.3
+Updated the "Reboot To Safe Mode" code to have the program now remove Safe Mode from the boot manager after you start the program in safe mode, instead of relying on the RunOnce registry key.
+
+Made some adjustments & tweaks to the registry and file permissions repairs.
+
+Yet even more code improvements and code changes. As the program grows I find cleaner, faster ways of doing things, so the code is always being improved.
+
+Updated Tweaking.com - Registry Backup to v3.2.0
+
+v3.4.2
+Bug fix, setacl (Used to set permissions) would crash on certain machines. This has hopefully been fixed. I was able to replicate the crash under certain conditions and so was able to find the cause and fix it. Will wait and hear back from users if there are any conditions I missed.
+
+Bug fix, you could only run the repairs once in safe mode, you would have to close the program and reopen it to run them again. This has now been fixed.
+
+Bug fix, the pre-scan tool and Reparse Point Tool would incorrectly started some bad points. This has now been fixed.
+
+Bug fix, while their default permissions where being applied there was a bug keeping the default inheritance being applied. This has now been fixed.
+
+Bug fix, the program wasn't remembering the setting for the drive read max value set by the user in the settings.
+
+Greatly improved the permissions repairs, including making the files fewer, smaller and faster. While tracing down a problem with permissions and windows 10, such as the network taking a long time to come up, network and sharing center freezing and a grey blinking screen, which you couldn't get to the desktop other than safe mode. I was able to trace it to permissions and I have streamlined them and redid how they are done and found what was causing it. Now, not only do the permissions not cause this problem on Windows 10, it even fixed the machine that had the trouble. Meaning the permission repairs should do better now than they ever have.
+
+All default permissions for 7, 8 and 10 have all been updated after the windows updates where done for the patch Tuesday of this month (Aug. 2015)
+
+The program now disables Quick Edit mode for the cmd.exe window. What would happen is when quick edit was enabled and you clicked into the cmd.exe window it would pause the script until you clicked enter. This would make the repair never finish if the user didn't realize they did that and the repair was paused. By having quick edit turned off it will keep it from happening. The program will remember if quick mode was enabled when it started and will put it back to enabled when the repairs are done.
+
+The program now only selects the windows drive for the file permissions when you click on defaults.
+
+Multiple code improvements.
+
+v3.4.1
+Updated the "Register System Files" repair.
+
+Updated "Repair Internet Explorer" the repair will now clean out the temporary internet files folder. While helping a user it turned out that corrupt files in here where keeping IE from downloading any files. This is now part of the repair.
+
+Bug fix, a log file was created on the root of the C:\ drive when restore registry permissions. This was a log left over from my testing.
+
+Bug fix, "Register System Files" wouldn't register files with spaces in the file name. This is now fixed.
+
+Added a new color preset "Gloss Black" submitted by a user of the program.
+
+Multiple code improvements and changes.
+
+v3.4.0
+Fix a bug where on some Windows 10 Machines the wireless would stop working after settings the registry permissions.
+
+The program now sets the default registry and file permissions for Windows 7. Before it only did for 8 and 10. Before the administrator would be given full rights, while this was nice for the user, it did make the machine less secure. So now only the defaults.
+
+The permissions repairs have been completely redone and are better than ever.
+
+Updated Repair Windows Updates
+
+Updated Repair Windows Firewall
+
+Updated Reset Registry Permissions
+
+Updated Reset File Permissions.
+
+Updated many more repairs.
+
+Multiple interface changes and code changes.
+
+Updated Tweaking.com - Registry Backup to v3.1.0
+
+v3.3.1
+Fixed bug where the Registry Permissions repair wouldn't run on windows 7 or XP.
+This bug was caused by one word missing from 1 line of code.
+I blame my all night programming sessions for this rookie type of mistake.
+I have been promptly beaten with a plastic light sabers and shot with fake phasers by the neighborhood geeks for my error.
+
+v3.3.0
+Program now supports Windows 10.
+
+Updates and improvements to multiple repairs. Since Windows 10 support has been added, nearly all repairs have been updated and improved.
+
+Updated Registry Backup to v3.0.0
+
+Multiple repairs have been renamed. Mainly all Windows 8 repairs have been renamed. Example: "Repair Windows 8 App Store" has been renamed to "Repair Windows 8/10 App Store" and so on.
+
+Multiple code changes.
+
+v3.2.5
+Updated "Restore Important Windows Services"
+
+Updated "Repair Windows Updates"
+
+Updated "Remove Policies Set By Infections"
+
+The Reboot to Safe Mode button will now ask if you would like to reboot after it has set the system for safe mode. Per user request this was added so that a user could set it, then finish up some other things before rebooting, or to power down and do a power reset before going into safe mode.
+
+v3.2.4
+Added new option to reboot into Windows Safe Mode right from the program. Some users have trouble getting into safe mode, this new option will make it as easy as 1 click. The button is on the bottom right of the main window in the program.
+
+The new reboot to windows safe mode button also applies the default safe mode registry keys before hand incase a virus has removed them. (Same as the Repair Safe Mode)
+
+Updated the pro feature of enabling the F8 menu in Windows 8, 8.1 and 10.
+
+
+v3.2.3
+Added a new script to clean out the Windows Prefetch to the pro feature "Enhanced Windows Disk Cleanup"
+
+Added new tips on how to get the best repair results on the repairs tab in the main window.
+
+Small user interface changes to the program.
+
+Multiple code improvements to multiple repairs.
+
+v3.2.2
+Multiple bug fixes.
+
+Multiple code improvements.
+
+Spelling corrections (I would be lost without spell check)
+
+v3.2.1
+Improved startup check. Startup check now checks for a MD4 hash instead of a SHA1 hash. This is faster than SHA1.
+
+Fixed a bug in the startup check where on certain systems the hash returned from the files didn't match up.
+
+Renamed "Repair Winsock & DNS Cache" to "Repair Network". This repair has grown and covers repairing the network better than it has before and covers more than just Winsock and DNS.
+
+Updated and improved "Repair Network"
+
+Updated the Pre-Scan tool.
+
+v3.2.0
+The program now also checks the SHA1 hash of its files at program startup. Before the program only checked if any files where missing. But I have found some users who either had their antivirus mess up some of the files (or some other program) or they had bad sectors on their hard drive, corrupting some of the files. When this happened not only did it mess with the repairs but if it happened to be one of the registry files it could end up screwing things up in Windows since the file was corrupted and not putting the correct data into the registry.
+So now the program will both check if any files are missing and if they have been changed in any way. This will slow the startup of the program down a little but only by a few seconds as it scans the files.
+
+Fixed a bug in the Restore UAC repair where it was saving to the wrong log file name.
+
+Fixed a bug where the Repair Windows Updates commands would be doubled in the repair.
+
+Updated "Repair Windows Sidebar/Gadgets"
+
+Updated and added more files to "Register System Files"
+
+v3.1.5
+Updated the Pre-Scan tool to better list any missing or corrupt packages files.
+
+Updated "Restore Important Windows Services" and "Repair Winsock & DNS Cache" with the following services DHCP, DNSCache, NTDS, Netlogon, Winsock and Winsock2.
+
+Multiple code updates.
+
+v3.1.4
+Multiple small bug fixes.
+
+Spelling corrections.
+
+v3.1.3
+Updated & improved the "Check Disk (chkdsk) At Next Boot" tool.
+
+Changed the task schedule for starting the tray icon at startup, it had the "Wake the computer to run this task" checked, which would keep some systems from going into sleep mode. The program now makes sure that is unchecked when having the tray icon start with windows.
+
+Updated log window to tell the user to run the repairs in Windows Safe Mode if the repairs are failing to start. (This normally happens because a 3rd party program gets in the way)
+
+You can now view the pro feature tools in the free version, you just won't be able to apply or use the pro features. This way a user can now see what exactly is in the pro features before they buy.
+
+Bug fix in Repair Reparse Points.
+
+The program should now better handle when the performance counters on a system are corrupted. The performance counters are used to show the drive read and write, cpu and memory during repairs. When the performance counters where corrupt it would cause the program to lock up.
+
+Multiple code changes and improvements.
+
+v3.1.2
+Updated Repair WMI.
+
+Updated Repair Windows Updates.
+
+Added a new option to the Pre-Scan tool at add the .cat files to the Windows Catalog database. This is needed after replacing or restoring missing .cat or .mum package files.
+
+Spelling corrections.
+
+v3.1.1
+Updated and improved the Pre Scan tool.
+
+Changed the Pre Scan window to show the text of the 2 repair buttons. Some users didn't realize what these buttons where for since they where just icons before.
+
+Updated and improved the "Repair Environment Variables" tool.
+
+Multiple code changes and improvements.
+
+v3.1.0
+Pre Repairs Scan has been renamed to Pre-Scan.
+
+New "Repair Reparse Points" tool has been added. This is not an automated tool, so it isn't in the repair list. Instead it is with the Pre-Scan tool.
+
+Added another script "Windows Updates Download Cache" to the pro feature "Enhanced Windows Disk Cleanup"
+
+Updated and improved the Pre-Scan.
+
+Multiple code improvements and updates.
+
+Multiple spelling corrections.
+
+When having the program schedule the tray icon to start at windows startup, it now adds a 2 min delay before the task scheduler starts it to give time for the other startup programs to finish loading.
+
+v3.0.0
+Massive update, weeks worth of work and so many changes that there is to many to list here. But I will list a few.
+
+Program is now Free/Pro. All repairs and everything that has always been in the previous free versions is still completely free and all future repairs will be free, I have taken nothing away from my users :-) The pro is extra tools and options while keeping all repairs free. The free version can still be used for both personal and business use. Also there is no nag screens or anything like that trying to get people to upgrade to pro.
+
+New Pre Repairs Scan tool has been added. You can now run this to have the program check for things before running the repairs. This checks the windows packages files, junction points and environment variables.
+
+New "Repair Environment Variables" tool has been added. This is not an automated tool, so it isn't in the repair list. Instead it is with the Pre Repairs Scan tool.
+
+Multiple new repairs added.
+
+A large amount of the repairs have been improved and updated.
+
+Some of the current pro features include built in system tweaks that you can have applied after the repairs. You can also now use your own scripts and registry files to have applied after the repairs are done as well. There will be more pro features coming in future updates.
+
+Another new pro feature is the ability to use your own logo in the bottom left of the main window of the program.
+
+New interface layout. I kept most things the same as people remember it but made the window bigger and rearranged a few things to try and make it less cluttered.
+Multiple bug fixes.
+
+Huge amount of codes changes, and a ton of other things that is to much to list here.
+
+Updated Registry Backup to v2.2.0
+
+v2.11.2
+Updated "Reset File Permissions" to support and handle Unicode paths in the permissions cleanup part of the repair.
+When the repair ran to fix the profile folders to proper denied & allow permissions it would fail on profiles that hand Unicode Chars in the paths.
+
+Multiple code changes and tweaks, adding more Unicode support for multiple commands and functions.
+
+Update the Check Disk command on Step 3 on the main Window. Before it would just call chkdsk, but if a user had their system paths messed up on the system then it would say that chkdsk couldn't be found or is not an internal program. I have update the code to set the proper paths to the Windows folders keeping that error from happening.
+
+v2.11.1
+Updated all repairs that changed the permissions on the windows 7 services registry keys to put back the default permissions for the default services. This fixes odd issues with the UAC and the time sync in the clock on the task bar.
+
+v2.11.0
+Updated and improved Repair Windows 8 App Store
+
+Updated Repair Internet Explorer
+
+Multiple code changes and improvements.
+
+Updated the Default Windows 8.1 with Media Center Permissions to all updates up to patch Tuesday Feb 2015.
+
+Updated Registry Backup to v2.1.1
+
+v2.10.5
+Added more files to the Register System Files.
+
+v2.10.4
+Fixed a bug in the Repair MSI.
+
+Updated Registry Backup to v2.0.0
+
+Multiple code changes and tweaks.
+
+
+v2.10.3
+Updated multiple repairs with code improvements
+
+Code cleanup and changes throughout the program.
+
+v2.10.2
+I have automated the program to auto add the services it needs when ran in safe mode and cleans them after when done. The program will no longer show a window asking the user to do it. Since it is automated it is one less thing a user needs to worry about :-)
+
+In past versions, when you downloaded the portable zip file of the program Windows would mark that it came from the internet and you would get the warning pop up for any of the files that the program uses in the files folder. The program now auto unblocks all the files in the files folder so users wont get the constant pop ups from Windows asking for permissions to run them. This way a user doesn't have to unblock all the files manually. This didn't happen when you installed with the installer, only the zip file.
+
+New repair added, "Restore UAC (User Account Control) Settings" This will restore the default registry settings for the UAC in Windows.
+
+Multiple repairs have been updated and tweaked.
+
+Multiple interface updates and changes.
+
+v2.10.1
+Updated Remove policies set by infections and restore important windows services.
+
+Spelling corrections.
+
+v2.10.0
+Major update, the program can now properly run in Windows Safe Mode. The program didn't run properly in safe mode before because services that the repairs needed where not allowed to run in safe mode.
+I have built and included a tool in the program that will allow a user to prepare safe mode for the repairs by setting the services it needs for the repairs to be allowed to run in safe mode.
+
+Updated the remove policies set by infections to remove the Google chrome policies set to not allow chrome to update.
+
+Updated the tweaking_ras.exe and tweaking_rati.exe to have their manifest files embedded in them to fix a problem where if the manifest files where corrupt or messed up for some reason then the repairs wouldn't run.
+
+Updated the "Repair WMI" to remove the bug in Windows causing Event ID 10 (Event filter with query "SELECT * FROM __InstanceModificationEvent WITHIN 60 WHERE TargetInstance ISA "Win32_Processor" AND TargetInstance.LoadPercentage > 99")
+
+Fixed a bug where if the settings.ini file was deleted or a user updated the program from from a older version and the settings.ini file didn't have the color information set that the colors wouldn't be set correctly, such as black text over the dark grey background. The program has now been updated to apply the proper default colors when this happens.
+
+Updated the "Reset File Permissions" to no longer set permissions on the profile locations when the user is setting permissions on a drive where the profiles are not located.
+
+Multiple code improvements and changes.
+
+Updated Registry Backup to v1.10.1
+
+Changed and updated multiple icons and graphics in the program.
+
+v2.9.2
+Updated Registry Backup with v1.10.0
+
+Updated Reset Registry Permissions. The program will now set the install date for installed programs before running the repair.
+Some installers don't put the registry key "InstallDate" in the uninstall section. So when you load up the add/remove programs or
+Programs and Features and it shows the date it is installed then windows will list the last modified date of the uninstall registry key for the program if "InstallDate" is missing.
+Well when you reset the registry permissions the last modified gets updated and so those programs show the install date of when you ran the repair.
+The program will now loop through these 3 locations
+"HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Uninstall"
+"HKEY_LOCAL_MACHINE\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall"
+"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Uninstall"
+For any installed program that doesn't have a "InstallDate" the program will add this registry key and set the date from the last modified time of that registry key.
+This will now keep older install programs from showing the wrong install date after running the reset registry permissions.
+
+v2.9.1
+Updated "Remove Policies Set By Infections" repair, the repair now sets the proper shell and userinit values under the Microsoft\Windows NT\CurrentVersion\Winlogon registry.
+
+More code improvements and interface changes.
+
+v2.9.0
+Code improvements to multiple repairs.
+
+Updated graphics to the interface of the program.
+
+Moved the image controls used in the program into a ocx file. This has reduced the size of the main exe by 460 KB. Also making the program more stable and require less memory.
+
+Multiple interface code tweaks and enhancements.
+
+v2.8.9
+Changed the "Start Repairs" tab text on the main window to just "Repairs" and under that tab changed the "Start" button text to "Open Repairs". Some users where getting confused since the repair window itself had a button that said "Start Repairs" they thought the program already started them since they clicked "start" on the main window. So some rewording to avoid that confusion.
+
+Multiple code changes and tweaks.
+
+v2.8.8
+Updated the tweaking_ras.exe and Tweaking_rati.exe. These are both used to run repairs as the system account or trusted installer. To do this they create themselves as a service and run the command, then remove the service they created. The problem was that on some systems, Windows wasn't removing the service fast enough before the next one was called and created. Since the service name was the same, the next one created wouldn't be called (Since it was in the process of being removed by Windows) and the repair wouldn't start. Both of these programs now randomize their service name to keep this from happening.
+
+The program now will try to start a repair up to 3 more times if it fails to start the first time (For a total of 4 times and 30 sec between each try). So now if there is ever a simple hiccup or problem that kept the repair from running then the program will try again and normally it will continue on. If it fails to run a repair 4 times then the repairs stop and the program tells you to let me know in the forums, where I will work with you to find out why they didn't run.
+
+Fixed a bug where the program didn't close itself if you told it to reboot or shutdown the systems after the repairs.
+
+V2.8.7
+Updated the Run As Service and Run as Trusted installer exes in the program to no longer crash on vista machines that don't have all their updates. Turns out that one of the API calls would cause the exe to crash on older vista machines and so the repair would never run. The bug in vista was fixed in an vista update but if a user didn't have all the updates then the run as system exe would crash. I found the problem and found another way to do it without having it crash.
+
+Fixed a bug where the repairs wouldn't run if there was a & in the path to the temp folder under the user profile. Turns out that cmd.exe doesn't play nice with the & character being in a path. So now instead of using the temp folder of the current user the program will use the temp folder in the windows folder instead. This will avoid any problems with odd user names on a system that cmd.exe wouldn't like.
+
+The program now waits for 30 sec for a repair to start. If it doesn't the program will let the user know and then stop the rest of the repairs. Before the program waited forever, and the user wouldn't know that the repair didn't start for some reason and so both the user and the program would just sit there waiting. Now the program will let the user know if a repair was unable to run for some reason.
+
+The program now stops instantly when you click stop repairs instead of saying waiting for the current repair to finish. The current repair if it is still running will keep running till it is done but the program will stop instead of waiting for it.
+
+Multiple code changes and improvements.
+
+v2.8.6
+Updated the Register System Files repair.
+
+Major improvement to how the system detects when the repairs start. On slower systems, and when I user had a lot of programs open, it caused the repairs to start to slowly and so the program would think the repair is done and start the next repair, causing 2 or more repairs running at once. The program can now tell and wait when a repair starts.
+
+Added new information to the program asking the user to do a "Clean Boot" before running the repairs. I also wrote a guide on how to do a proper clean boot for users. (Program has a link to point them to the guide on the site)
+All the other guides I found, for some reason, didn't bother including the task scheduler, which programs also startup from.
+The reason for doing a clean boot is because other 3rd party programs can interfere with the repairs. There have been multiple times I have seen users running the repairs on a system running 140+ processes and those programs interfered with the repairs, keeping them from even finishing.
+Once those users did a clean boot the repairs finished without any problems and even finished faster since the system was under less of a load.
+
+v2.8.5
+Improved File Permissions Repair.
+
+Updated and improved the Repair Winsock & DNS Cache.
+
+Updated and improved the Repair Windows Updates.
+
+v2.8.4
+Fixed a bug where the program would crash after opening a few of the windows a few times. This was caused by my resize control for the resizable windows in the program. It was hooking into windows to keep the controls from flicking when resizing. Well that subclass hook would sometimes cause the program to crash when too many windows where opened and closed quickly. The purpose of this hook was nothing more than for looks. I have since removed that from the code and while the controls may flicker when resized the program no longer crashes :-)
+
+Per user request, I added a option under the settings tab to lock or unlock the repair list while the repairs are running.
+
+Per user request, I added a option under the settings tab to show or hide the output of the repairs to the cmd.exe windows. Hiding the output greatly increases the repair speeds as it takes a lot of CPU to draw all the text to the windows.
+
+I have updated multiple repairs to fix the path in the registry to the oleaut32.dll file on the Windows system starting with vista and newer. In XP the file name was the only thing in these registry keys, not the file path. With a fresh install of vista, 7 and newer those registry keys have the full path. When ever you register oleaut32.dll it changes those registry keys to have the file name only, the dll itself does this. Everything works fine like that but some select programs such as VirtualBox will complain and not run. By simply putting the full paths back fixes this bug for those programs like VirtualBox.
+
+Improvements to multiple repairs.
+
+v2.8.3
+New repair added "Repair Windows 'New' Submenu". When you right click on the desktop or in a folder and go to new and it is missing, empty or is missing the default items then this repair will put back the registry keys for the new menu and its default items.
+
+Improvements to the Reset File Permissions. I have now made a tool to allow me to run the file permissions repair as the trusted installer. Before the only permissions it could set was anything with administrators or system as the owner. The only way to set the permissions on files that had the trusted installed as the owner was to take ownership of them. Well now that isn't needed as the repair can now set the permissions on those files as well :-)
+
+Updated multiple repairs to no longer display everything in the cmd.exe window. When there is a lot of text to display in the cmd.exe window then it would use a lot of cpu to draw and update the cmd.exe window, which would slow down the repair since the cpu was being used to draw the window. By not showing all the text it cuts down on the cpu usage which helps increase the speed of the repairs.
+
+Fix the monitors bars on the repair window to properly resize the bar picture when a user had their system dpi set above 100%. When it is above 100% everything increases in size in the program. The bars now take this into account.
+
+Multiple interface changes.
+
+v2.8.2
+In the last update I had the Reset Registry Permissions no longer take ownership of the permissions but instead only tried to set the permissions, this was done to fix some rare odd variables on very very few certain systems but ended up not being a good idea. On systems that where infected, the viruses had changed the owner of the permissions in the registry and so since the program wasn't taking back owner ship, the permissions where not getting fixed. The program now takes ownership again for the registry permissions :-)
+
+v2.8.1
+Updated the Default Windows 8 Permissions to include Media Center and also the newest updates on patch Tuesday July 2014.
+
+Added Default Windows 8 Permissions for C:\Program Files and C:\Program Files (x86). These are the defaults for the files and folders that are installed by default in Windows 8.
+
+Added HKEY_USERS\.DEFAULT default permissions for Windows 8 to the Registry Permissions repair.
+
+The Reset Registry Permissions repair now only sets the defaults on Windows 8 and doesn't modify any others. Windows 8 is to easy to break when it comes to permissions and simply resetting the default registry keys has been found to be the best option in my tests.
+
+Fixed bug where log file couldn't be created when there was Unicode characters in the path.
+
+Updated Repair Windows Update to include more fixes that help with the errors 0x80070643, 0x8007000B and 0x80071A91
+
+v2.8.0
+The program now auto takes a registry backup if the user didn't do one before hand. This is needed for the users who don't do a registry backup and then something doesn't go right and they cant restore. For now on the program will auto create it :-)
+
+Updated the Reset permissions repairs for both files and the registry to restore the default permissions on Windows 8 after the permission repairs run. Now the repairs will update any new or custom files, folders and registry keys while putting the defaults back on all the standard default Windows locations. This new repair has stopped the app store from breaking because of permissions.
+
+Major update the permissions repairs as well. The repairs no longer remove orphaned user accounts. It was this option that was causing so much headache in Windows 8 since windows uses unknown accounts for all their apps. Since the setacl.exe remove those unknown accounts it broke the apps. Reinstalling the apps will restore it and make it working again. The program will no longer remove these and this bug has finally been killed.
+
+Since the program now auto creates a registry backup I have added a check box on the start tab that a user can uncheck if they don't want a automatic registry backup.
+
+Updated Repair Windows 8 app store.
+
+Multiple code changes and improvements across the whole program.
+
+Multiple interface changes.
+
+v2.7.5
+I have written my own exe to run the repairs under the system account, replacing the 3rd party exe I was using. The tool I made is much smaller and I now can update it when needed :-)
+
+UI changes and spelling corrections.
+
+v2.7.2
+Updated the Repair Windows Firewall. After helping a user whose firewall wouldn't start I found certain registry keys that where not part of the normal shared access service that where keeping the firewall from starting. Those registry keys are now removed if they are on the system.
+
+Updated the program with a new icon and logo.
+
+Updated the Registry Backup tool to v1.9.0
+
+Small bug fixes.
+
+Spelling Corrections.
+
+v2.7.1
+Multiple bug fixes. While I had updated the v2.7.0 setup and portable files with the bug fixes some download sites still had the bad files. 
+So to make sure everyone gets updated I am putting out a new version. Make sure to use 2.7.1 :-)
+
+v2.7.0
+Added a new startup check to the program. The program will now check that all files needed for the repairs in the program folder are present.
+If files are missing then the repair that needs those files will fail, which can cause bad side effects depending on the repair.
+So now the program will do a quick check and if any files are missing, the program will let you know which files and ask you to reinstall the program to make sure all files are there.
+You can not continue with the program if any files are missing. If all files are present then it automatically continues to the normal start window of the program.
+
+Added a new repair "Reset Service Permissions" This repair will add permissions on all services on the current system. Administrators = Full, System = Full, TrustedInstaller = Full
+
+"Reset Registry Permissions" & "Reset File Permissions" have been completely redone. The program was using subinacl.exe to set permissions but it was only 32 bit and didn't access the 64 bit locations.
+This has been replaced with SetAcl.exe which supports 32 and 64 bits. So now on a 64 bit OS all areas get their permissions set.
+Because this can now access all locations the 2 repairs are a little slower and it doesn't have the progress screen that the subinacl.exe did.
+So the cmd window has been updated to not show what current key or file it is on as it slowed down the repair by a very very large amount because the CPU was being used to draw all the text to the cmd.exe window.
+So by not having it display all that information the speed of the repair is much better.
+
+Since "Reset File Permissions" now uses a new exe the exclusions part has been changed, if you used this option in the program please see the text files on how to use exclusions.
+
+For Vista and newer versions of Windows "Reset Registry Permissions" & "Reset File Permissions" now also adds the "TrustedInstaller" account with Full access rights.
+
+Updated multiple repairs to better handle Windows 8 and 8.1 and all the fussy stuff it wants, making the repairs better than ever for Windows 8 & 8.1 :-)
+
+Updated other multiple repairs.
+
+Improved the handling of the program running with the /silent switch and when it closes itself down after repairs.
+
+Multiple code changes and improvements.
+
+v2.6.3
+Updated Repair Registry Permissions
+
+Updated Restore Windows 8 COM+ Unmarshalers
+
+The 2 repair updates both have to do with a bug that only hits a few Windows 8.1 users.
+When the HKEY_CLASSES_ROOT\Unmarshalers permissions get changed and are not locked down then for some reason Windows deletes that registry key on reboot.
+Only happens to certain machines and appears to be a bug in Windows. The repairs have been updated to now lock down the registry location like it was before,
+this will stop the bug in Windows from the registry key from being removed.
+When this registry key and its sub keys are removed the COM+ wont work and sound will stop working among a bunch of other things.
+The Windows Repair Program didn't remove these, something in Windows does for a unknown reason. Now with that registry location being locked again it stops that from happening.
+
+v2.6.2
+Added a new repair "Restore Windows 8 COM+ Unmarshalers" Starting in Windows 8 the COM+ depends on a set of registry keys located under HKEY_CLASSES_ROOT\Unmarshalers\System
+There is a bug in Windows 8 where those registry keys are sometimes removed, which when they are COM+ will no longer function and many things in windows stop working including audio, Windows Defender, Windows Firewall, WMI and many more.
+When these keys are restored COM+ functions again. These registry keys where not in older versions of Windows and is new to Windows 8.
+
+Updated Repair Registry Permissions
+
+The tree view on the repair window now takes on the colors set for the text boxes and lists instead of the program back and text colors.
+
+Changed the default color theme to make the text boxes and lists a little darker than pure white.
+
+Updated Registry Backup to v1.8.0
+
+v2.6.1
+Multiple interface changes and fixes.
+
+Code updates and improvements in multiple locations in the program.
+
+v2.6.0
+Added a new option to change all the program colors (under the settings tab). The user can now control the colors of the program and even save their color layout as a preset. This is very helpful for colorblind, or hard of seeing users or just users who don't like my default colors :-)
+
+Added a new system monitor to the repair window. The repair window will now show the current memory usage, process count, cpu usage and current read and right speeds of the hard drives. This way a user can keep track if they are running out of memory or if the drives are doing anything during a repair. Very useful so the user can tell if a repair is working or has stalled.
+
+There are now 5 step tabs before the repairs. I changed the Welcome tab to Step 1 and changed the order of the rest. On the new step 1 it tells the user to do a proper power reset before anything else and gives them a quick 4 step instruction on how to do so.
+
+Changed the default colors of the program. Replaced the green text with a easier to read color. Also change the button colors to stand out more and multiple other changes.
+
+A large amount of interface and layout changes.
+
+Code cleanup, removed old code that I was no longer using.
+
+Updated the code on step 3 when doing a read only chkdsk on the drive.
+
+Updated the Register System Files repair.
+
+Updated Restore Important Services.
+
+Updated Repair WMI to make a backup of the antivirus, firewall and antispyware information. It will export that data out first since it is lost when WMI is built and then import it back in once WMI is finished. Normally the Windows security center would complain you have no AV install and such after the repair. The AV and such would update it self back to WMI after it updates itself or after another reboot. But this confused some users who thought their AV wasn't working. By exporting and then importing that information back will keep that from happening and confusing users.
+
+Multiple Code improvements and changes through out the whole program.
+
+v2.5.1
+Important update to the "Set Windows Services To Default Startup" repair. A few services Windows changes the default startup for based on the hardware you have installed. Such as the wireless service is set to manual but if Windows detects a wireless card then the service is changed to automatic. The services that get changed have been updated and is now fixed.
+
+v2.5.0
+The "Reset File Permissions" Repair has been totally redone. The old way the program would run a bat file for each folder on the root of the drive. So if you had 100 folders on the root of the drive it would run 100 bat files in order to set the permissions on each folder. This was done so the program could skip certain folders. The repair now does the whole drive in just 1 bat file, making things much faster for this repair.
+
+Also added a exclude list option to the "Reset File Permissions" Repair. This new excluded list will allow power users to tweak the repair and have it skip certain folders or files. This new option was what made it possible to streamline the repair. 2 new files where added to the files folder file_permissions_excludes.txt and file_permissions_profiles_excludes.txt.
+
+Updated the "Repair WMI" to skip the system volume information folder when looking for wmi files to add back. Normally this wasn't a problem but if for some reason a user had taken ownership over the system volume folder then the program had access to it and then the WMI repair would loop through the restore points, which we don't want.
+
+The "Set Windows Services To Default Startup" has been redone as well. Before it pulled what services to set from the services_startup.txt file in the files folder. With Windows having so many different services for each version of Windows I have now made the repair pull from a txt file based on what version of Windows the user is on. This now gives even more control to power users and also makes the repair better suited for each version of Windows. 5 new files have been added to the files folder services_startup_xp.txt, services_startup_vista.txt, services_startup_7.txt, services_startup_8.txt, services_startup_8.1.txt.
+
+To help make the "Set Windows Services To Default Startup" even better I installed a fresh copy of Windows XP Pro SP3, Vista Ultimate SP2, 7 Ultimate SP1 , 8 Pro and 8.1 Pro with nothing added to them but their default installs and pulled all the service startup information for every single service. The repair now sets more services than ever and as of right now every known service default in each version of Windows.
+
+Multiple other code changes and improvements.
+
+v2.4.2
+The step 3 system file checker cmd.exe window now uses the cmd color options in the program.
+On step 2 I added a view log button that will show up after you run check disk on the system, the log file is stored in the log file location but now the user can open it right from the program if they wish.
+Added a "View Logs" button to the main repair window. Now users can open the logs folder after doing repairs instead of manually going to them, this will help with users who have trouble knowing where the logs are.
+Bug fix for VSS and services for XP systems.
+
+v2.4.1
+Fixed bug in the program where if you ran the Repair CD/DVD and had iTunes installed iTunes could complain about a regkey missing. The program did put the registry key back into the registry but it didn't null terminate the line so iTunes still complained. This has now been fixed and iTunes no longer complains.
+Reset File Permissions has been improved. The reset file permissions normally skips the profile folders on the system. This was due to a odd bug in Windows Vista, 7 and newer where if "Everyone" permissions was set on a folder under the user profile Windows would think it is shared when it wasn't. Well after helping a user who had a lot of problems on their system it turned out to be because somehow the user had removed "Administrators" and "System" from all the permissions on the folders and files of the profile. Once those where put back everything worked. So I knew I had to get the profiles added to the repair. The new changes will update all the profile folders properly and only add administrators and system, not everyone. Also for the current user profile folder it will also add the current user as it should be that way.
+Small code changes.
+
+v2.4.0
+Repair Icons has been updated and redone. The repair will now kill explorer.exe to unlock the cache files, delete them and then start explorer.exe back up. Also Starting with vista, 7 and 8 there is a new location for the cache files and that has been added to the repair.
+Change the the logs, the program now makes a folder with the date and time the start repairs button was clicked and logs are stored in that folder in the log location. So now instead of the program overwriting logs it now keeps them so you can view logs from different repair runs.
+Added a new tab in the main window of the program letting users know about tweaking their system for performance after a repair. It simply tells them about my simple system tweaker and my CleanMem tool from my other site PcWinTech.com. This way users now have an option to try and speed things up afterwards if they like.
+I have made a custom CleanMem for Tweaking.com and included it with the program. The program will now cleanup memory on the system instantly before doing the repairs. This will help with systems with little memory or have some processes that are memory hogs or have memory leaks, they get cleaned up before the repairs start.
+Updated Repair WMI.
+Updated Repair IE to support IE 11.
+Program now pulls more system information and adds it to the logs, this has the benefit of letting the user see how memory and other things look and the information can also help when helping a user in the forums.
+Added 20 more services to Restore Important Windows Services.
+Multiple code changes and updates.
+The installer for the program now puts the setup log in the same folder as the program instead of the temp folder. This will make it easier for users to find it if they wish.
+
+v2.3.0
+Fixed a bug where the cmd.exe windows where not changing color like they use to.
+New feature, you can now set what back and text color to use in the cmd.exe windows. This is useful when running the program from a script and you can tell which cmd.exe windows belong to the program and not the script.
+Program now gives a warning if it is unable to create the log file path. If the program is unable to save the log files the repairs will fail. Examples of it failing would be if the path has Unicode chars or is pointing to a ready only folder such as running off a cd.
+Small bug fixes and multiple code changes.
+
+v2.2.1
+Per user request I have enabled the beta repair for system restore.
+Adjusted privileges of the program to fix a loop in the wmi repair and to also give better access for the repairs.
+Program now logs if it has trouble loading needed privileges. This can be helpful if the user account the program is running under doesn't have the correct access that is needed for the repairs.
+
+v2.2.0
+Remove beta repairs button. The only beta repair was for the system restore which wasn't repairing it, so no point in having it till i find more info on it :-)
+The Repair CD/DVD Missing/Not Working now logs if it detects iTunes and if it does it applies the upperfilter regkey so iTunes can burn cds.
+The Unhide Non System Files now also sets the show desktop icons back to enabled. Some viruses are putting desktop icons as hidden. If you keep them hidden your self you can rehide them with a simple right click on the desktop and then go to view.
+Updated the repair windows firewall to have file and print sharing enabled.
+Add a "Defaults" button next to the select all and unselect all repairs. This was by user request. The defaults button will select the default repairs, the same as when you run the Windows Repair for the first time.
+The Windows Repair log now record system information such as what version of windows and such. This way when a user posts the log in the forums and doesnt tell me what version of Windows they are on I can see it in the logs.
+New repair added for Windows 8 users. Repair Windows 8 Component Store. Microsoft finally added some built in tool to fix and recover corrupt files when sfc /scannow fails and says it couldn't fix some corrupt files. I also have the repair do a cleanup of the component store to shrink the size and also possibly remove errors from old outdated files. Here is the repair info from with in the program.:
+
+"Repair Windows 8 Component Store
+
+The following commands are done.
+
+Dism /Online /Cleanup-Image /StartComponentCleanup
+Dism /Online /Cleanup-Image /RestoreHealth
+
+The first command cleans up the component store (WinSxS Folder) in windows, reducing it size and removing old entries.
+
+The 2nd command is used to repair corrupt files and corrupt entries in the component store.
+
+Reasons for this repair:
+Used to fix Windows component store corruption when a SFC /SCANNOW command is unable to repair corrupted system files because the store (source) is corrupted, then run the SFC command again.
+Used to fix Windows component store corruption when the same Windows Updates continue to appear to be available to install even though they already show successfully installed in update history.
+
+More information on these commands can be found here:
+http://technet.microsoft.com/en-us/library/hh824869.aspx
+and
+http://www.eightforums.com/tutorials/26512-dism-fixing-component-store-corruption-windows-8-a.html
+"
+
+v2.1.1
+New feature added to the program (Possible speed increase as well). Under the settings tab in the main window of the program you can now set the window state and priority of the cmd.exe. The program uses bat files to run the repairs which goes through cmd.exe in Windows. Now you can choose to have the cmd.exe window be minimized, maximized or normal like it has been. (Useful for techs who are running repairs but are trying to do something else on the system) You can also set what CPU priority to run cmd.exe, so on older systems where the CPU is in use by other processes the cmd.exe window can now get priority, thus getting more CPU when it needs it and possibly speeding up the repairs for some people.
+Updated and improved the Repair Winsock & DNS Cache
+Updated and improved the Repair Windows Updates.
+Multiple small code changes.
+
+v2.1.0
+Added new repair "Repair Windows App Store"
+Updated Registry backup to 1.6.8
+The program now auto skips repairs that are meant for a different version of Windows.
+Added a checkbox to give the user an option to not have the program check for updates at startup. While I didn't have this before as it is extremely important to always run the latest version because of bug fixes and changes, it also causes the program to hang for a few seconds if the computer it is running on cant access the site to see what the current version is. So now the user can turn that off.
+
+v2.0.1
+Fixed bug where the /silent command didn't work. The bug was when you used /silent the repair window would show but didn't run the repairs. This is because with the new interface the treeview of the repairs wasn't loaded yet, so it didn't see any repair to run. This bug has now been fixed and /silent works again :-)
+
+v2.0.0
+New interface. Still the same layout but new colors that match the same look and feel as other programs on tweaking.com
+Due to the interface changes I changed controls and graphics to make a smaller exe, smaller setup and use less memory.
+Code improvements to Repair WMI.
+All new logging. The program now records any output from the cmd.exe, not just errors. Bigger log files, but much better information when needed.
+Support for Windows 8.1 added.
+Tons of Code changes.
+Repair Windows Updates updated.
+Repair WMI updated.
+Restore Important Windows Services updated.
+Multiple bug fixes from the last version have been fixed.
+
+v1.9.18
+Bug fix: The program would get stuck in a opening and closing loop when you had it set to auto restart after repairs. This was because of a timer not turning off and wanting to update the window while it was closing down, thus the loop. This has now been fixed and the program closes like it should.
+
+New feature: Since I had to get this bug fixed quickly I decided to take the time to add a new feature I came up with. In the steps before the repairs, Step 2 asks the user to do a check disk (chkdsk) on the system to make sure there is no file system errors before doing any repairs. I hated the fact that I forced the user to reboot to scan it when there may not be any errors on the file system. So I have added a new option to this step where the program will check the drive for errors and let you know if any are found. It is done by making a pipe to a cmd.exe window and running chkdsk in read only mode. Once chkdsk is done it looks for the key words "Windows found problems" and can let the user know if running chkdsk is even needed. Thus saving the user a reboot if there are no errors. I also have it log the chkdsk results to a chkdsk.log file in the logs folder in case a user wants to see the results of the chkdsk. :-)
+
+v1.9.17
+Updated the repair list to be numbered. This way when others have users use the program they can tell them what number in the list to choose instead of the repair name, making it easier for the user to check the correct ones.
+Unhide non system files has been updated to support Unicode systems and file names and also to skip folders and files with symbolic links so it doesn't get stuck in a loop.
+Unhide Non System Files now logs all files it unhides.
+Repair WMI has been updated to apply MOF and MFL files back into WMI. So if you have a 3rd party program that added themselves to WMI they will be added back.
+Log files have been updated to make a log file for each repair instead of trying to put everything into one log file. This is because the cmd.exe would sometimes give an error on the log file being in use.
+Program now deletes old log files before running repairs. This way the log files dont keep growing in size if repairs are ran more than once.
+Reset Registry Permissions has been enabled for Windows 8, but only does sections of the registry that doesn't effect the app store.
+Repair Windows Firewall has been updated to use subinacl.exe to set the reg permissions instead of regini.exe. That is now 2 less files needed in the program.
+Multiple code changes.
+
+v1.9.16
+Update to the Reset File and Reset Registry permissions. These repairs now delete orphaned SIDs and no longer follows symbolic links, keeping it from getting stuck in an infinite loop.
+Updated the Repair Important Services to apply reg permissions to the service section in the registry (In case the reg permissions repair was skipped, and for users on Windows 8 who can't user the reg permissions repair because of the Windows App store.) and also to remove symbolic links from the Windows defender folder in case a well known virus put those there to break Windows defender.
+Added remove_symbolic_links_from_windows_defender_folder.bat file to the files folder. This can be used by users who simply need to remove the symbolic links a virus puts on the Windows defender folder to keep Windows defender from working. The program now does this as well, but I decided to add a file for it for advanced users. The program doesn't not use this file, so changing it will have no effect on the program.
+When a new update is available the program will now tell you in the caption bar instead of only at program startup. This is good for users who missed the message that there is a new version.
+
+v1.9.15
+Change the scan of malwarebytes from full to quick. Full is normally needed when scanning external drives and such and a quick scan is meant for scanning your system for all known malware locations and is much faster.
+Small code changes.
+
+v1.9.14
+The awesome guys over at Malwarebytes gave me permission to allow Tweaking.com - Windows Repair to download and install Malwarebytes Anti-Malware and start a scan right from the program. This will now help make things a little easier for novice users and is a few less steps that my fellow techs need to do. When you start the program the scan option is on "Step 1" and is totally optional :-)
+
+v1.9.13
+Added msiserver service "Restore Important Windows Services" and "Repair MSI (Windows Installer)"
+Added sppsvc service to the "Restore Important Windows Services"
+Improved "Repair Internet Explorer", now better supports IE6 to IE 10.
+"Repair Internet Explorer" now loads the list of files to register from the ie.txt file in the files folder. This gives users more control if they need it.
+Improved "Repair MDAC/MS Jet"
+"Repair MDAC/MS Jet" now loads the list of files to register from the mdac.txt file in the files folder. This gives users more control if they need it.
+
+v1.9.12
+Added 4 more service repairs to the "Restore Important Windows Services".
+Improved repair print spooler.
+Moved "Set Windows Services To Default Startup" to the bottom of the list. Since you can edit the file of what services are set to what startup, it made sense to move this last since other repairs that restore services put them back to their startup as well. This way a person can edit this file to keep any tweaks they have done to their services on the system.
+Minor bug fixes and code changes.
+
+v1.9.11
+Improved "Repair Windows Update". On a very few machines the repair was unable to rename the pending.xml file. On vista and 7 this would cause the "installing update step 3 of 3" screen to never go away at boot up. By simply renaming the pending.xml file fixed this. Even though this was already part of the repair, if the file was in use at the time then it wasn't able to be renamed and the person would get stuck at the next boot. I am changed the repair to now remove any attributes from the file and set a secondary rename option directly in the registry to have windows rename the file at boot up. So now if the repair is unable to rename that file during the repair it will get rename at the next system boot. Hopefully this will now keep the "installing update step 3 of 3" screen from coming up and getting stuck. I was able to replicate this problem in Windows and the new repair fixed it in my testing.
+
+Improved the "Repair Winsock & DNS Cache". The repair reset TCP which would also clear any static IP info set on the system. Per user request the program will now extract the static IP info, run the repair and then put the static IP info back.
+
+v1.9.10
+Improved the "Repair Windows Firewall". The program use to only restore the core of the shared access service. It didn't put any policies or rules. While helping a user in the forum they had a virus completely delete the shard access service key, including all rules. When the shared access was put back the firewall worked but he was unable to share any files. This is because there is some core things that have to be in the firewall rules in order to work. I have now added those core rules to the repair and it got his file sharing working just fine. This now makes the repair even better than before.
+
+Added some more settings for the "Repair Windows Firewall". While helping a user in the forum the firewall was working but he couldn't get the firewall to open and would get a Group Policy error. While helping him I found the 2 reg keys that where needed to fix it. This keys are only on Vista and 7. They are not on Xp, 2003 or 8. The repair now puts these keys in on Vista and 7 only.
+
+Added Windows Defender to the "Restore Important Windows Services" repair.
+
+v1.9.9
+Fixed bug reported by users where a folder was created on the C: drive called "Program" and windows would ask to delete or rename it, which was safe to do. The bug was with the new log settings. Bat files do not like spaces. If there was a space in the log location name it made that folder and the log was never made. The fix is to just make sure that the path is started and ended with quotation marks. I have updated all 250 locations in the program to make sure the log path has the quotation marks. This bug is now fixed.
+
+v1.9.8
+Changed the "Set Windows Services To Default Startup" repair to pull the services startup from a text file in the files folder instead of being hard coded. This will let users tweak this repair if they wish.
+
+The program will now keep Windows from going into sleep mode or hibernation when repairs are running.
+
+Added new repair "Repair Print Spooler"
+
+Added "Time Elapsed" to the repair Window, so now users can see how long the repairs have been running.
+
+Add new settings tab to the main window.
+
+Under the new settings tab you can now change the default location for the log files.
+
+Changed the default location of the log files from the Windows drive to the Logs folder in the program folder.
+
+Added new repair "Restore Important Windows Services", this repair will replace all the services that the other repairs do. And as time goes I will add more services to this repair.
+
+v1.9.7
+Major changes to both "Reset Registry Permissions" and "Reset File Permissions". I found out that if you where on a non English system these two repairs simply wouldn't run and thus not change any permissions. This was because it was settings the permissions based on the names such as "Administrators" or "Everyone". On non English systems these are spelled differently and so would fail. I have changed these two repairs to set it by SID now instead of name. Example: Instead of "Administrators" it will use "S-1-5-32-544" (Which is the Windows Default SID for Administrators). These two repairs will now work on non English systems. As an added bonus, the two repairs run much faster now. The reason why is when I was using the names instead of the SID it had to go and lookup the SID of the names. Now that I am using the SID from the start it no longer has to do that lookup, thus making it run nearly twice as fast or better :-)
+
+Fixed bug where if you opened the repair window, then closed it and then went back to it the repairs wouldn't work. This is because the program though it was in close down mode from closing the repair window. This has now been fixed.
+
+Program now shows how many repairs are selected above the repair list. Example: "Repair Options (Selected: 10 of 35)"
+
+The repair wmi was done in 3 steps to simply give a progress of what it is doing. Instead I have combined the 3 steps into 1.
+
+Unhide none system files now gives a count of how many files it unhides. Also made a new status window to show when the unhide repair is running.
+
+The Beta Repairs button will now be disabled when your running repairs.
+
+The program now lists all fixed drives in the system for the Reset File Permissions and Unhide Non System Files repairs. Before it would only do the drive that Windows is on, now you can have it do other fixed drives as well. By default only the Windows drive is selected.
+
+Log window now shows when a repair is being ran under the system account and the current user account.
+
+The cmd.exe windows now show what repair it is doing in the title bar.
+
+The program now checks if it is being run from a network path. If it is it lets the user know that due to Windows network security most repairs will fail and to please run the program locally on the system.
+
+v1.9.6
+Added renaming of the pending.xml file to the Repair Windows Updates
+
+Due to an odd bug with the Windows 8 app store I had to disabled the reset reg permissions repair for now for Windows 8 systems. For some reason even though the app store has permissions, if you change the permissions in any way under certain keys under hkey local machine the app store will refuse to install apps and give the error code 0x8007064a. Until I can find out what keys the app store doesn't like touched I will keep this repair disabled for Windows 8.
+
+v1.9.5
+Fix bug where the program wouldn't go to the next repair if a cmd.exe was open. That means when the program was run from a bat file it wouldn't move forward. This bug was caused from a previous update. This is now fixed.
+
+Updated the "Set Windows Services To Default Startup"
+
+v1.9.4
+On some systems, depending what programs are installed would not leave enough system resources for the reg and file permissions repair. On these systems after those repairs the rest of the repairs wouldn't work because the system was out of resources. There are two simple reg tweaks that increase the system resources Windows will use. Both repairs will now apply those two reg keys. Not only will this fix the resources being used up but should also fix any other program that runs out of resources. A reg file for these two tweaks are in the files folder with the program.
+
+Added more files to the repair system restore.
+
+Nearly all repairs run under the system account. As I work on the repairs I noticed something odd. Some parts of the repairs work when run under the current user account and fail under the system account, and other parts fail under the user account and work with the system account. Such as adding reg files or registering files. Here is an example registering the file blb_ps.dll under the user account works while trying to register it under the system account fails, and this only happens with a few files while the rest work fine under both. To handle this I now have some of the repairs run twice, once under the user account then again under the system account. This should handle any odd permissions between the two accounts and insure that the repairs are successful. This isn't needed on all repairs.
+
+v1.9.3
+Added a new section to the program called "Beta Repairs". There is a button on the repair window that will open it for you.
+Added new beta repair "Repair System Restore" this is for Windows Vista, 7 and 8. Microsoft has no repair info on the system restore. So I monitored what services and files the system restore needs and I am working on the first known system restore repair. This is in the beta section till I get user feedback on how it works and if it gets system restore working again for people.
+
+v1.9.2
+Per user request the main repair window is now resizable.
+Added 11 new file association repairs. What makes these repairs different than just clicking a reg file is on vista and newer some of the keys are locked. Since the program runs the repairs under the system account these repairs have access to those locked keys.
+Added a "Tips" button that loads a page on the site with some tips on which repairs to run and tricks you can do with the program.
+Changed the list in the program to a treeview.
+I have some repairs unchecked by default now instead of all repairs checked.
+Many code changes.
+
+v1.9.1
+Changes to the user interface.
+
+v1.9.0
+Minor Interface changes.
+Program now pulls the information of each repair from a txt file instead of being directly in the program.
+Added the BITS service to the Repair Windows Updates.
+Added the wuauserv service to the Repair Windows Updates
+Added a few more things to the Repair Windows Updates.
+Added more support for Windows 8 repairs.
+Added more dll files to the register system files repair.
+Added new repair - "Repair Windows Safe Mode". This will put the default reg keys in order to boot into safe mode. Some viruses remove these reg keys. This will simply put the defaults back and allow safe mode to boot again.
+Added more to the "Remove Policies Set By Infections" repair.
+Multiple Code changes and improvements.
+
+v1.8.0
+Replaced Erunt registry backup with Tweaking.com - Registry Backup
+Some new viruses have been adding programs to the Image File Execution Options in the registry. Keeping those programs from running. I have added 773 more items to the Remove Policies Set By Infections.
+Added new repair "Repair Windows Snipping Tool". This will run on vista or newer and replace the reg keys needed for the snipping tool.
+Added new repair "Repair .lnk (Shortcuts) File Association" This will run on vista or newer.
+Updated the "Repair CD/DVD Missing/Not Working" to see if iTunes is running (Looks for ituneshelper.exe is running). If it is it puts the iTunes "UpperFilters" for the cd/dvd rom drive so iTunes wont give the error "Warning the registry setting used for importing CD are missing". More info here http://support.apple.com/kb/TS2372?viewlocale=en_US
+Multiple code improvements.
+
+v1.7.5
+Improved operating system detection code. What does this mean? Some repairs need to know what version of Windows it is running run to run the correct code. The program used WMI to pull this info. But if WMI was broken it didn't pull the info. I now have it use the Windows API to pull the Windows version, and if for any reason it fails it will fall back to using WMI to pull the info.
+
+v1.7.4
+The program is now Terminal Server Aware. When you ran the program on a Windows server that had Terminal Services installed the Windows API returned the wrong path to the windows dir. This is now fixed.
+
+v1.7.3
+Updated the Repair Windows Firewall. It now restores the reg keys for the BFE, MPSSVC and WSCSVC services. Before it only put back the shared access service. Which in XP is all the firewall needed. But in Vista and 7 it required more services. They are now part of the repair :-)
+
+v1.7.2
+Small bug fixes to the log creation of the program.
+I have removed the 3 options "Basic" "Advanced" and "Custom" before you start the repairs. Nearly all users that I have talk to, and myself included always choose custom anyways. No need for these other options and they have been removed. Should cut down on the confusion for new users on which to use.
+New interface changes to the repair window in the program.
+Added "Always On Top" option for the repair window.
+Added a minimize button to the repair window. With the always on top option if something opens behind the window and the user needs to get to it they can now minimize the window.
+Added a minimize button to the main window in the program for the heck of it :-)
+Code improvements.
+
+v1.7.1
+Updated the Repair WMI to better handle the commands needed for the different version of Windows. While the WMI works great on XP, Vista and 7 it didn't work correctly on 2003 thus breaking WMI. I have added the commands need to have it run properly on 2003 :-)
+
+v1.7.0
+Small improvements to a few repairs.
+Better support when running the program through a script. I have a good amount of repair shops that use this repair tool. Some like to run the repair tool with the silent command and from a script in a bat file. The old version of the program would close any cmd.exe window before running the repairs. This of course defeated the purpose of running through a script. So I have changed the way the program waits for a repair to finish. Instead of waiting for cmd.exe to close, each repair will now make a file. When the repair is finished it will delete the file, then the program will know to move onto the next repair.
+I now have the cmd.exe windows change to a gray background with black text. This way when running the program through a script you will know which cmd.exe window belongs to the windows repair :-)
+The program will now save any errors from the repairs into a txt file on the Windows drive in a folder. Example: "C:\Tweaking.com_Windows_Repair_Logs\" Multiple log files are made for the permission repairs. This is because the MS tool doesn't append to the log file, so a new file has to be made for each section. Since this could create a fair amount of log files I have the program cleanup any empty log files after the repairs are ran.
+
+v1.6.5
+Program detects if you are running in safe mode and warns that some repairs may not work in safe mode.
+I have also made a few changes for all repairs to run better in safe mode. No guarantees but should definitely run better in safe mode than it has before.
+Per user request you can now choose to restart or shutdown the computer after repairs.
+I have the repair window resized to 750 x 550 pixels (Now bigger than before). This is the max size to fit on the screen in safe mode which is normally 800 x 600.
+
+v1.6.4
+Add ERUNT Registry backup tools. This is another option to backup the system registry before doing repairs. Also very helpful when a users system restore isn't working properly.
+
+v1.6.3
+Major improvement for the Reset File Permissions repair. On vista and newer the repair would allow access to folders windows normally blocked. Such as "C:\ProgramData\Application Data". Normally with this folder you would get an access denied. After you ran the reset file permissions repair you could access it. The side effect was that this folder points back to the C:\ProgramData folder. So it made an endless loop! The repair now checks if your on anything newer than XP. If you are then it runs a batch of commands after the repair that puts back the deny permissions on all the folders that are supposed to be blocked. This stops that endless loop from happening. 46 folders total. :-)
+
+v1.6.2
+Per user request I have added a silent command option to the program. Set the options in the setting.ini file and run the program with /silent. The program will run in custom mode running the repairs set in the settings and then close it self. Will even reboot when done if set in the settings. (Perfect option for my fellow network admins) :-)
+Small code changes.
+
+v1.6.1
+Added new repair "Repair Missing Start Menu Icons Removed By Infections" This repair will put back the missing icons in the start menu, quick launch, and desktop that are moved by a rogue virus.
+
+v1.6.0
+Added new repair "Repair MSI (Windows Installer)"
+Added exe fix (when a virus hijacks the exe section in the registry) to the "Remove Policies Set By Infections" repair.
+Improved "Repair Windows Updates".
+Small interface changes.
+
+v1.5.8
+Bug Fix: I found a very odd bug where some of the repairs were not working right. All repairs run under the system account (because of the trusted installer in vista and newer). For some reason the repairs that set registry keys by a .reg file and with regedit would run but the changes wouldn't take. The fix was to have those repairs run as the logged in account. Still scratching my head on that one, but at least now they work again :-D
+Bug Fix: The repair windows firewall wasn't running all the repairs needed for it. This has now been fixed.
+The Reset File Permissions now skips the "Users" folder in Vista and newer and "Documents and Settings". The reason for this is in Vista and newer there is a bug where if the file permissions are changed in the user profile then Windows thinks the file is shared when it isn't and you get a shared icon on it. More information is here http://www.tweaking.com/forums/index.php/topic,69.0.html
+Small code improvements.
+
+v1.5.7
+Changed Windows Image Acquisition (WIA) from "stisvc start= demand" to "stisvc start= auto" in the windows services repair.
+
+v1.5.6
+The "Remove Policies Set By Infections" repair wasn't working properly. The commands where deleting the Reg file before it had been applied. I added the start /wait command to the regedit. "Remove Policies Set By Infections" Now works correctly :-)
+
+v1.5.5
+Removed "WwanSvc start= demand" from the windows services repair.
+The program no longer defaults to the C:\ for repairs. The program now looks at the location of the Windows dir and uses the drive that Windows is on.
+
+v1.5.4
+On users machines who's "Path" variable was corrupt none of the repairs would work. To fix this I have added "set path=%SystemRoot%\system32;%SystemRoot%;%SystemRoot%\System32\Wbem" to all the repairs. Now on users systems with a corrupt "path" variable the repairs will still work properly :-)
+
+v1.5.3
+Changed 4 service defaults from manual to auto in the set services to default startup repair. Media Center Receiver Service, Media Center Scheduler Service, Windows Media Center Service Launcher and Windows Media Player Network Sharing Service.
+Removed Panda cloud antivirus from the program and put Avast as a recommendation (Step 2 Window).
+Added ComboFix to the recommendation page (Step 2 Window).
+
+v1.5.2
+Interface changes.
+
+v1.5.1
+Blackvipers site listed the Windows 7 wireless service startup state as manual. But when it is set to manual it will not start and thus the user has no wireless. I have updated the services startup repair tool to put the wireless to auto instead of manual.
+
+v1.5.0
+Added a new repair "Set Windows Services To Default Startup". (Currently 194 services) This will set the Windows services to their default startup state. Special thanks to http://www.blackviper.com/ for having all the default information handy. This will set the services startup by the "sc config" command and not by the registry. The information on the repair in the program lists all the services that are set.
+
+1.4.3
+The new setup file for the program was missing some of the repair files it needed. The setup has been updated and I made this new version so people who downloaded the last version will update and get the rest of the files they need.
+
+1.4.2
+Removed moving arrow from the repair window. Since the list of repairs is growing and the list is scrollable the arrow didn't work well.
+In a past update I removed the custom buttons because they would cause the program to crash. The program then used the default old ugly buttons. I have made a new button control and updated the buttons so they look better, and it doesn't cause the program to crash like the old ones.
+Program now asks the user if they want to create a restore point before doing repairs if they didn't have the program create one.
+The program now comes in a setup program and the portable version. The new setup is larger because it contains the VB6 SP6 runtimes the program needs in case they are corrupt on the system that is being repaired.
+More Code tweaks and changes.
+
+v1.4.1
+Added more files to the register system files repair that will fix "Class not registered" when trying to open a .mmc file. Such as Task scheduler, Device Manager, Computer Management and more.
+Program now starts the Windows Sidebar after the Windows Sidebar repair.
+Removed the security zones in IE being reset with the sidebar repair.
+More code tweaks and improvements.
+
+v1.4.0
+Removed the custom buttons from the program. It was causing the program to crash on some systems. Program is meant to repair, not look pretty, so ugly standard safe buttons it is :-)
+Add new repair "Repair Windows Sidebar/Gadgets"
+Changed the window size of the repair window, making it smaller and easier to fit on screen for smaller resolutions.
+More code tweaks.
+
+v1.3.1
+Minor GUI and code Tweaks.
+
+v1.3.0
+If you ran an older version of this repair program and it caused problems on your system, download and run this version and it will fix any problems it caused :-)
+Added new repair "Repair Volume Shadow Copy Service"
+Major update to the program making it safer and better at repairs. Make sure to use this new version and not the old versions.
+
+v1.2.0
+Per user request - Added a new repair "Repair CD/DVD Missing/Not Working"
+Fixed bug where when repairing WMI the WMI tester would open and the program wouldn't move forward till the WMI tester was closed. Most users didn't know to close this. I have made the program now look for and close the WMI tester if it pops up during the WMI repair.
+
+v1.1.1
+Remove some files from the Register System Files repair. While this repair worked great on a lot of some systems on a few ones it would create more problems. The repair now has a much smaller list of only known good files to register.
+Updated Repair IE section.
+Updated Repair MDAC Section.
+
+v1.1.0
+Major changes to how the program launches the repairs. It now shows the command window doing the repair in the task bar. Also should work better with the UAC enabled and running the commands as administrator. This will also keep the program from not responding during repairs.
+Updated the file permissions repair to include everyone and users full rights. It use to do just Administrators & System. But on some machines they needed more to get things working right again. This should fix that.
+Replaced some of the controls in the program so the program & zip file is smaller in size.
+
+v1.0.2
+Fixed bug in Repair WMI (Hopefully got it this time)
+Added link to help fix any problems someone might have with the file permissions repair.
+
+v1.0.1
+Fixed bug in Repair WMI
+GUI Changes.
+
+v1.0.0
+First Release

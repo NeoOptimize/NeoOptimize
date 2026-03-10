@@ -215,6 +215,45 @@ public sealed class AIChatResponse
     public Dictionary<string, object?> ContextSummary { get; init; } = new();
 }
 
+public sealed class ConsentUpdateRequest
+{
+    [JsonPropertyName("accepted")]
+    public bool Accepted { get; init; }
+
+    [JsonPropertyName("accepted_at")]
+    public DateTimeOffset? AcceptedAt { get; init; }
+
+    [JsonPropertyName("updated_at")]
+    public DateTimeOffset? UpdatedAt { get; init; }
+
+    [JsonPropertyName("telemetry")]
+    public bool Telemetry { get; init; }
+
+    [JsonPropertyName("diagnostics")]
+    public bool Diagnostics { get; init; }
+
+    [JsonPropertyName("maintenance")]
+    public bool Maintenance { get; init; }
+
+    [JsonPropertyName("remote_control")]
+    public bool RemoteControl { get; init; }
+
+    [JsonPropertyName("auto_execution")]
+    public bool AutoExecution { get; init; }
+
+    [JsonPropertyName("location")]
+    public bool Location { get; init; }
+
+    [JsonPropertyName("camera")]
+    public bool Camera { get; init; }
+}
+
+public sealed class ConsentUpdateResponse
+{
+    [JsonPropertyName("status")]
+    public required string Status { get; init; }
+}
+
 public sealed class AIFeedbackRequest
 {
     [JsonPropertyName("message_id")]

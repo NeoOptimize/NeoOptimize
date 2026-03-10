@@ -329,6 +329,13 @@
             color: var(--accent);
         }
 
+        .neo-ai-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(107, 140, 255, 0.25);
+        }
+
         .chat-header h2 {
             font-size: 1.4rem;
             font-weight: 600;
@@ -846,16 +853,3 @@ body.light-theme ::-webkit-scrollbar-thumb {
     border-color: var(--accent);
 }
 
-.chat-send.voice-btn {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: var(--input-bg);
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
-}
-
-.chat-send.voice-btn.is-listening {
-    background: var(--accent);
-    color: #ffffff;
-}

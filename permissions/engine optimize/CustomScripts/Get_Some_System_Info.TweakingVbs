@@ -1,0 +1,232 @@
+'Get Some System Info
+'This script will output the current start up items, processes
+'and services to files in the log folder of the current repairs.
+
+On Error Resume Next
+
+Const adVarChar = 200
+Const MaxCharacters = 255
+
+Set objFSOStartupItems = CreateObject("Scripting.FileSystemObject")
+
+outFileStartupItems = "%%%RepairLogFolder%%%\_Info_Startup_Items.txt"
+
+Set objFileStartupItems = objFSOStartupItems.CreateTextFile(outFileStartupItems,True)
+
+Set DataListStartupItems = CreateObject("ADOR.Recordset")
+
+DataListStartupItems.Fields.Append "Name", adVarChar, MaxCharacters
+DataListStartupItems.Fields.Append "Command", adVarChar, MaxCharacters
+DataListStartupItems.Fields.Append "Location", adVarChar, MaxCharacters
+DataListStartupItems.Fields.Append "SettingID", adVarChar, MaxCharacters
+DataListStartupItems.Fields.Append "User", adVarChar, MaxCharacters
+DataListStartupItems.Fields.Append "UserSID", adVarChar, MaxCharacters
+DataListStartupItems.Open
+
+Set objWMIService = GetObject("winmgmts:\\.\root\CIMV2")
+Set colItems = objWMIService.ExecQuery("SELECT * FROM Win32_StartupCommand", , 48)
+
+For Each objItem In colItems
+    DataListStartupItems.AddNew
+    DataListStartupItems("Name") = objItem.Name
+    DataListStartupItems("Command") = objItem.Command
+    DataListStartupItems("Location") = objItem.Location
+    DataListStartupItems("SettingID") = objItem.SettingID
+    DataListStartupItems("User") = objItem.User
+    DataListStartupItems("UserSID") = objItem.UserSID
+    DataListStartupItems.Update
+Next
+    
+    DataListStartupItems.Sort = "Name"
+    DataListStartupItems.MoveFirst
+    i = 0
+    objFileStartupItems.Write "Date: " & Date & vbCrLf
+    objFileStartupItems.Write "Time: " & Time & vbCrLf
+    objFileStartupItems.Write "Total: " & DataListStartupItems.RecordCount & vbCrLf
+    objFileStartupItems.Write "--------------------------------------------------------------------------------------------------------------------------------" & vbCrLf
+    Do Until DataListStartupItems.EOF
+        i = i + 1
+        objFileStartupItems.Write FormatNumber(i, 0, -1) & "." & vbCrLf
+        objFileStartupItems.Write "Name: " & DataListStartupItems.Fields.item("Name") & vbCrLf
+        objFileStartupItems.Write "Command: " & DataListStartupItems.Fields.item("Command") & vbCrLf
+        objFileStartupItems.Write "Location: " & DataListStartupItems.Fields.item("Location") & vbCrLf
+        objFileStartupItems.Write "SettingID: " & DataListStartupItems.Fields.item("SettingID") & vbCrLf
+        objFileStartupItems.Write "User: " & DataListStartupItems.Fields.item("User") & vbCrLf
+        objFileStartupItems.Write "UserSID: " & DataListStartupItems.Fields.item("UserSID") & vbCrLf
+        objFileStartupItems.Write "--------------------------------------------------------------------------------------------------------------------------------" & vbCrLf
+     
+        DataListStartupItems.MoveNext
+    Loop
+    DataListStartupItems.Close
+
+objFileStartupItems.Close
+
+
+
+Set objFSOProcesses = CreateObject("Scripting.FileSystemObject")
+
+outFileProcesses = "%%%RepairLogFolder%%%\_Info_Processes.txt"
+
+Set objFileProcesses = objFSOProcesses.CreateTextFile(outFileProcesses,True)
+
+Set DataListProcesses = CreateObject("ADOR.Recordset")
+
+DataListProcesses.Fields.Append "Name", adVarChar, MaxCharacters
+DataListProcesses.Fields.Append "CommandLine", adVarChar, MaxCharacters
+DataListProcesses.Fields.Append "ExecutablePath", adVarChar, MaxCharacters
+DataListProcesses.Fields.Append "Handle", adVarChar, MaxCharacters
+DataListProcesses.Fields.Append "HandleCount", adVarChar, MaxCharacters
+DataListProcesses.Fields.Append "MaximumWorkingSetSize", adVarChar, MaxCharacters
+DataListProcesses.Fields.Append "MinimumWorkingSetSize", adVarChar, MaxCharacters
+DataListProcesses.Fields.Append "PageFaults", adVarChar, MaxCharacters
+DataListProcesses.Fields.Append "PageFileUsage", adVarChar, MaxCharacters
+DataListProcesses.Fields.Append "ParentProcessId", adVarChar, MaxCharacters
+DataListProcesses.Fields.Append "Priority", adVarChar, MaxCharacters
+DataListProcesses.Fields.Append "ProcessId", adVarChar, MaxCharacters
+DataListProcesses.Fields.Append "ThreadCount", adVarChar, MaxCharacters
+DataListProcesses.Fields.Append "VirtualSize", adVarChar, MaxCharacters
+DataListProcesses.Fields.Append "WorkingSetSize", adVarChar, MaxCharacters
+DataListProcesses.Open
+
+Set objWMIService = GetObject("winmgmts:\\.\root\CIMV2")
+Set colItems = objWMIService.ExecQuery("SELECT * FROM Win32_Process", , 48)
+DoEvents
+
+For Each objItem In colItems
+    DataListProcesses.AddNew
+    DataListProcesses("Name") = objItem.Name
+    DataListProcesses("CommandLine") = objItem.commandLine
+    DataListProcesses("ExecutablePath") = objItem.ExecutablePath
+    DataListProcesses("Handle") = objItem.Handle
+    DataListProcesses("HandleCount") = objItem.HandleCount
+    DataListProcesses("MaximumWorkingSetSize") = objItem.MaximumWorkingSetSize
+    DataListProcesses("MinimumWorkingSetSize") = objItem.MinimumWorkingSetSize
+    DataListProcesses("PageFaults") = objItem.PageFaults
+    DataListProcesses("PageFileUsage") = objItem.PageFileUsage
+    DataListProcesses("ParentProcessId") = objItem.ParentProcessId
+    DataListProcesses("Priority") = objItem.Priority
+    DataListProcesses("ProcessId") = objItem.ProcessId
+    DataListProcesses("ThreadCount") = objItem.ThreadCount
+    DataListProcesses("VirtualSize") = objItem.VirtualSize
+    DataListProcesses("WorkingSetSize") = objItem.WorkingSetSize
+    DataListProcesses.Update
+    DoEvents
+Next
+
+    DataListProcesses.Sort = "Name"
+    DataListProcesses.MoveFirst
+    i = 0
+    objFileProcesses.Write "Date: " & Date & vbCrLf
+    objFileProcesses.Write "Time: " & Time & vbCrLf
+    objFileProcesses.Write "Total: " & DataListProcesses.RecordCount & vbCrLf
+    objFileProcesses.Write "--------------------------------------------------------------------------------------------------------------------------------" & vbCrLf
+    Do Until DataListProcesses.EOF
+        i = i + 1
+        objFileProcesses.Write FormatNumber(i, 0, -1) & "." & vbCrLf
+        objFileProcesses.Write "Name: " & DataListProcesses.Fields.item("Name") & vbCrLf
+        objFileProcesses.Write "CommandLine: " & DataListProcesses.Fields.item("CommandLine") & vbCrLf
+        objFileProcesses.Write "ExecutablePath: " & DataListProcesses.Fields.item("ExecutablePath") & vbCrLf
+        objFileProcesses.Write "Handle: " & DataListProcesses.Fields.item("Handle") & vbCrLf
+        objFileProcesses.Write "HandleCount: " & DataListProcesses.Fields.item("HandleCount") & vbCrLf
+        objFileProcesses.Write "MaximumWorkingSetSize: " & DataListProcesses.Fields.item("MaximumWorkingSetSize") & vbCrLf
+        objFileProcesses.Write "MinimumWorkingSetSize: " & DataListProcesses.Fields.item("MinimumWorkingSetSize") & vbCrLf
+        objFileProcesses.Write "PageFaults: " & DataListProcesses.Fields.item("PageFaults") & vbCrLf
+        objFileProcesses.Write "PageFileUsage: " & DataListProcesses.Fields.item("PageFileUsage") & vbCrLf
+        objFileProcesses.Write "ParentProcessId: " & DataListProcesses.Fields.item("ParentProcessId") & vbCrLf
+        objFileProcesses.Write "Priority: " & DataListProcesses.Fields.item("Priority") & vbCrLf
+        objFileProcesses.Write "ProcessId: " & DataListProcesses.Fields.item("ProcessId") & vbCrLf
+        objFileProcesses.Write "ThreadCount: " & DataListProcesses.Fields.item("ThreadCount") & vbCrLf
+        objFileProcesses.Write "VirtualSize: " & DataListProcesses.Fields.item("VirtualSize") & vbCrLf
+        objFileProcesses.Write "WorkingSetSize: " & DataListProcesses.Fields.item("WorkingSetSize") & vbCrLf
+        objFileProcesses.Write "--------------------------------------------------------------------------------------------------------------------------------" & vbCrLf
+        DoEvents
+        DataListProcesses.MoveNext
+    Loop
+    DataListProcesses.Close
+
+objFileProcesses.Close
+
+
+Set objFSOServices = CreateObject("Scripting.FileSystemObject")
+
+outFileServices = "%%%RepairLogFolder%%%\_Info_Services.txt"
+
+Set objFileServices = objFSOServices.CreateTextFile(outFileServices,True)
+
+Set DataListServices = CreateObject("ADOR.Recordset")
+
+DataListServices.Fields.Append "DisplayName", adVarChar, MaxCharacters
+DataListServices.Fields.Append "Name", adVarChar, MaxCharacters
+DataListServices.Fields.Append "Description", adVarChar, MaxCharacters
+DataListServices.Fields.Append "PathName", adVarChar, MaxCharacters
+DataListServices.Fields.Append "AcceptPause", adVarChar, MaxCharacters
+DataListServices.Fields.Append "AcceptStop", adVarChar, MaxCharacters
+DataListServices.Fields.Append "CheckPoint", adVarChar, MaxCharacters
+DataListServices.Fields.Append "DesktopInteract", adVarChar, MaxCharacters
+DataListServices.Fields.Append "ErrorControl", adVarChar, MaxCharacters
+DataListServices.Fields.Append "ProcessId", adVarChar, MaxCharacters
+DataListServices.Fields.Append "ServiceType", adVarChar, MaxCharacters
+DataListServices.Fields.Append "Started", adVarChar, MaxCharacters
+DataListServices.Fields.Append "StartMode", adVarChar, MaxCharacters
+DataListServices.Fields.Append "StartName", adVarChar, MaxCharacters
+DataListServices.Fields.Append "State", adVarChar, MaxCharacters
+DataListServices.Open
+
+Set objWMIService = GetObject("winmgmts:\\.\root\CIMV2")
+Set colItems = objWMIService.ExecQuery("SELECT * FROM Win32_Service", , 48)
+DoEvents
+
+For Each objItem In colItems
+    DataListServices.AddNew
+    DataListServices("DisplayName") = objItem.DisplayName
+    DataListServices("Name") = objItem.Name
+    DataListServices("Description") = objItem.Description
+    DataListServices("PathName") = objItem.PathName
+    DataListServices("AcceptPause") = objItem.AcceptPause
+    DataListServices("AcceptStop") = objItem.AcceptStop
+    DataListServices("CheckPoint") = objItem.CheckPoint
+    DataListServices("DesktopInteract") = objItem.DesktopInteract
+    DataListServices("ErrorControl") = objItem.ErrorControl
+    DataListServices("ProcessId") = objItem.ProcessId
+    DataListServices("ServiceType") = objItem.ServiceType
+    DataListServices("Started") = objItem.Started
+    DataListServices("StartMode") = objItem.StartMode
+    DataListServices("StartName") = objItem.StartName
+    DataListServices("State") = objItem.State
+    DataListServices.Update
+    DoEvents
+Next
+
+    DataListServices.Sort = "DisplayName"
+    DataListServices.MoveFirst
+    i = 0
+    objFileServices.Write "Date: " & Date & vbCrLf
+    objFileServices.Write "Time: " & Time & vbCrLf
+    objFileServices.Write "Total: " & DataListServices.RecordCount & vbCrLf
+    objFileServices.Write "--------------------------------------------------------------------------------------------------------------------------------" & vbCrLf
+    Do Until DataListServices.EOF
+        i = i + 1
+        objFileServices.Write FormatNumber(i, 0, -1) & "." & vbCrLf
+        objFileServices.Write "Display Name: " & DataListServices.Fields.item("DisplayName") & vbCrLf
+        objFileServices.Write "Name: " & DataListServices.Fields.item("Name") & vbCrLf
+        objFileServices.Write "Description: " & DataListServices.Fields.item("Description") & vbCrLf
+        objFileServices.Write "Path Name: " & DataListServices.Fields.item("PathName") & vbCrLf
+        objFileServices.Write "Accept Pause: " & DataListServices.Fields.item("AcceptPause") & vbCrLf
+        objFileServices.Write "Accept Stop: " & DataListServices.Fields.item("AcceptStop") & vbCrLf
+        objFileServices.Write "Check Point: " & DataListServices.Fields.item("CheckPoint") & vbCrLf
+        objFileServices.Write "Desktop Interact: " & DataListServices.Fields.item("DesktopInteract") & vbCrLf
+        objFileServices.Write "Error Control: " & DataListServices.Fields.item("ErrorControl") & vbCrLf
+        objFileServices.Write "Process Id: " & DataListServices.Fields.item("ProcessId") & vbCrLf
+        objFileServices.Write "Service Type: " & DataListServices.Fields.item("ServiceType") & vbCrLf
+        objFileServices.Write "Started: " & DataListServices.Fields.item("Started") & vbCrLf
+        objFileServices.Write "Start Mode: " & DataListServices.Fields.item("StartMode") & vbCrLf
+        objFileServices.Write "Start Name: " & DataListServices.Fields.item("StartName") & vbCrLf
+        objFileServices.Write "State: " & DataListServices.Fields.item("State") & vbCrLf
+        objFileServices.Write "--------------------------------------------------------------------------------------------------------------------------------"  & vbCrLf
+        DoEvents
+        DataListServices.MoveNext
+    Loop
+    DataListServices.Close
+
+objFileServices.Close
+

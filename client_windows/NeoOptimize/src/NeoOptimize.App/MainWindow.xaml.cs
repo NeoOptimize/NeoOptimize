@@ -6,6 +6,8 @@ using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Drawing = System.Drawing;
+using Forms = System.Windows.Forms;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Web.WebView2.Core;
@@ -24,6 +26,7 @@ public partial class MainWindow : Window
     private readonly SystemSnapshotProvider _snapshotProvider;
     private readonly DesktopActionRunner _actionRunner;
     private readonly ReportStore _reportStore;
+    private readonly ConsentStore _consentStore;
     private readonly NeoOptimizeClientOptions _options;
     private readonly ILogger<MainWindow> _logger;
     private readonly CancellationTokenSource _shutdownCts = new();
@@ -32,6 +35,8 @@ public partial class MainWindow : Window
     private readonly List<ActivityEntry> _activity = [];
     private int _tickCount;
     private bool _timersStarted;
+    private Forms.NotifyIcon? _trayIcon;
+    private bool _allowClose;
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -43,6 +48,7 @@ public partial class MainWindow : Window
         SystemSnapshotProvider snapshotProvider,
         DesktopActionRunner actionRunner,
         ReportStore reportStore,
+        ConsentStore consentStore,
         IOptions<NeoOptimizeClientOptions> options,
         ILogger<MainWindow> logger)
     {
@@ -51,6 +57,7 @@ public partial class MainWindow : Window
         _snapshotProvider = snapshotProvider;
         _actionRunner = actionRunner;
         _reportStore = reportStore;
+        _consentStore = consentStore;
         _options = options.Value;
         _logger = logger;
 
@@ -67,12 +74,26 @@ public partial class MainWindow : Window
         _commandTimer.Tick += async (_, _) => await ProcessPendingCommandsAsync();
 
         Loaded += OnLoaded;
+        Closing += OnClosing;
         Closed += OnClosed;
     }
 
     private async void OnLoaded(object sender, RoutedEventArgs e)
     {
         await InitializeWebViewAsync();
+        InitializeTray();
+    }
+
+    private void OnClosing(object? sender, System.ComponentModel.CancelEventArgs e)
+    {
+        if (_allowClose)
+        {
+            return;
+        }
+
+        e.Cancel = true;
+        Hide();
+        _trayIcon?.ShowBalloonTip(1500, "NeoOptimize", "NeoOptimize tetap berjalan di background.", Forms.ToolTipIcon.Info);
     }
 
     private void OnClosed(object? sender, EventArgs e)
@@ -80,6 +101,11 @@ public partial class MainWindow : Window
         _shutdownCts.Cancel();
         _telemetryTimer.Stop();
         _commandTimer.Stop();
+        if (_trayIcon is not null)
+        {
+            _trayIcon.Visible = false;
+            _trayIcon.Dispose();
+        }
     }
 
     private async Task InitializeWebViewAsync()
@@ -102,6 +128,70 @@ public partial class MainWindow : Window
             webRoot,
             CoreWebView2HostResourceAccessKind.Allow);
         DashboardWebView.Source = new Uri("https://app.neooptimize.local/index.html");
+    }
+
+    private void InitializeTray()
+    {
+        if (_trayIcon is not null)
+        {
+            return;
+        }
+
+        _trayIcon = new Forms.NotifyIcon
+        {
+            Text = "NeoOptimize",
+            Icon = LoadTrayIcon(),
+            Visible = true,
+        };
+
+        var menu = new Forms.ContextMenuStrip();
+        menu.Items.Add(new Forms.ToolStripMenuItem("Open NeoOptimize", null, (_, _) => ShowFromTray()));
+        menu.Items.Add(new Forms.ToolStripSeparator());
+        menu.Items.Add(new Forms.ToolStripMenuItem("Smart Boost", null, (_, _) => RunActionFromTray("smartBoost")));
+        menu.Items.Add(new Forms.ToolStripMenuItem("Smart Optimize", null, (_, _) => RunActionFromTray("smartOptimize")));
+        menu.Items.Add(new Forms.ToolStripMenuItem("Health Check", null, (_, _) => RunActionFromTray("healthCheck")));
+        menu.Items.Add(new Forms.ToolStripMenuItem("Integrity Scan", null, (_, _) => RunActionFromTray("integrityScan")));
+        menu.Items.Add(new Forms.ToolStripSeparator());
+        menu.Items.Add(new Forms.ToolStripMenuItem("Exit", null, (_, _) => ExitFromTray()));
+        _trayIcon.ContextMenuStrip = menu;
+        _trayIcon.DoubleClick += (_, _) => ShowFromTray();
+    }
+
+    private Drawing.Icon LoadTrayIcon()
+    {
+        try
+        {
+            var iconPath = Path.Combine(AppContext.BaseDirectory, "Assets", "neooptimize.ico");
+            return File.Exists(iconPath) ? new Drawing.Icon(iconPath) : Drawing.SystemIcons.Application;
+        }
+        catch
+        {
+            return Drawing.SystemIcons.Application;
+        }
+    }
+
+    private void ShowFromTray()
+    {
+        Dispatcher.Invoke(() =>
+        {
+            Show();
+            WindowState = WindowState.Normal;
+            Activate();
+        });
+    }
+
+    private void ExitFromTray()
+    {
+        Dispatcher.Invoke(() =>
+        {
+            _allowClose = true;
+            Close();
+        });
+    }
+
+    private void RunActionFromTray(string action)
+    {
+        Dispatcher.InvokeAsync(() => RunActionAsync(action));
     }
 
     private string ResolveWebViewUserDataFolder()
@@ -162,7 +252,7 @@ public partial class MainWindow : Window
                     if (_reportStore.DeleteReport(root.GetProperty("fileName").GetString() ?? string.Empty))
                     {
                         SendReports();
-                        AddActivity("Report deleted", "Laporan lokal dihapus dari storage desktop.");
+                        AddActivity("Report deleted", "Laporan lokal dihapus dari storage desktop.", null);
                         SendActivity();
                     }
                     break;
@@ -170,6 +260,9 @@ public partial class MainWindow : Window
                     await HandleAiChatAsync(
                         root.GetProperty("message").GetString() ?? string.Empty,
                         root.TryGetProperty("dispatchActions", out var dispatchElement) && dispatchElement.GetBoolean());
+                    break;
+                case "updateConsent":
+                    await UpdateConsentAsync(root.GetProperty("payload"));
                     break;
                 case "checkUpdate":
                     await CheckForUpdateAsync(silent: false);
@@ -198,10 +291,11 @@ public partial class MainWindow : Window
                     appVersion = _options.AppVersion,
                     status = $"Connected · {DateTimeOffset.Now:HH:mm:ss}",
                     reports = _reportStore.ListReports(),
+                    consent = await _consentStore.LoadAsync(_shutdownCts.Token),
                 },
             });
 
-            AddActivity("Client registered", $"NeoOptimize aktif sebagai {registration.ClientId[..8]}.");
+            AddActivity("Client registered", $"NeoOptimize aktif sebagai {registration.ClientId[..8]}.", null);
             SendReports();
             SendActivity();
             await RefreshSnapshotAsync(manual: true);
@@ -301,7 +395,7 @@ public partial class MainWindow : Window
         try
         {
             var result = await _actionRunner.RunActionAsync(action, _shutdownCts.Token);
-            AddActivity(result.Title, result.Summary);
+            AddActivity(result.Title, result.Summary, result.ReportFileName);
             SendReports();
             SendActivity();
             PostMessage(new
@@ -333,6 +427,13 @@ public partial class MainWindow : Window
 
         try
         {
+            var consent = await _consentStore.LoadAsync(_shutdownCts.Token);
+            if (dispatchActions && (!consent.Accepted || !consent.AutoExecution))
+            {
+                dispatchActions = false;
+                SendToast("info", "Auto eksekusi AI dinonaktifkan sampai consent diberikan.");
+            }
+
             var response = await _apiClient.ChatWithAiAsync(message, dispatchActions, _shutdownCts.Token);
             var plannedActions = response.PlannedActions.Select(action => new
             {
@@ -367,7 +468,8 @@ public partial class MainWindow : Window
                 "Neo AI analysis",
                 plannedActions.Any(action => action.dispatched)
                     ? "Neo AI mengirim tindakan ke execution loop lokal."
-                    : "Neo AI mengembalikan analisis dan rencana aksi.");
+                    : "Neo AI mengembalikan analisis dan rencana aksi.",
+                null);
             SendActivity();
 
             if (dispatchActions)
@@ -379,6 +481,29 @@ public partial class MainWindow : Window
         {
             _logger.LogError(exception, "AI chat failed");
             SendToast("error", "Neo AI tidak merespons. Coba ulangi prompt Anda.");
+        }
+    }
+
+    private async Task UpdateConsentAsync(JsonElement payload)
+    {
+        try
+        {
+            var consent = JsonSerializer.Deserialize<ConsentState>(payload.GetRawText(), JsonOptions);
+            if (consent is null)
+            {
+                SendToast("error", "Consent payload tidak valid.");
+                return;
+            }
+
+            var updated = await _consentStore.SaveAsync(consent, _shutdownCts.Token);
+            await _apiClient.UpdateConsentAsync(updated, _shutdownCts.Token);
+            PostMessage(new { type = "consent", payload = updated });
+            SendToast("success", "Consent tersimpan.");
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Failed to update consent");
+            SendToast("error", "Gagal menyimpan consent.");
         }
     }
 
@@ -400,7 +525,8 @@ public partial class MainWindow : Window
                     $"Remote command · {command.CommandName}",
                     result.Status == "completed"
                         ? "Command berhasil dieksekusi dari queue backend."
-                        : result.ErrorMessage ?? "Command gagal dieksekusi.");
+                        : result.ErrorMessage ?? "Command gagal dieksekusi.",
+                    null);
                 SendReports();
                 SendActivity();
             }
@@ -499,13 +625,14 @@ public partial class MainWindow : Window
                 title = item.Title,
                 summary = item.Summary,
                 timestamp = item.Timestamp,
+                file = item.ReportFileName,
             }),
         });
     }
 
-    private void AddActivity(string title, string summary)
+    private void AddActivity(string title, string summary, string? reportFileName)
     {
-        _activity.Insert(0, new ActivityEntry(title, summary, DateTimeOffset.Now.ToString("HH:mm:ss")));
+        _activity.Insert(0, new ActivityEntry(title, summary, DateTimeOffset.Now.ToString("HH:mm:ss"), reportFileName));
         if (_activity.Count > 12)
         {
             _activity.RemoveAt(_activity.Count - 1);
@@ -689,7 +816,7 @@ public partial class MainWindow : Window
         WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
     }
 
-    private sealed record ActivityEntry(string Title, string Summary, string Timestamp);
+    private sealed record ActivityEntry(string Title, string Summary, string Timestamp, string? ReportFileName);
 
     private sealed record GitHubRelease(
         [property: JsonPropertyName("tag_name")] string? TagName,

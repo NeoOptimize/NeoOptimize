@@ -19,6 +19,7 @@ from app.models.schemas import (
     AuthenticatedClient,
     ClientRegisterRequest,
     CommandResultRequest,
+    ConsentUpdateRequest,
     RemoteCommandCreateRequest,
     SystemHealthPayload,
     TelemetryPayload,
@@ -154,6 +155,7 @@ class SupabaseRepository:
         client: AuthenticatedClient,
         payload: TelemetryPayload,
         alerts: list[str],
+        client_ip: str | None = None,
     ) -> None:
         record = payload.model_dump()
         snapshot = record.pop("snapshot")
@@ -170,6 +172,14 @@ class SupabaseRepository:
             }
         ).execute()
 
+        if client_ip:
+            self.client.table("clients").update(
+                {
+                    "last_ip": client_ip,
+                    "last_seen_at": utcnow_iso(),
+                }
+            ).eq("id", str(client.client_id)).execute()
+
         if alerts:
             self.log_action(
                 client_id=str(client.client_id),
@@ -179,6 +189,40 @@ class SupabaseRepository:
                 summary="Telemetry threshold breached",
                 details={"alerts": alerts},
             )
+
+    def update_client_consent(self, *, client: AuthenticatedClient, payload: ConsentUpdateRequest) -> None:
+        now = utcnow_iso()
+        record = payload.model_dump()
+        self.client.table("clients").update(
+            {
+                "consent_accepted": record["accepted"],
+                "consent_accepted_at": record.get("accepted_at") or now,
+                "consent_updated_at": record.get("updated_at") or now,
+                "consent_telemetry": record.get("telemetry", True),
+                "consent_diagnostics": record.get("diagnostics", True),
+                "consent_maintenance": record.get("maintenance", True),
+                "consent_remote_control": record.get("remote_control", False),
+                "consent_auto_execution": record.get("auto_execution", False),
+                "consent_location": record.get("location", False),
+                "consent_camera": record.get("camera", False),
+                "last_seen_at": now,
+            }
+        ).eq("id", str(client.client_id)).execute()
+
+        self.client.table("consent_logs").insert(
+            {
+                "client_id": str(client.client_id),
+                "accepted": record["accepted"],
+                "telemetry": record.get("telemetry", True),
+                "diagnostics": record.get("diagnostics", True),
+                "maintenance": record.get("maintenance", True),
+                "remote_control": record.get("remote_control", False),
+                "auto_execution": record.get("auto_execution", False),
+                "location": record.get("location", False),
+                "camera": record.get("camera", False),
+                "recorded_at": now,
+            }
+        ).execute()
 
     def insert_system_health(
         self,

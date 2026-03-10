@@ -19,7 +19,9 @@ const mimeTypes = {
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.svg': 'image/svg+xml',
-  '.ico': 'image/x-icon'
+  '.ico': 'image/x-icon',
+  '.json': 'application/json; charset=utf-8',
+  '.mp4': 'video/mp4'
 };
 
 const server = createServer((request, response) => {
@@ -101,6 +103,16 @@ try {
       backendUrl: 'https://neooptimize-neooptimize.hf.space/',
       appVersion: '1.0.0',
       status: 'Connected',
+      consent: {
+        accepted: true,
+        telemetry: true,
+        diagnostics: true,
+        maintenance: true,
+        remoteControl: true,
+        autoExecution: true,
+        location: false,
+        camera: false
+      },
       reports: [
         {
           fileName: 'neo-health-report.html',
@@ -118,7 +130,7 @@ try {
       cpu: 42,
       ram: 58,
       disk: 67,
-      temp: 49,
+      networkMbps: 84.5,
       healthState: 'healthy',
       integrityStatus: 'verified',
       alerts: ['Disk IO'],
@@ -194,6 +206,9 @@ try {
   const statCardCount = await page.locator('#statsGrid .stat-card').count();
   await assert(Promise.resolve(statCardCount === 4), 'exactly four stat cards rendered');
 
+  const clearButton = await page.locator('#clearChatBtn').count();
+  await assert(Promise.resolve(clearButton === 1), 'clear chat button rendered');
+
   const logsCount = await page.locator('#logsList .log-item').count();
   await assert(Promise.resolve(logsCount >= 2), 'activity log rendered');
 
@@ -210,7 +225,8 @@ try {
   await page.click('#updateBtn');
   await page.check('#autoExecute');
   await page.fill('#chatInput', 'Analisa startup lambat saya.');
-  await page.click('#analyzeBtn');
+  await page.evaluate(() => window.sendPrompt());
+  await page.waitForFunction(() => window.__postedMessages.some((message) => message?.type === 'aiChat'), { timeout: 2000 });
 
   const postedMessages = await page.evaluate(() => window.__postedMessages);
   const actionPosted = postedMessages.some((message) => message?.type === 'runAction' && message?.action === 'smartBoost');

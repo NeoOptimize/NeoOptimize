@@ -1,0 +1,44 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-03-10",
+  "actions": {
+    "smart_booster": {
+      "requires_admin": true,
+      "local_only": true,
+      "capabilities": [
+        "flush_dns",
+        "clean_temp",
+        "trim_working_set",
+        "stop_optional_processes"
+      ]
+    },
+    "smart_optimize": {
+      "requires_admin": true,
+      "local_only": true,
+      "capabilities": [
+        "flush_dns",
+        "clean_temp",
+        "trim_working_set",
+        "stop_optional_processes",
+        "priority_optimization",
+        "dump_cleanup",
+        "bloatware_removal"
+      ]
+    },
+    "health_check": {
+      "requires_admin": true,
+      "local_only": true,
+      "capabilities": [
+        "sfc_verify",
+        "dism_check"
+      ]
+    },
+    "integrity_scan": {
+      "requires_admin": true,
+      "local_only": true,
+      "capabilities": [
+        "sha256_scan"
+      ]
+    }
+  }
+}

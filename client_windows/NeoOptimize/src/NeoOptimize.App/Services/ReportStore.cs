@@ -35,12 +35,12 @@ public sealed class ReportStore
     public string CreateReport(string slug, string title, string summary, IEnumerable<string> detailLines)
     {
         var timestamp = DateTimeOffset.Now;
-        var baseName = $"report-{timestamp:ddMM-yyyy}.html";
+        var baseName = $"report-{timestamp:dd-MM-yyyy}.html";
         var fileName = baseName;
         var fullPath = Path.Combine(_reportsFolder, fileName);
         if (File.Exists(fullPath))
         {
-            fileName = $"report-{timestamp:ddMM-yyyy}-{timestamp:HHmmss}.html";
+            fileName = $"report-{timestamp:dd-MM-yyyy}-{timestamp:HHmmss}.html";
             fullPath = Path.Combine(_reportsFolder, fileName);
         }
         var details = detailLines.Select(line => System.Net.WebUtility.HtmlEncode(line)).ToList();

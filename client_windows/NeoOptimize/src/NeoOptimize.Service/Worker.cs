@@ -11,6 +11,7 @@ public sealed class Worker(
     SystemSnapshotProvider snapshotProvider,
     CommandExecutor commandExecutor,
     WindowsMaintenanceToolkit maintenanceToolkit,
+    ConsentStore consentStore,
     IOptions<NeoOptimizeClientOptions> options) : BackgroundService
 {
     private readonly ILogger<Worker> _logger = logger;
@@ -18,6 +19,7 @@ public sealed class Worker(
     private readonly SystemSnapshotProvider _snapshotProvider = snapshotProvider;
     private readonly CommandExecutor _commandExecutor = commandExecutor;
     private readonly WindowsMaintenanceToolkit _maintenanceToolkit = maintenanceToolkit;
+    private readonly ConsentStore _consentStore = consentStore;
     private readonly NeoOptimizeClientOptions _options = options.Value;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -31,6 +33,7 @@ public sealed class Worker(
             RunHealthLoopAsync(stoppingToken),
             RunCommandLoopAsync(stoppingToken),
             RunSmartBoosterLoopAsync(stoppingToken),
+            RunSmartOptimizeLoopAsync(stoppingToken),
             RunIntegrityLoopAsync(stoppingToken),
         };
 
@@ -45,6 +48,13 @@ public sealed class Worker(
         {
             try
             {
+                var consent = await _consentStore.LoadAsync(cancellationToken);
+                if (!consent.Accepted || !consent.Telemetry)
+                {
+                    _logger.LogInformation("Telemetry consent not granted. Skipping telemetry push.");
+                    continue;
+                }
+
                 var telemetry = _snapshotProvider.CollectTelemetry();
                 var response = await _apiClient.PushTelemetryAsync(telemetry, cancellationToken);
                 _logger.LogInformation("Telemetry pushed. Status={Status} Alerts={Alerts}", response.Status, string.Join(", ", response.Alerts));
@@ -65,6 +75,13 @@ public sealed class Worker(
         {
             try
             {
+                var consent = await _consentStore.LoadAsync(cancellationToken);
+                if (!consent.Accepted || !consent.Diagnostics)
+                {
+                    _logger.LogInformation("Diagnostics consent not granted. Skipping health report.");
+                    continue;
+                }
+
                 var result = await _maintenanceToolkit.RunHealthCheckAsync("pending_integrity_scan", cancellationToken);
                 if (result.HealthPayload is not null)
                 {
@@ -88,6 +105,13 @@ public sealed class Worker(
         {
             try
             {
+                var consent = await _consentStore.LoadAsync(cancellationToken);
+                if (!consent.Accepted || !consent.RemoteControl)
+                {
+                    _logger.LogInformation("Remote control consent not granted. Skipping command polling.");
+                    continue;
+                }
+
                 var command = await _apiClient.PollCommandAsync(cancellationToken);
                 if (!string.Equals(command.Status, "pending", StringComparison.OrdinalIgnoreCase))
                 {
@@ -114,12 +138,51 @@ public sealed class Worker(
         {
             try
             {
+                var consent = await _consentStore.LoadAsync(cancellationToken);
+                if (!consent.Accepted || !consent.Maintenance)
+                {
+                    _logger.LogInformation("Maintenance consent not granted. Skipping scheduled Smart Booster.");
+                    continue;
+                }
+
                 var result = await _maintenanceToolkit.RunSmartBoosterAsync(cancellationToken);
                 _logger.LogInformation("Scheduled Smart Booster completed. {Summary}", result.Summary);
             }
             catch (Exception exception)
             {
                 _logger.LogError(exception, "Scheduled Smart Booster failed");
+            }
+        }
+        while (await timer.WaitForNextTickAsync(cancellationToken));
+    }
+
+    private async Task RunSmartOptimizeLoopAsync(CancellationToken cancellationToken)
+    {
+        if (_options.SmartOptimizeIntervalHours <= 0)
+        {
+            _logger.LogInformation("Smart Optimize interval disabled.");
+            return;
+        }
+
+        using var timer = new PeriodicTimer(TimeSpan.FromHours(_options.SmartOptimizeIntervalHours));
+
+        do
+        {
+            try
+            {
+                var consent = await _consentStore.LoadAsync(cancellationToken);
+                if (!consent.Accepted || !consent.Maintenance)
+                {
+                    _logger.LogInformation("Maintenance consent not granted. Skipping scheduled Smart Optimize.");
+                    continue;
+                }
+
+                var result = await _maintenanceToolkit.RunSmartOptimizeAsync(_options.EnableBloatwareRemoval, cancellationToken);
+                _logger.LogInformation("Scheduled Smart Optimize completed. {Summary}", result.Summary);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Scheduled Smart Optimize failed");
             }
         }
         while (await timer.WaitForNextTickAsync(cancellationToken));
@@ -133,6 +196,13 @@ public sealed class Worker(
         {
             try
             {
+                var consent = await _consentStore.LoadAsync(cancellationToken);
+                if (!consent.Accepted || !consent.Diagnostics)
+                {
+                    _logger.LogInformation("Diagnostics consent not granted. Skipping integrity scan.");
+                    continue;
+                }
+
                 var result = await _maintenanceToolkit.RunIntegrityScanAsync(AppContext.BaseDirectory, cancellationToken);
                 if (result.HealthPayload is not null)
                 {

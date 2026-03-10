@@ -1,0 +1,346 @@
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\acelpdec.ax /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\actxprxy.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\asctrls.ocx /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\browseui.dll /I /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\browseui.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\browsewm.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\cdfview.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\comcat.dll /s
+%SystemRoot%\system32\regsvr32.exe /s /i /n %SystemRoot%\system32\comctl32.dll
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\comctl32.dll /i /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\corpol.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\CRSWPP.DLL /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\cryptdlg.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\CRYPTDLG.DLL /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\cryptext.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\CSSEQCHK.DLL /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\danim.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\datime.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\Daxctle.ocx /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\dhtmled.ocx /s
+%SystemRoot%\system32\regsvr32.exe /s /i /n %SystemRoot%\system32\digest.dll
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\digest.dll /i /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\directdb.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\dispex.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\DSSENH.DLL /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\dxmasf.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\dxtmsft.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\dxtrans.dll /s
+%SystemRoot%\system32\regsvr32.exe /s %SystemRoot%\system32\extmgr.dll
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\FLUPL.OCX /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\FPWPP.DLL /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\FTPWPP.DLL /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\Gpkcsp.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\hhctrl.ocx /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\hlink.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\hmmapi.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\icmfilter.dll /s
+%SystemRoot%\system32\regsvr32.exe /s %SystemRoot%\system32\ieaksie.dll
+%SystemRoot%\system32\regsvr32.exe /s %SystemRoot%\system32\ieapfltr.dll
+%SystemRoot%\system32\regsvr32.exe /s %SystemRoot%\system32\iedkcs32.dll
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\iepeers.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\iesetup.dll /i /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\ils.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\imgutil.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\inetcfg.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\inetcomm.dll /s
+%SystemRoot%\system32\regsvr32.exe /s /i /n %SystemRoot%\system32\inetcpl.cpl
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\inetcpl.cpl /i /s
+%SystemRoot%\system32\regsvr32.exe /s /i:A %SystemRoot%\system32\initpki.dll
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\inseng.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\jscript.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\l3codecx.ax /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\laprxy.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\licdll.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\licmgr10.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\lmrt.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\mlang.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\mmefxe.ocx /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\mobsync.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\mpg4ds32.ax /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\msapsspc.dll /SspcCreateSspiReg /s
+%SystemRoot%\system32\regsvr32.exe /s %SystemRoot%\system32\mscoree.dll
+%SystemRoot%\system32\regsvr32.exe /s %SystemRoot%\system32\msdbg2.dll
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\msdxm.ocx /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\mshtml.dll /i /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\mshtml.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\mshtmled.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\msident.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\msieftp.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\msnsspc.dll /SspcCreateSspiReg /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\msoe.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\msoeacct.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\MSR2C.DLL /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\msrating.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\MSTIME.DLL /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\msxml.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\occache.dll /i /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\occache.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\oeimport.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\oemiglib.dll /s
+%SystemRoot%\system32\regsvr32.exe /s %SystemRoot%\system32\oleacc.dll
+%SystemRoot%\system32\regsvr32.exe /s %SystemRoot%\system32\ole32.dll
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\oleaut32.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\plugin.ocx /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\pngfilt.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\POSTWPP.DLL /s
+%SystemRoot%\system32\regsvr32.exe /s %SystemRoot%\system32\proctexe.ocx
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\regwizc.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\rsabase.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\RSAENH.DLL /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\Sccbase.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\scrobj.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\scrrun.dll %SystemRoot%\system32\mstinit.exe /setup /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\sendmail.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\setupwbv.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\shdoc401.dll /i /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\shdoc401.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\shdocvw.dll /I /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\shdocvw.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\Slbcsp.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\softpub.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\tdc.ocx /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\thumbvw.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\trialoc.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\triedit.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\urlmon.dll /i /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\urlmon.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\vbscript.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\vgx.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\voxmsdec.ax /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\wab32.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\wabfind.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\wabimp.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\webcheck.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\WEBPOST.DLL /s
+%SystemRoot%\system32\regsvr32.exe /s /i /n %SystemRoot%\system32\wininet.dll
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\wininet.dll /i /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\wininet.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\WINTRUST.DLL /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\WPWIZDLL.DLL /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\wshext.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\wshom.ocx /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\xmsconf.ocx /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\elshyph.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\icardie.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\ieadvpack.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\ieetwcollectorres.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\ieetwproxystub.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\ieframe.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\iernonce.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\iertutil.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\iesysprep.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\ieui.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\javascriptcollectionagent.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\jscript9.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\jscript9diag.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\jsintl.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\jsproxy.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\migration\wininetplugin.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\msfeeds.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\msfeedsbs.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\mshtmldac.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\mshtmler.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\mshtmlmedia.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\msls31.dll /s
+%SystemRoot%\system32\regsvr32.exe %SystemRoot%\system32\url.dll /s
+
+%SystemRoot%\system32\regsvr32.exe /s "%ProgramFiles%\internet explorer\hmmapi.dll"
+%SystemRoot%\system32\regsvr32.exe /s "%ProgramFiles%\internet explorer\iedvtool.dll"
+%SystemRoot%\system32\regsvr32.exe /s "%ProgramFiles%\internet explorer\ieproxy.dll"
+%SystemRoot%\system32\regsvr32.exe /s "%ProgramFiles%\internet explorer\pdm.dll"
+%SystemRoot%\system32\regsvr32.exe /s "%ProgramFiles%\internet explorer\d3dcompiler_47.dll
+%SystemRoot%\system32\regsvr32.exe /s "%ProgramFiles%\internet explorer\diagnosticshub.datawarehouse.dll
+%SystemRoot%\system32\regsvr32.exe /s "%ProgramFiles%\internet explorer\diagnosticshub_is.dll
+%SystemRoot%\system32\regsvr32.exe /s "%ProgramFiles%\internet explorer\diagnosticstap.dll
+%SystemRoot%\system32\regsvr32.exe /s "%ProgramFiles%\internet explorer\f12.dll
+%SystemRoot%\system32\regsvr32.exe /s "%ProgramFiles%\internet explorer\f12resources.dll
+%SystemRoot%\system32\regsvr32.exe /s "%ProgramFiles%\internet explorer\f12tools.dll
+%SystemRoot%\system32\regsvr32.exe /s "%ProgramFiles%\internet explorer\ieshims.dll
+%SystemRoot%\system32\regsvr32.exe /s "%ProgramFiles%\internet explorer\jsdbgui.dll
+%SystemRoot%\system32\regsvr32.exe /s "%ProgramFiles%\internet explorer\jsdebuggeride.dll
+%SystemRoot%\system32\regsvr32.exe /s "%ProgramFiles%\internet explorer\jsprofilercore.dll
+%SystemRoot%\system32\regsvr32.exe /s "%ProgramFiles%\internet explorer\jsprofilerui.dll
+%SystemRoot%\system32\regsvr32.exe /s "%ProgramFiles%\internet explorer\memoryanalyzer.dll
+%SystemRoot%\system32\regsvr32.exe /s "%ProgramFiles%\internet explorer\msdbg2.dll
+%SystemRoot%\system32\regsvr32.exe /s "%ProgramFiles%\internet explorer\networkinspection.dll
+%SystemRoot%\system32\regsvr32.exe /s "%ProgramFiles%\internet explorer\pdmproxy100.dll
+%SystemRoot%\system32\regsvr32.exe /s "%ProgramFiles%\internet explorer\perf_nt.dll
+%SystemRoot%\system32\regsvr32.exe /s "%ProgramFiles%\internet explorer\perfcore.dll
+%SystemRoot%\system32\regsvr32.exe /s "%ProgramFiles%\internet explorer\sqmapi.dll
+%SystemRoot%\system32\regsvr32.exe /s "%ProgramFiles%\internet explorer\timeline.dll
+%SystemRoot%\system32\regsvr32.exe /s "%ProgramFiles%\internet explorer\timeline_is.dll
+%SystemRoot%\system32\regsvr32.exe /s "%CommonProgramFiles%\microsoft shared\vgx\vgx.dll"
+%SystemRoot%\system32\regsvr32.exe /s "%CommonProgramFiles%\system\directdb.dll"
+%SystemRoot%\system32\regsvr32.exe /s "%CommonProgramFiles%\system\wab32.dll
+
+IF NOT EXIST %systemroot%\SysWoW64\regsvr32.exe goto :end
+
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\acelpdec.ax /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\actxprxy.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\asctrls.ocx /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\browseui.dll /I /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\browseui.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\browsewm.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\cdfview.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\comcat.dll /s
+%systemroot%\SysWoW64\regsvr32.exe /s /i /n %systemroot%\SysWoW64\comctl32.dll
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\comctl32.dll /i /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\corpol.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\CRSWPP.DLL /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\cryptdlg.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\CRYPTDLG.DLL /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\cryptext.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\CSSEQCHK.DLL /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\danim.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\datime.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\Daxctle.ocx /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\dhtmled.ocx /s
+%systemroot%\SysWoW64\regsvr32.exe /s /i /n %systemroot%\SysWoW64\digest.dll
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\digest.dll /i /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\directdb.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\dispex.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\DSSENH.DLL /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\dxmasf.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\dxtmsft.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\dxtrans.dll /s
+%systemroot%\SysWoW64\regsvr32.exe /s %systemroot%\SysWoW64\extmgr.dll
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\FLUPL.OCX /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\FPWPP.DLL /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\FTPWPP.DLL /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\Gpkcsp.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\hhctrl.ocx /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\hlink.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\hmmapi.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\icmfilter.dll /s
+%systemroot%\SysWoW64\regsvr32.exe /s %systemroot%\SysWoW64\ieaksie.dll
+%systemroot%\SysWoW64\regsvr32.exe /s %systemroot%\SysWoW64\ieapfltr.dll
+%systemroot%\SysWoW64\regsvr32.exe /s %systemroot%\SysWoW64\iedkcs32.dll
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\iepeers.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\iesetup.dll /i /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\ils.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\imgutil.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\inetcfg.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\inetcomm.dll /s
+%systemroot%\SysWoW64\regsvr32.exe /s /i /n %systemroot%\SysWoW64\inetcpl.cpl
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\inetcpl.cpl /i /s
+%systemroot%\SysWoW64\regsvr32.exe /s /i:A %systemroot%\SysWoW64\initpki.dll
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\inseng.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\jscript.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\l3codecx.ax /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\laprxy.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\licdll.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\licmgr10.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\lmrt.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\mlang.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\mmefxe.ocx /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\mobsync.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\mpg4ds32.ax /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\msapsspc.dll /SspcCreateSspiReg /s
+%systemroot%\SysWoW64\regsvr32.exe /s %systemroot%\SysWoW64\mscoree.dll
+%systemroot%\SysWoW64\regsvr32.exe /s %systemroot%\SysWoW64\msdbg2.dll
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\msdxm.ocx /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\mshtml.dll /i /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\mshtml.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\mshtmled.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\msident.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\msieftp.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\msnsspc.dll /SspcCreateSspiReg /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\msoe.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\msoeacct.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\MSR2C.DLL /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\msrating.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\MSTIME.DLL /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\msxml.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\occache.dll /i /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\occache.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\oeimport.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\oemiglib.dll /s
+%systemroot%\SysWoW64\regsvr32.exe /s %systemroot%\SysWoW64\oleacc.dll
+%systemroot%\SysWoW64\regsvr32.exe /s %systemroot%\SysWoW64\ole32.dll
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\oleaut32.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\plugin.ocx /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\pngfilt.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\POSTWPP.DLL /s
+%systemroot%\SysWoW64\regsvr32.exe /s %systemroot%\SysWoW64\proctexe.ocx
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\regwizc.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\rsabase.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\RSAENH.DLL /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\Sccbase.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\scrobj.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\scrrun.dll %systemroot%\SysWoW64\mstinit.exe /setup /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\sendmail.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\setupwbv.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\shdoc401.dll /i /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\shdoc401.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\shdocvw.dll /I /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\shdocvw.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\Slbcsp.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\softpub.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\tdc.ocx /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\thumbvw.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\trialoc.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\triedit.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\urlmon.dll /i /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\urlmon.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\vbscript.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\vgx.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\voxmsdec.ax /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\wab32.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\wabfind.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\wabimp.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\webcheck.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\WEBPOST.DLL /s
+%systemroot%\SysWoW64\regsvr32.exe /s /i /n %systemroot%\SysWoW64\wininet.dll
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\wininet.dll /i /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\wininet.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\WINTRUST.DLL /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\WPWIZDLL.DLL /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\wshext.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\wshom.ocx /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\xmsconf.ocx /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\elshyph.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\icardie.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\ieadvpack.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\ieetwproxystub.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\ieframe.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\iernonce.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\iertutil.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\iesysprep.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\ieui.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\javascriptcollectionagent.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\jscript9.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\jscript9diag.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\jsintl.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\jsproxy.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\migration\wininetplugin.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\msfeeds.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\msfeedsbs.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\mshtmldac.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\mshtmler.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\mshtmlmedia.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\msls31.dll /s
+%systemroot%\SysWoW64\regsvr32.exe %systemroot%\SysWoW64\url.dll /s
+
+%systemroot%\SysWoW64\regsvr32.exe /s "%ProgramFiles(x86)%\internet explorer\hmmapi.dll"
+%systemroot%\SysWoW64\regsvr32.exe /s "%ProgramFiles(x86)%\internet explorer\iedvtool.dll"
+%systemroot%\SysWoW64\regsvr32.exe /s "%ProgramFiles(x86)%\internet explorer\ieproxy.dll"
+%systemroot%\SysWoW64\regsvr32.exe /s "%ProgramFiles(x86)%\internet explorer\pdm.dll"
+%systemroot%\SysWoW64\regsvr32.exe /s "%ProgramFiles(x86)%\internet explorer\d3dcompiler_47.dll
+%systemroot%\SysWoW64\regsvr32.exe /s "%ProgramFiles(x86)%\internet explorer\diagnosticstap.dll
+%systemroot%\SysWoW64\regsvr32.exe /s "%ProgramFiles(x86)%\internet explorer\f12tools.dll
+%systemroot%\SysWoW64\regsvr32.exe /s "%ProgramFiles(x86)%\internet explorer\ieshims.dll
+%systemroot%\SysWoW64\regsvr32.exe /s "%ProgramFiles(x86)%\internet explorer\jsdbgui.dll
+%systemroot%\SysWoW64\regsvr32.exe /s "%ProgramFiles(x86)%\internet explorer\jsdebuggeride.dll
+%systemroot%\SysWoW64\regsvr32.exe /s "%ProgramFiles(x86)%\internet explorer\jsprofilercore.dll
+%systemroot%\SysWoW64\regsvr32.exe /s "%ProgramFiles(x86)%\internet explorer\jsprofilerui.dll
+%systemroot%\SysWoW64\regsvr32.exe /s "%ProgramFiles(x86)%\internet explorer\msdbg2.dll
+%systemroot%\SysWoW64\regsvr32.exe /s "%ProgramFiles(x86)%\internet explorer\networkinspection.dll
+%systemroot%\SysWoW64\regsvr32.exe /s "%ProgramFiles(x86)%\internet explorer\pdmproxy100.dll
+%systemroot%\SysWoW64\regsvr32.exe /s "%ProgramFiles(x86)%\internet explorer\sqmapi.dll
+%systemroot%\SysWoW64\regsvr32.exe /s "%CommonProgramFiles(x86)%\microsoft shared\vgx\vgx.dll"
+
+%systemroot%\SysWoW64\regsvr32.exe /s "%CommonProgramFiles(x86)%\system\directdb.dll"
+%systemroot%\SysWoW64\regsvr32.exe /s "%CommonProgramFiles(x86)%\system\wab32.dll
+
+:end

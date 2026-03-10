@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.v1.endpoints import ai, auth, commands, health, telemetry, websocket
+from app.api.v1.endpoints import ai, auth, commands, consent, health, telemetry, websocket
 from app.core.config import get_settings
 from app.services.supabase_client import get_supabase
 
@@ -52,6 +52,7 @@ def create_app() -> FastAPI:
 
     app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
     app.include_router(ai.router, prefix="/api/v1/ai", tags=["ai"])
+    app.include_router(consent.router, prefix="/api/v1/consent", tags=["consent"])
     app.include_router(telemetry.router, prefix="/api/v1/telemetry", tags=["telemetry"])
     app.include_router(health.router, prefix="/api/v1/health", tags=["health"])
     app.include_router(commands.router, prefix="/api/v1/commands", tags=["commands"])

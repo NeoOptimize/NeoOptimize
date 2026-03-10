@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using NeoOptimize.Contracts;
 
@@ -25,6 +26,33 @@ public sealed class WindowsMaintenanceToolkit
         "OneDrive", "Teams", "Discord", "Steam", "EpicGamesLauncher", "Battle.net", "Origin",
         "Skype", "Spotify", "Telegram", "WhatsApp", "Zoom", "Adobe Desktop Service",
         "Creative Cloud", "Xbox", "GamingServices", "RiotClientServices", "Razer Synapse"
+    };
+
+    private static readonly string[] BloatwarePackageNames =
+    {
+        "Microsoft.XboxApp",
+        "Microsoft.XboxGamingOverlay",
+        "Microsoft.XboxGameOverlay",
+        "Microsoft.Xbox.TCUI",
+        "Microsoft.XboxIdentityProvider",
+        "Microsoft.GamingApp",
+        "Microsoft.GetHelp",
+        "Microsoft.Getstarted",
+        "Microsoft.Microsoft3DViewer",
+        "Microsoft.MixedReality.Portal",
+        "Microsoft.People",
+        "Microsoft.SkypeApp",
+        "Microsoft.ZuneMusic",
+        "Microsoft.ZuneVideo",
+        "Microsoft.MicrosoftSolitaireCollection",
+        "Microsoft.BingWeather",
+        "Microsoft.BingNews",
+        "Microsoft.BingSports",
+        "Microsoft.BingFinance",
+        "Microsoft.WindowsFeedbackHub",
+        "Microsoft.YourPhone",
+        "Clipchamp.Clipchamp",
+        "MicrosoftTeams"
     };
 
     private readonly SystemSnapshotProvider _snapshotProvider;
@@ -121,6 +149,92 @@ public sealed class WindowsMaintenanceToolkit
         return new MaintenanceActionResult(
             "smart_booster",
             "Smart Booster",
+            summary,
+            output);
+    }
+
+    public async Task<MaintenanceActionResult> RunSmartOptimizeAsync(bool enableBloatwareRemoval, CancellationToken cancellationToken)
+    {
+        var output = new Dictionary<string, object?>();
+        var errors = new List<string>();
+
+        var booster = await RunSmartBoosterAsync(cancellationToken);
+        output["smart_booster"] = new Dictionary<string, object?>
+        {
+            ["summary"] = booster.Summary,
+            ["details"] = booster.Output,
+        };
+
+        DumpCleanupResult dumpCleanup;
+        try
+        {
+            dumpCleanup = CleanupDumpFilesCore();
+            output["dump_cleanup"] = new Dictionary<string, object?>
+            {
+                ["deleted_files"] = dumpCleanup.DeletedFiles,
+                ["deleted_bytes"] = dumpCleanup.DeletedBytes,
+                ["failed_files"] = dumpCleanup.FailedFiles,
+                ["targets"] = dumpCleanup.Targets,
+                ["sample_deleted"] = dumpCleanup.SampleDeleted,
+                ["errors"] = dumpCleanup.Errors,
+            };
+        }
+        catch (Exception exception)
+        {
+            dumpCleanup = new DumpCleanupResult(0, 0, 0, Array.Empty<string>(), Array.Empty<string>(), Array.Empty<string>());
+            output["dump_cleanup"] = new Dictionary<string, object?>
+            {
+                ["error"] = exception.Message,
+            };
+            errors.Add($"Dump cleanup failed: {exception.Message}");
+        }
+
+        if (enableBloatwareRemoval)
+        {
+            try
+            {
+                var bloatware = await RemoveBloatwareAsync(cancellationToken);
+                output["bloatware_removal"] = new Dictionary<string, object?>
+                {
+                    ["removed_packages"] = bloatware.RemovedPackages,
+                    ["not_found"] = bloatware.NotFoundPackages,
+                    ["errors"] = bloatware.Errors,
+                    ["exit_code"] = bloatware.ExitCode,
+                    ["stderr"] = bloatware.Stderr,
+                };
+
+                if (bloatware.Errors.Count > 0)
+                {
+                    errors.AddRange(bloatware.Errors.Select(error => $"Bloatware: {error}"));
+                }
+            }
+            catch (Exception exception)
+            {
+                output["bloatware_removal"] = new Dictionary<string, object?>
+                {
+                    ["error"] = exception.Message,
+                };
+                errors.Add($"Bloatware removal failed: {exception.Message}");
+            }
+        }
+        else
+        {
+            output["bloatware_removal"] = new Dictionary<string, object?>
+            {
+                ["enabled"] = false,
+                ["reason"] = "EnableBloatwareRemoval=false",
+            };
+        }
+
+        var summary = $"Smart Optimize selesai. Dump cleanup deleted {dumpCleanup.DeletedFiles} file, bloatware removal {(enableBloatwareRemoval ? "enabled" : "disabled")}.";
+        if (errors.Count > 0)
+        {
+            summary += $" Errors: {string.Join("; ", errors)}";
+        }
+
+        return new MaintenanceActionResult(
+            "smart_optimize",
+            "Smart Optimize",
             summary,
             output);
     }
@@ -247,13 +361,14 @@ public sealed class WindowsMaintenanceToolkit
             _snapshotProvider.CollectHealth(files.Count > 0 ? "verified" : "warning")));
     }
 
-    public async Task<MaintenanceActionResult> RunActionAsync(string action, string installationRoot, CancellationToken cancellationToken)
+    public async Task<MaintenanceActionResult> RunActionAsync(string action, string installationRoot, bool enableBloatwareRemoval, CancellationToken cancellationToken)
     {
         return Normalize(action) switch
         {
             "flushdns" or "flush_dns" => await RunFlushDnsAsync(cancellationToken),
             "cleartempfiles" or "clear_temp_files" => RunClearTempFiles(),
             "smartbooster" or "smart_booster" => await RunSmartBoosterAsync(cancellationToken),
+            "smartoptimize" or "smart_optimize" => await RunSmartOptimizeAsync(enableBloatwareRemoval, cancellationToken),
             "healthcheck" or "health_check" => await RunHealthCheckAsync("scheduled_local_scan", cancellationToken),
             "integrityscan" or "integrity_scan" => await RunIntegrityScanAsync(installationRoot, cancellationToken),
             _ => new MaintenanceActionResult(
@@ -295,6 +410,94 @@ public sealed class WindowsMaintenanceToolkit
         }
 
         return new TempCleanupResult(tempPath, deleted);
+    }
+
+    private static DumpCleanupResult CleanupDumpFilesCore()
+    {
+        var targets = new List<string>();
+        var deleted = 0;
+        var deletedBytes = 0L;
+        var failed = 0;
+        var errors = new List<string>();
+        var sampleDeleted = new List<string>();
+
+        var windowsRoot = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+        var programData = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+
+        var fileCandidates = new[]
+        {
+            Path.Combine(windowsRoot, "MEMORY.DMP"),
+            Path.Combine(windowsRoot, "memory.dmp"),
+        };
+
+        foreach (var file in fileCandidates)
+        {
+            if (File.Exists(file))
+            {
+                targets.Add(file);
+            }
+        }
+
+        var dumpDirectories = new[]
+        {
+            Path.Combine(windowsRoot, "Minidump"),
+            Path.Combine(windowsRoot, "LiveKernelReports"),
+            Path.Combine(programData, "Microsoft", "Windows", "WER", "ReportQueue"),
+            Path.Combine(programData, "Microsoft", "Windows", "WER", "ReportArchive"),
+            Path.Combine(programData, "Microsoft", "Windows", "WER", "Temp"),
+        };
+
+        foreach (var directory in dumpDirectories)
+        {
+            if (!Directory.Exists(directory))
+            {
+                continue;
+            }
+
+            try
+            {
+                foreach (var file in Directory.EnumerateFiles(directory, "*.*", SearchOption.AllDirectories))
+                {
+                    if (file.EndsWith(".dmp", StringComparison.OrdinalIgnoreCase) ||
+                        file.EndsWith(".hdmp", StringComparison.OrdinalIgnoreCase) ||
+                        file.EndsWith(".wer", StringComparison.OrdinalIgnoreCase))
+                    {
+                        targets.Add(file);
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                errors.Add($"{directory}: {exception.Message}");
+            }
+        }
+
+        foreach (var target in targets.Distinct(StringComparer.OrdinalIgnoreCase))
+        {
+            try
+            {
+                var fileInfo = new FileInfo(target);
+                if (fileInfo.Exists)
+                {
+                    var size = fileInfo.Length;
+                    fileInfo.IsReadOnly = false;
+                    fileInfo.Delete();
+                    deleted++;
+                    deletedBytes += size;
+                    if (sampleDeleted.Count < 20)
+                    {
+                        sampleDeleted.Add(target);
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                failed++;
+                errors.Add($"{target}: {exception.Message}");
+            }
+        }
+
+        return new DumpCleanupResult(deleted, deletedBytes, failed, targets.Distinct(StringComparer.OrdinalIgnoreCase).ToArray(), sampleDeleted, errors);
     }
 
     private (int StoppedProcesses, IReadOnlyList<string> ProcessNames) StopOptionalBackgroundProcesses()
@@ -441,6 +644,95 @@ public sealed class WindowsMaintenanceToolkit
         return new ProcessExecutionResult(process.ExitCode, SanitizeOutput(stdout), SanitizeOutput(stderr));
     }
 
+    private static async Task<ProcessExecutionResult> ExecutePowerShellAsync(string script, CancellationToken cancellationToken)
+    {
+        var encoded = Convert.ToBase64String(Encoding.Unicode.GetBytes(script));
+        return await ExecuteProcessAsync(
+            "powershell",
+            $"-NoProfile -ExecutionPolicy Bypass -EncodedCommand {encoded}",
+            cancellationToken,
+            Encoding.UTF8);
+    }
+
+    private static async Task<BloatwareRemovalResult> RemoveBloatwareAsync(CancellationToken cancellationToken)
+    {
+        var targets = string.Join("','", BloatwarePackageNames);
+        var script = $@"
+$ErrorActionPreference = 'Stop'
+$targets = @('{targets}')
+$removed = @()
+$notFound = @()
+$errors = @()
+foreach ($name in $targets) {{
+  try {{
+    $pkgs = Get-AppxPackage -Name $name -ErrorAction SilentlyContinue
+    if ($pkgs) {{
+      $pkgs | Remove-AppxPackage -ErrorAction Stop | Out-Null
+      if ($removed -notcontains $name) {{ $removed += $name }}
+    }} else {{
+      $notFound += $name
+    }}
+    try {{
+      $prov = Get-AppxProvisionedPackage -Online | Where-Object {{ $_.DisplayName -eq $name }}
+      if ($prov) {{
+        $prov | Remove-AppxProvisionedPackage -Online -ErrorAction Stop | Out-Null
+        if ($removed -notcontains $name) {{ $removed += $name }}
+      }}
+    }} catch {{
+      $errors += ""$name: $($_.Exception.Message)""
+    }}
+  }} catch {{
+    $errors += ""$name: $($_.Exception.Message)""
+  }}
+}}
+[pscustomobject]@{{ removed = $removed; not_found = $notFound; errors = $errors }} | ConvertTo-Json -Compress
+";
+
+        var result = await ExecutePowerShellAsync(script, cancellationToken);
+        var removed = new List<string>();
+        var notFound = new List<string>();
+        var errors = new List<string>();
+
+        if (!string.IsNullOrWhiteSpace(result.Stdout))
+        {
+            try
+            {
+                using var document = JsonDocument.Parse(result.Stdout);
+                if (document.RootElement.TryGetProperty("removed", out var removedElement))
+                {
+                    removed.AddRange(removedElement.EnumerateArray()
+                        .Select(item => item.GetString() ?? string.Empty)
+                        .Where(name => !string.IsNullOrWhiteSpace(name)));
+                }
+
+                if (document.RootElement.TryGetProperty("not_found", out var notFoundElement))
+                {
+                    notFound.AddRange(notFoundElement.EnumerateArray()
+                        .Select(item => item.GetString() ?? string.Empty)
+                        .Where(name => !string.IsNullOrWhiteSpace(name)));
+                }
+
+                if (document.RootElement.TryGetProperty("errors", out var errorElement))
+                {
+                    errors.AddRange(errorElement.EnumerateArray()
+                        .Select(item => item.GetString() ?? string.Empty)
+                        .Where(message => !string.IsNullOrWhiteSpace(message)));
+                }
+            }
+            catch (Exception exception)
+            {
+                errors.Add($"Parse error: {exception.Message}");
+            }
+        }
+
+        return new BloatwareRemovalResult(
+            removed.Distinct(StringComparer.OrdinalIgnoreCase).ToList(),
+            notFound.Distinct(StringComparer.OrdinalIgnoreCase).ToList(),
+            errors,
+            result.ExitCode,
+            result.Stderr);
+    }
+
     private static string ParseSfcStatus(ProcessExecutionResult result)
     {
         var combined = $"{result.Stdout}\n{result.Stderr}".ToLowerInvariant();
@@ -526,4 +818,19 @@ public sealed class WindowsMaintenanceToolkit
     }
 
     private sealed record TempCleanupResult(string TempPath, int DeletedFiles);
+
+    private sealed record DumpCleanupResult(
+        int DeletedFiles,
+        long DeletedBytes,
+        int FailedFiles,
+        IReadOnlyList<string> Targets,
+        IReadOnlyList<string> SampleDeleted,
+        IReadOnlyList<string> Errors);
+
+    private sealed record BloatwareRemovalResult(
+        IReadOnlyList<string> RemovedPackages,
+        IReadOnlyList<string> NotFoundPackages,
+        IReadOnlyList<string> Errors,
+        int ExitCode,
+        string Stderr);
 }

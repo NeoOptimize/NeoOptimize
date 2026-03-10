@@ -1,0 +1,62 @@
+Tweaking.com - Windows Repair 2018 v4
+Copyright (c) 2011 - 2018 Tweaking LLC
+
+*** LE CONTRAT DE LICENCE UTILISATEUR FINAL ***
+
+IMPORTANT : VEUILLEZ LIRE ATTENTIVEMENT CETTE LICENCE AVANT DE COMMENCER L’UTILISATION DE CE LOGICIEL.
+
+1. Général
+
+Prière de bien lire ce contrat de licence avant de poursuivre l'installation. Le Contrat de Licence Utilisateur Final de Tweaking LLC (« CLUF ») est un accord juridique conclu entre vous (personne ou entité unique) et Tweaking LLC, les produits logiciels listés en plus des composants logiciels associés.  En installant ce logiciel, vous acceptez d'être lié par les termes de ce CLUF.   Si vous n'acceptez pas les termes de ce CLUF, n'installez pas le logiciel.
+
+2. L'obtention d'une licence
+
+Tweaking LLC vous permet d'installer et d'utiliser une ou plusieurs copies de Tweaking.com Windows Repair, dans les limites des restrictions de licence ci-dessous, sur un ordinateur doté d'un système d'exploitation sous licence appropriée.  Vous pouvez également faire des sauvegardes de Tweaking.com Windows Repair si nécessaire et ce à des fins d'archivage.
+
+3.  Propriété intellectuelle
+
+Ce logiciel contient du matériel protégé par des droits d'auteur, des secrets commerciaux et d'autres matériels de nature exclusive. Vous ne devez pas, et ne devez pas tenter de, modifier, rétro concevoir, désassembler ou décompiler le logiciel Tweaking.com - Windows Repair ou les logiciels associés. Vous ne devez pas non plus créer de travaux dérivés ou d'autres travaux qui sont basés sur ou dérivés du logiciel Tweaking.com - Windows Repair en tout ou en partie.
+Le nom, le logo et les fichiers graphiques de Tweaking LLC Tweaking.com - Windows Repair ne doivent être utilisés que pour la promotion des produits développés par Tweaking LLC et ce avec un accord explicite et écrit. Tweaking LLC conserve la propriété unique et exclusive de tous les droits, titres et intérêts dans et sur Tweaking.com - Windows Repair et tous les droits de propriété intellectuelle s'y rapportant.
+La loi sur le droit d'auteur et les dispositions du traité international sur le droit d'auteur protègent toutes les parties de Tweaking.com - Windows Repair, ainsi que l’ensemble de produits et des services. Aucun programme, code, partie, image, échantillon audio ou texte ne peut être copié ou utilisé de quelque manière que ce soit par l'utilisateur, sauf dans les limites de l'accord de licence.  Tous les droits qui ne sont pas expressément accordés dans le présent document sont réservés à Tweaking LLC.
+
+4. Restrictions de la licence de la version libre
+
+La version gratuite de Tweaking.com Windows Repair est UNIQUEMENT valable pour un USAGE PERSONNEL. Si vous utilisez Tweaking.com Windows Repair dans un environnement professionnel, vous devez utiliser une licence Tweaking.com Windows Repair Pro, Technicien ou de Site. Les organisations à but non lucratif ou caritatives peuvent utiliser la version gratuite sans acheter de licence.
+
+5. Restrictions de la licence Home / PRO
+
+La version de licence Home ou PRO de Tweaking.com Windows Repair est valable pour un seul ordinateur.  La licence Home / PRO est destinée à être utilisée dans un environnement personnel et est une licence à utiliser sur un seul ordinateur. Cet ordinateur peut être utilisé par plus d'une personne, mais une seule personne peut utiliser cette licence à la fois.
+
+6. Restrictions de la licence des techniciens d'atelier
+
+La version de la licence dédiée aux techniciens d'atelier de Tweaking.com Windows Repair est valable pour 1 seul technicien.  Cette licence est destinée à un atelier de réparation informatique ou à un environnement de gestion de réseau.  Cette licence doit être utilisée par une personne (le technicien informatique licencié) sur plusieurs machines, mais une seule personne peut utiliser cette licence.
+
+7. Restrictions de la licence Centre d'appel
+
+La version Centre d'appel de Tweaking.com Windows Repair est valable pour 1 seul technicien.  Cette licence est destinée à un centre d'appel / environnement de réparation informatique à distance.  Cette licence doit être utilisée par une seule personne sur plusieurs machines, mais une unique personne peut utiliser cette licence. Cette licence est disponible uniquement en contactant support@tweaking.com
+
+8. Restrictions relatives aux licences d'entreprise
+
+La version Enterprise de Tweaking.com Windows Repair est valable pour un nombre illimité d'ordinateurs sur un nombre illimité de sites appartenant spécifiquement à l'entreprise acheteuse. Cette licence est disponible uniquement en contactant support@tweaking.com
+
+9. Autres droits et limitations
+
+Vous ne devez pas modifier ou supprimer les mentions de copyright sur les copies du logiciel. Vous ne devez pas distribuer de copies enregistrées du logiciel à des tiers. Les versions gratuites disponibles en téléchargement sur le site web de Tweaking LLC peuvent être distribuées librement avec l'autorisation écrite de Tweaking LLC, cela n'inclut pas les versions payantes.  Vous ne pouvez pas louer ou prêter le logiciel. Vous devez vous conformer à toutes les lois applicables concernant l'utilisation du logiciel.
+
+10. Vérifications de mise à jour
+
+Tweaking.com Windows Repair vérifiera occasionnellement la présence d'une version plus récente grâce à nos serveurs de mise à jour (tweaking.com). Au cours de ce processus de mise à jour, Tweaking.com Windows Repair enverra les données nécessaires pour mettre à jour le logiciel et vérifier la licence correctement. Les données peuvent inclure : les versions du produit, le nom de l'utilisateur enregistré, le hachage de la licence et la version de Windows. Vous pouvez désactiver ces vérifications de mise à jour à tout moment en décochant l'option « Vérifier les mises à jour au démarrage du programme » dans la fenêtre des paramètres de Tweaking.com Windows Repair. Vous ne pouvez pas vous désinscrire de la vérification de la licence.
+
+11. Résiliation
+
+Le non-respect des termes et conditions énoncés dans le présent CLUF entraînera la résiliation immédiate de cette licence.  En cas de résiliation, vous acceptez de cesser immédiatement l'utilisation de Tweaking.com - Windows Repair et de détruire toutes les copies de Tweaking.com - Windows Repair.
+
+12. Aucune garantie
+
+Tweaking LLC décline expressément toute garantie pour le logiciel. Le programme est fourni « en l’état » et sans garantie d'aucune sorte et, à ce titre, Tweaking.com ne sera en aucun cas responsable des dommages indirects, accessoires ou directs subis lors de l'utilisation du logiciel.
+Tweaking LLC n'assume aucune responsabilité quant à l'exactitude des informations, textes, graphiques, liens ou autres éléments contenus dans le logiciel. Tweaking LLC n'offre aucune garantie concernant tout dommage pouvant être causé par la transmission d'un virus informatique ou d'un autre programme informatique de ce type. Tweaking LLC décline en outre expressément toute garantie ou représentation aux utilisateurs autorisés ou à tout tiers.
+
+13. Limitation de la responsabilité
+
+En aucun cas, Tweaking LLC ne peut être tenu pour responsable de tout dommage, y compris, mais sans s'y limiter, la perte de profits, l'interruption d'activité ou la perte d'informations résultant de l'utilisation ou de l'incapacité à utiliser le logiciel, même si Tweaking LLC a été informé de la possibilité de tels dommages. En aucun cas, Tweaking LLC ne sera responsable de la perte de données ou de dommages indirects, spéciaux, accessoires, consécutifs ou autres, fondés sur un contrat, un délit civil ou autre. 
+Tweaking LLC n'assume aucune responsabilité quant au contenu du logiciel, y compris, mais sans s'y limiter, les erreurs ou omissions, les violations des droits de publicité, de la vie privée, des droits de marque, les interruptions d'activité, les dommages corporels, la violation de la vie privée ou des droits moraux ou la divulgation d'informations confidentielles.

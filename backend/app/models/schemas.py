@@ -141,6 +141,23 @@ class AIChatResponse(BaseModel):
     context_summary: dict[str, Any] = Field(default_factory=dict)
 
 
+class ConsentUpdateRequest(BaseModel):
+    accepted: bool = False
+    accepted_at: datetime | None = None
+    updated_at: datetime | None = None
+    telemetry: bool = True
+    diagnostics: bool = True
+    maintenance: bool = True
+    remote_control: bool = False
+    auto_execution: bool = False
+    location: bool = False
+    camera: bool = False
+
+
+class ConsentUpdateResponse(BaseModel):
+    status: Literal["recorded"]
+
+
 class AIFeedbackRequest(BaseModel):
     message_id: UUID
     client_id: UUID | None = None

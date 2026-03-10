@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoOptimize - AI System Optimizer</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Anime.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Theme variables */
+        :root {
+            --bg-primary: #0a0f1f;
+            --bg-secondary: #1a1f2f;
+            --bg-card: rgba(30, 36, 52, 0.7);
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0b0d0;
+            --accent: #6b8cff;
+            --accent-glow: rgba(107, 140, 255, 0.4);
+            --danger: #ff6b6b;
+            --success: #4caf50;
+            --warning: #ffa726;
+            --border-color: rgba(255,255,255,0.05);
+            --input-bg: rgba(0,0,0,0.3);
+            --input-border: rgba(255,255,255,0.1);
+        }
+
+        body.light-theme {
+            --bg-primary: #f0f4fa;
+            --bg-secondary: #e0e8f0;
+            --bg-card: rgba(255, 255, 255, 0.7);
+            --text-primary: #1a1f2f;
+            --text-secondary: #4a5a7a;
+            --accent: #4a6cf7;
+            --border-color: rgba(0,0,0,0.1);
+            --input-bg: #ffffff;
+            --input-border: #c0c8d0;
+        }
+
+        body.night-theme {
+            --bg-primary: #05070c;
+            --bg-secondary: #0f1420;
+            --bg-card: rgba(20, 24, 36, 0.8);
+            --text-primary: #c0c0e0;
+            --text-secondary: #8090b0;
+            --accent: #5a7cf5;
+            --border-color: rgba(255,255,255,0.08);
+            --input-bg: #151a28;
+            --input-border: #2a3345;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .app-container {
+            display: flex;
+            gap: 20px;
+            max-width: 1400px;
+            width: 100%;
+            height: calc(100vh - 40px);
+            margin: 0 auto;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            border: 1px solid var(--border-color);
+            transition: width 0.3s ease, transform 0.3s ease;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .sidebar.collapsed .menu-item span,
+        .sidebar.collapsed .logo-text,
+        .sidebar.collapsed .user-info,
+        .sidebar.collapsed .footer-item span {
+            display: none;
+        }
+
+        .sidebar.collapsed .menu-item i {
+            margin-right: 0;
+            font-size: 1.4rem;
+        }
+
+        .sidebar.collapsed .logo {
+            justify-content: center;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent), #a56eff);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+        }
+
+        .logo-text {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), #a56eff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .toggle-sidebar {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: var(--text-secondary);
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .toggle-sidebar:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
+            margin-top: 8px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .user-role {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 16px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .menu-item i {
+            width: 24px;
+            font-size: 1.2rem;
+        }
+
+        .menu-item span {
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: rgba(107, 140, 255, 0.15);
+            color: var(--accent);
+        }
+
+        .menu-item.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .sidebar-footer {
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 24px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        /* Header */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .device-info {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0,0,0,0.2);
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+        }
+
+        .info-item i {
+            color: var(--accent);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .theme-toggle, .lang-toggle {
+            display: flex;
+            background: rgba(0,0,0,0.3);
+            border-radius: 30px;
+            padding: 4px;
+        }
+
+        .theme-toggle span, .lang-toggle span {
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-secondary);
+        }
+
+        .theme-toggle span.active, .lang-toggle span.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .mode-toggle {
+            display: flex;
+            gap: 8px;
+            background: rgba(0,0,0,0.3);
+            padding: 4px;
+            border-radius: 40px;
+        }
+
+        .mode-btn {
+            padding: 6px 16px;
+            border-radius: 30px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .mode-btn.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .recommendation-banner {
+            background: rgba(255, 167, 38, 0.15);
+            border-left: 4px solid var(--warning);
+            padding: 16px 24px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 167, 38, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 167, 38, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 167, 38, 0); }
+        }
+
+        .recommendation-banner i {
+            font-size: 2rem;
+            color: var(--warning);
+        }
+
+        .recommendation-banner p {
+            flex: 1;
+        }
+
+        .recommendation-banner button {
+            background: var(--warning);
+            border: none;
+            padding: 8px 24px;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: rgba(0,0,0,0.2);
+            border-radius: 20px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(107, 140, 255, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: var(--accent);
+        }
+
+        .stat-title {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .stat-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+        .stat-unit {
+            font-size: 0.8rem;
+            color: var(--accent);
+            margin-left: 2px;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), #a56eff);
+            width: 0%;
+            transition: width 0.5s;
+        }
+
+        /* Charts Row */
+        .charts-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .chart-card {
+            background: rgba(0,0,0,0.2);
+            border-radius: 20px;
+            padding: 16px;
+        }
+
+        .chart-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-secondary);
+        }
+
+        .chart-container {
+            height: 150px;
+        }
+
+        /* Chat Section */
+        .chat-section {
+            background: rgba(0,0,0,0.2);
+            border-radius: 20px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            height: 250px;
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-header i {
+            font-size: 1.5rem;
+            color: var(--accent);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-right: 4px;
+        }
+
+        .message {
+            padding: 10px 14px;
+            border-radius: 16px;
+            max-width: 80%;
+            word-wrap: break-word;
+            font-size: 0.9rem;
+        }
+
+        .message.user {
+            background: var(--accent);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.ai {
+            background: rgba(107, 140, 255, 0.15);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+            border-left: 3px solid var(--accent);
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px 14px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 40px;
+            color: var(--text-primary);
+            outline: none;
+            font-size: 0.9rem;
+        }
+
+        .chat-input:focus {
+            border-color: var(--accent);
+        }
+
+        .chat-send, .chat-voice {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .chat-voice {
+            background: var(--warning);
+        }
+
+        .chat-send:hover, .chat-voice:hover {
+            transform: scale(1.05);
+        }
+
+        /* Pages */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .page-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .scan-panel, .optimize-panel, .settings-group {
+            background: rgba(0,0,0,0.2);
+            border-radius: 20px;
+            padding: 20px;
+        }
+
+        .file-upload {
+            border: 2px dashed var(--accent);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 16px;
+        }
+
+        .file-upload:hover {
+            background: rgba(107,140,255,0.05);
+        }
+
+        .file-upload i {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .dryrun-toggle {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .toggle-switch {
+            width: 44px;
+            height: 22px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 30px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .toggle-switch.active {
+            background: var(--accent);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: left 0.2s;
+        }
+
+        .toggle-switch.active::after {
+            left: 24px;
+        }
+
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .tool-item {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tool-item:hover {
+            background: var(--accent);
+            transform: scale(1.02);
+        }
+
+        .tool-item i {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+            color: var(--accent);
+        }
+
+        .tool-item:hover i {
+            color: white;
+        }
+
+        .tool-item span {
+            font-size: 0.8rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 16px var(--accent-glow);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.15);
+        }
+
+        /* Settings */
+        .settings-group {
+            margin-bottom: 16px;
+        }
+
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .contact-info {
+            display: flex;
+            gap: 16px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+
+        .contact-item i {
+            color: var(--accent);
+        }
+
+        .support-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .support-link {
+            background: rgba(255,255,255,0.1);
+            padding: 6px 14px;
+            border-radius: 30px;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+        }
+
+        .support-link:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+            }
+            .sidebar.collapsed {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon"><i class="fas fa-robot"></i></div>
+                    <span class="logo-text">NeoOptimize</span>
+                </div>
+                <button class="toggle-sidebar" id="toggleSidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <div class="user-info">
+                <div class="user-avatar">S</div>
+                <div class="user-details">
+                    <div class="user-name">Sigit</div>
+                    <div class="user-role">Professional IT</div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a class="menu-item active" data-page="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a class="menu-item" data-page="scan">
+                    <i class="fas fa-search"></i>
+                    <span>Scan File Dump</span>
+                </a>
+                <a class="menu-item" data-page="optimize">
+                    <i class="fas fa-microchip"></i>
+                    <span>Optimasi</span>
+                </a>
+                <a class="menu-item" data-page="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <!-- Help dan Logout dihapus sesuai permintaan -->
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Dashboard Page -->
+            <div id="dashboard-page" class="page active">
+                <div class="dashboard-header">
+                    <div class="header-left">
+                        <div class="device-info">
+                            <div class="info-item"><i class="fas fa-desktop"></i> DESKTOP-7F8A2C</div>
+                            <div class="info-item"><i class="fab fa-windows"></i> Windows 11 Pro</div>
+                            <div class="info-item"><i class="fas fa-microchip"></i> Intel i7-12700K</div>
+                            <div class="info-item"><i class="fas fa-memory"></i> 32 GB DDR5</div>
+                        </div>
+                    </div>
+                    <div class="header-controls">
+                        <div class="theme-toggle" id="themeToggle">
+                            <span class="active" data-theme="system"><i class="fas fa-desktop"></i></span>
+                            <span data-theme="light"><i class="fas fa-sun"></i></span>
+                            <span data-theme="night"><i class="fas fa-moon"></i></span>
+                        </div>
+                        <div class="lang-toggle" id="langToggle">
+                            <span class="active" data-lang="en">EN</span>
+                            <span data-lang="id">ID</span>
+                        </div>
+                        <div class="mode-toggle" id="modeToggle">
+                            <button class="mode-btn active" data-mode="auto">Auto</button>
+                            <button class="mode-btn" data-mode="manual">Manual</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recommendation Banner -->
+                <div class="recommendation-banner" id="recommendationBanner" style="display: none;">
+                    <i class="fas fa-lightbulb"></i>
+                    <p>Neo AI merekomendasikan untuk mengaktifkan mode Auto agar sistem selalu optimal.</p>
+                    <button id="enableAutoBtn">Aktifkan Auto</button>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon"><i class="fas fa-microchip"></i></div>
+                            <div>
+                                <div class="stat-title">CPU Usage</div>
+                                <div class="stat-value"><span id="cpuValue">0</span><span class="stat-unit">%</span></div>
+                            </div>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill" id="cpuProgress" style="width:0%"></div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon"><i class="fas fa-memory"></i></div>
+                            <div>
+                                <div class="stat-title">RAM Usage</div>
+                                <div class="stat-value"><span id="ramValue">0</span><span class="stat-unit">%</span></div>
+                            </div>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill" id="ramProgress" style="width:0%"></div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon"><i class="fas fa-hdd"></i></div>
+                            <div>
+                                <div class="stat-title">Disk Usage</div>
+                                <div class="stat-value"><span id="diskValue">0</span><span class="stat-unit">%</span></div>
+                            </div>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill" id="diskProgress" style="width:0%"></div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon"><i class="fas fa-network-wired"></i></div>
+                            <div>
+                                <div class="stat-title">Network</div>
+                                <div class="stat-value"><span id="networkValue">0</span><span class="stat-unit">Mbps</span></div>
+                            </div>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill" id="networkProgress" style="width:0%"></div></div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="charts-row">
+                    <div class="chart-card">
+                        <div class="chart-title">CPU & RAM History</div>
+                        <div class="chart-container">
+                            <canvas id="cpuRamChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-title">Disk & Network</div>
+                        <div class="chart-container">
+                            <canvas id="diskNetChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Section -->
+                <div class="chat-section">
+                    <div class="chat-header">
+                        <i class="fas fa-robot"></i>
+                        <span>Neo AI Copilot</span>
+                    </div>
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message ai">Halo! Saya Neo AI, asisten sistem Anda. Ada yang bisa saya bantu?</div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" class="chat-input" id="chatInput" placeholder="Ketik perintah suara atau teks...">
+                        <button class="chat-voice" id="voiceBtn"><i class="fas fa-microphone"></i></button>
+                        <button class="chat-send" id="sendChat"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scan Page -->
+            <div id="scan-page" class="page">
+                <h2 class="page-title">Scan File Dump</h2>
+                <div class="scan-panel">
+                    <div class="file-upload" id="fileUpload">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h4>Klik atau tarik file ke sini</h4>
+                        <p>Upload file dump untuk dianalisis Neo AI</p>
+                    </div>
+                    <input type="file" id="fileInput" style="display: none;">
+                    <div class="dryrun-toggle">
+                        <span>Dry Run (hanya simulasi)</span>
+                        <div class="toggle-switch active" id="dryRunToggle"></div>
+                    </div>
+                    <div id="scanResult" style="margin-top: 16px;"></div>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="analyzeDumpBtn" style="display: none;">Analisis dengan Neo AI</button>
+                        <button class="btn btn-secondary" id="cleanDumpBtn" style="display: none;">Bersihkan Dump</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Optimize Page -->
+            <div id="optimize-page" class="page">
+                <h2 class="page-title">Optimasi Sistem</h2>
+                <div class="optimize-panel">
+                    <h4>1 Klik Optimasi</h4>
+                    <button class="btn btn-primary" id="oneClickOptimize"><i class="fas fa-bolt"></i> Jalankan 1 Klik Optimasi</button>
+                    
+                    <h4 style="margin-top: 24px;">Pilih Tool Manual</h4>
+                    <div class="tool-grid" id="toolGrid">
+                        <!-- Akan diisi oleh JS -->
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="runSelectedTool"><i class="fas fa-play"></i> Jalankan Tool</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div id="settings-page" class="page">
+                <h2 class="page-title">Pengaturan</h2>
+                <div class="settings-group">
+                    <h4>Auto Optimasi</h4>
+                    <div class="settings-item">
+                        <span>Smart Boost Otomatis</span>
+                        <div class="toggle-switch" id="autoSmartBoost"></div>
+                    </div>
+                    <div class="settings-item">
+                        <span>Smart Optimize Otomatis</span>
+                        <div class="toggle-switch" id="autoSmartOptimize"></div>
+                    </div>
+                    <div class="settings-item">
+                        <span>Integrity Scan Otomatis</span>
+                        <div class="toggle-switch" id="autoIntegrityScan"></div>
+                    </div>
+                    <div class="settings-item">
+                        <span>Jadwal (jam)</span>
+                        <select style="background: var(--input-bg); color: var(--text-primary); border: 1px solid var(--input-border); padding: 6px; border-radius: 8px;">
+                            <option>1 jam</option>
+                            <option>6 jam</option>
+                            <option>12 jam</option>
+                            <option>24 jam</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="settings-group">
+                    <h4>Update</h4>
+                    <div class="settings-item">
+                        <span>Periksa Update Otomatis</span>
+                        <div class="toggle-switch" id="autoUpdate"></div>
+                    </div>
+                    <div class="settings-item">
+                        <span>Versi Saat Ini</span>
+                        <span>1.0.0</span>
+                    </div>
+                    <button class="btn btn-primary" id="checkUpdateBtn"><i class="fas fa-sync-alt"></i> Periksa Update</button>
+                </div>
+            </div>
+
+            <!-- Footer with contact and support -->
+            <div class="footer-links">
+                <div class="contact-info">
+                    <a href="https://wa.me/6287889911030" class="contact-item" target="_blank">
+                        <i class="fab fa-whatsapp"></i> 087889911030
+                    </a>
+                    <a href="mailto:neooptimizeofficial@gmail.com" class="contact-item">
+                        <i class="far fa-envelope"></i> neooptimizeofficial@gmail.com
+                    </a>
+                </div>
+                <div class="support-links">
+                    <a href="https://buymeacoffee.com/nol.eight" class="support-link" target="_blank">
+                        <i class="fas fa-mug-hot"></i> BuyMeACoffee
+                    </a>
+                    <a href="https://saweria.co/dtechtive" class="support-link" target="_blank">
+                        <i class="fas fa-coffee"></i> Saweria
+                    </a>
+                    <a href="https://ik.imagekit.io/dtechtive/Dana" class="support-link" target="_blank">
+                        <i class="fas fa-wallet"></i> Dana
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Inisialisasi Anime.js untuk animasi awal
+        anime({
+            targets: '.sidebar, .main-content',
+            opacity: [0, 1],
+            translateY: [30, 0],
+            duration: 800,
+            easing: 'easeOutQuad'
+        });
+
+        // Sidebar toggle
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('toggleSidebar');
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+        });
+
+        // Page navigation
+        const menuItems = document.querySelectorAll('.menu-item');
+        const pages = document.querySelectorAll('.page');
+        menuItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const pageId = item.dataset.page;
+                menuItems.forEach(m => m.classList.remove('active'));
+                item.classList.add('active');
+                pages.forEach(p => p.classList.remove('active'));
+                document.getElementById(pageId + '-page').classList.add('active');
+            });
+        });
+
+        // Theme toggle
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', (e) => {
+            const target = e.target.closest('span');
+            if (!target) return;
+            themeToggle.querySelectorAll('span').forEach(s => s.classList.remove('active'));
+            target.classList.add('active');
+            const theme = target.dataset.theme;
+            const body = document.body;
+            body.classList.remove('light-theme', 'night-theme');
+            if (theme === 'light') {
+                body.classList.add('light-theme');
+            } else if (theme === 'night') {
+                body.classList.add('night-theme');
+            } else {
+                // system - detect
+                if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    body.classList.add('light-theme');
+                } else {
+                    body.classList.add('night-theme');
+                }
+            }
+        });
+
+        // Language toggle
+        const langToggle = document.getElementById('langToggle');
+        let currentLang = 'en';
+        langToggle.addEventListener('click', (e) => {
+            const target = e.target.closest('span');
+            if (!target) return;
+            langToggle.querySelectorAll('span').forEach(s => s.classList.remove('active'));
+            target.classList.add('active');
+            currentLang = target.dataset.lang;
+            // Update teks statis (sederhana, hanya contoh)
+            if (currentLang === 'id') {
+                document.querySelector('.chat-header span').innerText = 'Neo AI Copilot (ID)';
+            } else {
+                document.querySelector('.chat-header span').innerText = 'Neo AI Copilot';
+            }
+        });
+
+        // Mode toggle
+        const modeBtns = document.querySelectorAll('.mode-btn');
+        const recommendationBanner = document.getElementById('recommendationBanner');
+        let currentMode = 'auto';
+
+        modeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                modeBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentMode = btn.dataset.mode;
+                if (currentMode === 'manual') {
+                    recommendationBanner.style.display = 'flex';
+                } else {
+                    recommendationBanner.style.display = 'none';
+                }
+            });
+        });
+
+        document.getElementById('enableAutoBtn').addEventListener('click', () => {
+            modeBtns.forEach(b => b.classList.remove('active'));
+            document.querySelector('[data-mode="auto"]').classList.add('active');
+            currentMode = 'auto';
+            recommendationBanner.style.display = 'none';
+        });
+
+        // Simulasi real-time stats
+        let cpu = 32, ram = 45, disk = 67, net = 12;
+        function updateStats() {
+            cpu = Math.min(100, Math.max(0, cpu + (Math.random() - 0.5) * 10));
+            ram = Math.min(100, Math.max(0, ram + (Math.random() - 0.5) * 8));
+            disk = Math.min(100, Math.max(0, disk + (Math.random() - 0.5) * 5));
+            net = Math.min(100, Math.max(0, net + (Math.random() - 0.5) * 15));
+
+            document.getElementById('cpuValue').innerText = cpu.toFixed(1);
+            document.getElementById('cpuProgress').style.width = cpu + '%';
+            document.getElementById('ramValue').innerText = ram.toFixed(1);
+            document.getElementById('ramProgress').style.width = ram + '%';
+            document.getElementById('diskValue').innerText = disk.toFixed(1);
+            document.getElementById('diskProgress').style.width = disk + '%';
+            document.getElementById('networkValue').innerText = net.toFixed(1);
+            document.getElementById('networkProgress').style.width = net + '%';
+
+            updateCharts(cpu, ram, disk, net);
+        }
+        setInterval(updateStats, 2000);
+
+        // Chart.js
+        const ctx1 = document.getElementById('cpuRamChart').getContext('2d');
+        const ctx2 = document.getElementById('diskNetChart').getContext('2d');
+        let cpuRamChart, diskNetChart;
+        let cpuData = [], ramData = [], diskData = [], netData = [], labels = [];
+
+        for (let i = 0; i < 20; i++) {
+            labels.push('');
+            cpuData.push(0);
+            ramData.push(0);
+            diskData.push(0);
+            netData.push(0);
+        }
+
+        function initCharts() {
+            cpuRamChart = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'CPU', data: cpuData, borderColor: '#6b8cff', backgroundColor: 'rgba(107,140,255,0.1)', tension: 0.4, pointRadius: 0, borderWidth: 2 },
+                        { label: 'RAM', data: ramData, borderColor: '#a56eff', backgroundColor: 'rgba(165,110,255,0.1)', tension: 0.4, pointRadius: 0, borderWidth: 2 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { display: false }, y: { beginAtZero: true, max: 100, grid: { color: 'rgba(255,255,255,0.1)' } } }
+                }
+            });
+
+            diskNetChart = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Disk', data: diskData, borderColor: '#ffa726', backgroundColor: 'rgba(255,167,38,0.1)', tension: 0.4, pointRadius: 0, borderWidth: 2 },
+                        { label: 'Network', data: netData, borderColor: '#4caf50', backgroundColor: 'rgba(76,175,80,0.1)', tension: 0.4, pointRadius: 0, borderWidth: 2 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { display: false }, y: { beginAtZero: true, max: 100, grid: { color: 'rgba(255,255,255,0.1)' } } }
+                }
+            });
+        }
+
+        function updateCharts(cpu, ram, disk, net) {
+            cpuData.push(cpu);
+            ramData.push(ram);
+            diskData.push(disk);
+            netData.push(net);
+            cpuData.shift();
+            ramData.shift();
+            diskData.shift();
+            netData.shift();
+            cpuRamChart.update();
+            diskNetChart.update();
+        }
+
+        initCharts();
+
+        // Chat functionality
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('sendChat');
+        const voiceBtn = document.getElementById('voiceBtn');
+
+        function addMessage(text, sender) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${sender}`;
+            msgDiv.textContent = text;
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        sendBtn.addEventListener('click', () => {
+            if (chatInput.value.trim()) {
+                addMessage(chatInput.value, 'user');
+                const userMsg = chatInput.value;
+                chatInput.value = '';
+                processAIResponse(userMsg);
+            }
+        });
+
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendBtn.click();
+            }
+        });
+
+        // Voice recognition
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            recognition.lang = currentLang === 'id' ? 'id-ID' : 'en-US';
+            recognition.interimResults = false;
+
+            voiceBtn.addEventListener('click', () => {
+                recognition.start();
+                voiceBtn.style.backgroundColor = 'var(--danger)';
+            });
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                chatInput.value = transcript;
+                voiceBtn.style.backgroundColor = 'var(--warning)';
+            };
+
+            recognition.onerror = () => {
+                voiceBtn.style.backgroundColor = 'var(--warning)';
+            };
+
+            recognition.onend = () => {
+                voiceBtn.style.backgroundColor = 'var(--warning)';
+            };
+        } else {
+            voiceBtn.style.display = 'none';
+        }
+
+        function processAIResponse(userMsg) {
+            setTimeout(() => {
+                let reply = 'Maaf, saya tidak mengerti. Coba tanyakan tentang optimasi sistem.';
+                if (userMsg.toLowerCase().includes('lambat')) {
+                    reply = 'Sistem terasa lambat? Saya sarankan menjalankan Smart Boost atau mengaktifkan mode Auto.';
+                    if (currentMode === 'manual') {
+                        reply += ' (Anda dalam mode manual, saya tetap merekomendasikan auto)';
+                    }
+                } else if (userMsg.toLowerCase().includes('boost')) {
+                    reply = 'Menjalankan Smart Boost...';
+                    simulateTool('smart_boost');
+                } else if (userMsg.toLowerCase().includes('optimize')) {
+                    reply = 'Menjalankan Smart Optimize...';
+                    simulateTool('smart_optimize');
+                } else if (userMsg.toLowerCase().includes('scan')) {
+                    reply = 'Memulai Integrity Scan...';
+                    simulateTool('integrity_scan');
+                } else if (userMsg.toLowerCase().includes('driver')) {
+                    reply = 'Memeriksa update driver...';
+                    simulateTool('check_driver_updates');
+                }
+                addMessage(reply, 'ai');
+            }, 1000);
+        }
+
+        function simulateTool(tool) {
+            // Animasi
+            anime({
+                targets: '.stat-card',
+                scale: [1, 1.02, 1],
+                duration: 500
+            });
+        }
+
+        // File upload scan
+        const fileUpload = document.getElementById('fileUpload');
+        const fileInput = document.getElementById('fileInput');
+        const scanResult = document.getElementById('scanResult');
+        const analyzeBtn = document.getElementById('analyzeDumpBtn');
+        const cleanBtn = document.getElementById('cleanDumpBtn');
+        const dryRunToggle = document.getElementById('dryRunToggle');
+
+        fileUpload.addEventListener('click', () => fileInput.click());
+        fileUpload.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUpload.style.borderColor = '#6b8cff';
+        });
+        fileUpload.addEventListener('dragleave', () => {
+            fileUpload.style.borderColor = 'var(--accent)';
+        });
+        fileUpload.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUpload.style.borderColor = 'var(--accent)';
+            const file = e.dataTransfer.files[0];
+            handleFile(file);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            handleFile(file);
+        });
+
+        function handleFile(file) {
+            const isDryRun = dryRunToggle.classList.contains('active');
+            scanResult.innerHTML = `<p>File: ${file.name} (${(file.size/1024).toFixed(2)} KB) siap dianalisis. Mode: ${isDryRun ? 'Dry Run' : 'Langsung'}</p>`;
+            analyzeBtn.style.display = 'inline-block';
+            if (!isDryRun) {
+                cleanBtn.style.display = 'inline-block';
+            }
+            analyzeBtn.onclick = () => {
+                addMessage(`Analisis file dump: ${file.name}`, 'user');
+                setTimeout(() => {
+                    let result = 'Hasil analisis: Ditemukan 3 dump file yang bisa dibersihkan.';
+                    if (isDryRun) {
+                        result += ' (Dry run - tidak ada tindakan)';
+                    }
+                    addMessage(result, 'ai');
+                }, 1500);
+            };
+            cleanBtn.onclick = () => {
+                addMessage(`Membersihkan dump file...`, 'user');
+                setTimeout(() => {
+                    addMessage('Pembersihan selesai. Ruang disk bertambah 120 MB.', 'ai');
+                }, 2000);
+            };
+        }
+
+        dryRunToggle.addEventListener('click', function() {
+            this.classList.toggle('active');
+        });
+
+        // Tool grid dari core Neo AI.txt
+        const toolsList = [
+            { name: 'run_cleaner', icon: 'fas fa-broom', desc: 'Cleaner' },
+            { name: 'run_optimizer', icon: 'fas fa-microchip', desc: 'Optimizer' },
+            { name: 'run_app_management', icon: 'fas fa-apple-alt', desc: 'App Mgmt' },
+            { name: 'check_integrity', icon: 'fas fa-shield-alt', desc: 'Integrity' },
+            { name: 'get_system_info', icon: 'fas fa-info-circle', desc: 'System Info' },
+            { name: 'kill_background_processes', icon: 'fas fa-times-circle', desc: 'Kill BG' },
+            { name: 'fix_system_crash', icon: 'fas fa-exclamation-triangle', desc: 'Fix Crash' },
+            { name: 'defrag_drive', icon: 'fas fa-compact-disc', desc: 'Defrag' },
+            { name: 'trim_ssd', icon: 'fas fa-ssd', desc: 'Trim SSD' },
+            { name: 'wipe_free_space', icon: 'fas fa-eraser', desc: 'Wipe Free' },
+            { name: 'scan_disk', icon: 'fas fa-search', desc: 'Scan Disk' },
+            { name: 'fix_boot', icon: 'fas fa-bolt', desc: 'Fix Boot' },
+            { name: 'clear_memory_cache', icon: 'fas fa-memory', desc: 'Clear RAM' },
+            { name: 'run_duplicate_finder', icon: 'fas fa-copy', desc: 'Duplicates' },
+            { name: 'run_empty_folder_cleaner', icon: 'fas fa-folder-open', desc: 'Empty Folders' },
+            { name: 'run_registry_cleaner', icon: 'fas fa-registered', desc: 'Registry' },
+            { name: 'run_network_cleaner', icon: 'fas fa-network-wired', desc: 'Network' },
+            { name: 'run_visual_cache_cleaner', icon: 'fas fa-eye', desc: 'Visual Cache' },
+            { name: 'run_appx_cleaner', icon: 'fas fa-store', desc: 'AppX' },
+            { name: 'run_driver_cleaner', icon: 'fas fa-tools', desc: 'Driver Clean' },
+            { name: 'run_driver_scanner', icon: 'fas fa-car', desc: 'Driver Scan' },
+            { name: 'run_backup_restore', icon: 'fas fa-database', desc: 'Backup' },
+            { name: 'smart_boost', icon: 'fas fa-bolt', desc: 'Smart Boost' },
+            { name: 'save_feedback', icon: 'fas fa-comment', desc: 'Feedback' },
+            { name: 'get_smart_advice', icon: 'fas fa-lightbulb', desc: 'Advice' },
+            { name: 'web_search', icon: 'fas fa-globe', desc: 'Web Search' },
+            { name: 'check_driver_updates', icon: 'fas fa-sync-alt', desc: 'Driver Updates' },
+            { name: 'auto_backup', icon: 'fas fa-clock', desc: 'Auto Backup' },
+            { name: 'analyze_logs', icon: 'fas fa-chart-line', desc: 'Analyze Logs' }
+        ];
+
+        const toolGrid = document.getElementById('toolGrid');
+        toolsList.forEach(tool => {
+            const div = document.createElement('div');
+            div.className = 'tool-item';
+            div.dataset.tool = tool.name;
+            div.innerHTML = `<i class="${tool.icon}"></i><span>${tool.desc}</span>`;
+            toolGrid.appendChild(div);
+        });
+
+        document.getElementById('runSelectedTool').addEventListener('click', () => {
+            const selected = document.querySelector('.tool-item.selected');
+            if (selected) {
+                const tool = selected.dataset.tool;
+                addMessage(`Menjalankan tool: ${tool}`, 'user');
+                setTimeout(() => {
+                    addMessage(`Tool ${tool} selesai dijalankan.`, 'ai');
+                }, 1500);
+            } else {
+                alert('Pilih tool terlebih dahulu');
+            }
+        });
+
+        toolGrid.addEventListener('click', (e) => {
+            const item = e.target.closest('.tool-item');
+            if (item) {
+                document.querySelectorAll('.tool-item').forEach(t => t.classList.remove('selected'));
+                item.classList.add('selected');
+            }
+        });
+
+        document.getElementById('oneClickOptimize').addEventListener('click', () => {
+            addMessage('Menjalankan 1 Klik Optimasi...', 'user');
+            setTimeout(() => {
+                addMessage('1 Klik Optimasi selesai. Sistem lebih cepat dan stabil.', 'ai');
+            }, 3000);
+        });
+
+        // Toggle switches
+        document.querySelectorAll('.toggle-switch').forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+        });
+
+        document.getElementById('checkUpdateBtn').addEventListener('click', () => {
+            alert('Memeriksa update... (simulasi)');
+        });
+    </script>
+</body>
+</html>

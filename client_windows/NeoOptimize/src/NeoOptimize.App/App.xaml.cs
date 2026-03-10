@@ -7,7 +7,7 @@ using NeoOptimize.Infrastructure;
 
 namespace NeoOptimize.App;
 
-public partial class App : Application
+public partial class App : System.Windows.Application
 {
     private IHost? _host;
 
@@ -28,6 +28,7 @@ public partial class App : Application
 
         builder.Services.AddSingleton<HardwareFingerprintService>();
         builder.Services.AddSingleton<RegistrationStore>();
+        builder.Services.AddSingleton<ConsentStore>();
         builder.Services.AddSingleton<SystemSnapshotProvider>();
         builder.Services.AddSingleton<WindowsMaintenanceToolkit>();
         builder.Services.AddSingleton<ReportStore>();

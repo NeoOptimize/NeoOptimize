@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 
 from app.api.deps import get_current_client, get_repo
 from app.core.config import get_settings
@@ -34,9 +34,11 @@ def build_alerts(payload: TelemetryPayload) -> list[str]:
 @router.post("/push", response_model=TelemetryIngestResponse, summary="Push telemetry snapshot")
 def push_telemetry(
     payload: TelemetryPayload,
+    request: Request,
     client: AuthenticatedClient = Depends(get_current_client),
     repo: SupabaseRepository = Depends(get_repo),
 ) -> TelemetryIngestResponse:
     alerts = build_alerts(payload)
-    repo.insert_telemetry(client=client, payload=payload, alerts=alerts)
+    client_ip = request.client.host if request.client else None
+    repo.insert_telemetry(client=client, payload=payload, alerts=alerts, client_ip=client_ip)
     return TelemetryIngestResponse(status="recorded", alerts=alerts)

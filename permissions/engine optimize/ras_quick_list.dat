@@ -1,0 +1,4 @@
+%WindowsFolder%\Regedit.exe|
+%WindowsFolder%\System32\taskmgr.exe|
+%WindowsFolder%\System32\mmc.exe|services.msc
+%WindowsFolder%\System32\cmd.exe|

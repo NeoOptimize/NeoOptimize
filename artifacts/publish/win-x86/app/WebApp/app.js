@@ -64,10 +64,7 @@ const translations = {
     promptRequired: 'Type a message for Neo AI first.',
     updateReady: 'Update available',
     upToDate: 'Already up to date',
-    clearChat: 'Clear Chat',
-    voiceNotSupported: 'Voice input is not supported in this environment.',
-    voiceListening: 'Listening…',
-    voiceStopped: 'Voice input stopped.'
+    clearChat: 'Clear Chat'
   },
   id: {
     smartBoost: 'Smart Boost',
@@ -97,18 +94,8 @@ const translations = {
     promptRequired: 'Isi pesan untuk Neo AI terlebih dahulu.',
     updateReady: 'Update tersedia',
     upToDate: 'Sudah versi terbaru',
-    clearChat: 'Bersihkan Chat',
-    voiceNotSupported: 'Voice input tidak didukung di perangkat ini.',
-    voiceListening: 'Mendengarkan…',
-    voiceStopped: 'Voice input dihentikan.'
+    clearChat: 'Bersihkan Chat'
   }
-};
-
-const voiceState = {
-  supported: false,
-  listening: false,
-  recognition: null,
-  speakEnabled: true
 };
 
 const actionLabels = {
@@ -253,10 +240,6 @@ function setLanguage(lang) {
     ? 'e.g., PC feels slow at startup...'
     : 'Contoh: PC terasa lambat saat startup...';
 
-  if (voiceState.recognition) {
-    voiceState.recognition.lang = lang === 'id' ? 'id-ID' : 'en-US';
-  }
-
   renderStats();
   renderLogs();
   renderReports();
@@ -389,7 +372,7 @@ function buildLogs() {
     title: item.title,
     time: item.timestamp,
     summary: item.summary,
-    file: null
+    file: item.file || item.reportFile || null
   }));
 }
 
@@ -487,7 +470,7 @@ function updateProfilePanel() {
   loginContent.style.display = 'none';
   userProfile.style.display = 'block';
   hiddenGoogleButton.style.display = 'none';
-  userAvatar.src = './assets/icon.png';
+  userAvatar.src = './assets/neooptimize.ico';
   userName.textContent = getText('profileName');
   userEmail.textContent = buildProfileEmail();
   closeButton.innerHTML = `<i class="fas fa-times-circle"></i> ${escapeHtml(getText('profileClose'))}`;
@@ -519,80 +502,6 @@ function updateUpdateButton() {
 function clearChat() {
   state.chatMessages = [];
   renderChatMessages();
-}
-
-function initVoiceRecognition() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) {
-    voiceState.supported = false;
-    return;
-  }
-
-  const recognition = new SpeechRecognition();
-  recognition.lang = state.lang === 'id' ? 'id-ID' : 'en-US';
-  recognition.interimResults = false;
-  recognition.continuous = false;
-
-  recognition.onstart = () => {
-    voiceState.listening = true;
-    updateVoiceButton();
-    showToast(getText('voiceListening'), 'info');
-  };
-
-  recognition.onend = () => {
-    voiceState.listening = false;
-    updateVoiceButton();
-  };
-
-  recognition.onerror = () => {
-    voiceState.listening = false;
-    updateVoiceButton();
-    showToast(getText('voiceNotSupported'), 'error');
-  };
-
-  recognition.onresult = (event) => {
-    const transcript = event.results?.[0]?.[0]?.transcript;
-    if (transcript) {
-      sendPrompt(transcript);
-    }
-  };
-
-  voiceState.supported = true;
-  voiceState.recognition = recognition;
-}
-
-function updateVoiceButton() {
-  const button = document.getElementById('voiceBtn');
-  if (!button) {
-    return;
-  }
-  button.classList.toggle('is-listening', voiceState.listening);
-}
-
-function toggleVoice() {
-  if (!voiceState.supported || !voiceState.recognition) {
-    showToast(getText('voiceNotSupported'), 'error');
-    return;
-  }
-
-  if (voiceState.listening) {
-    voiceState.recognition.stop();
-    showToast(getText('voiceStopped'), 'info');
-    return;
-  }
-
-  voiceState.recognition.lang = state.lang === 'id' ? 'id-ID' : 'en-US';
-  voiceState.recognition.start();
-}
-
-function speakText(text) {
-  if (!voiceState.speakEnabled || !('speechSynthesis' in window)) {
-    return;
-  }
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = state.lang === 'id' ? 'id-ID' : 'en-US';
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(utterance);
 }
 
 function sendPrompt(overrideMessage) {
@@ -726,7 +635,6 @@ function handleMessage(data) {
         .filter(Boolean)
         .join(' · ');
       addChatMessage('ai', data.payload?.reply || 'Neo AI returned an empty response.', meta);
-      speakText(data.payload?.reply || '');
       break;
     }
     case 'updateStatus':
@@ -792,7 +700,6 @@ function init() {
   document.getElementById('integrityScanBtn').addEventListener('click', () => runAction('integrityScan'));
   document.getElementById('sendChat').addEventListener('click', sendPrompt);
   document.getElementById('clearChatBtn').addEventListener('click', clearChat);
-  document.getElementById('voiceBtn').addEventListener('click', toggleVoice);
   document.getElementById('analyzeBtn').addEventListener('click', sendPrompt);
   document.getElementById('chatInput').addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
@@ -822,7 +729,6 @@ function init() {
   renderLogs();
   renderReports();
   renderChatMessages();
-  initVoiceRecognition();
 
   if (window.chrome?.webview) {
     window.chrome.webview.addEventListener('message', (event) => {

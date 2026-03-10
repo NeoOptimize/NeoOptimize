@@ -14,6 +14,10 @@ public sealed class NeoOptimizeClientOptions
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "NeoOptimize",
         "reports");
+    public string ConsentStatePath { get; set; } = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+        "NeoOptimize",
+        "consent.json");
     public string WebViewUserDataFolder { get; set; } = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
         "NeoOptimize",
@@ -22,5 +26,7 @@ public sealed class NeoOptimizeClientOptions
     public int HealthIntervalMinutes { get; set; } = 60;
     public int CommandPollIntervalSeconds { get; set; } = 30;
     public int SmartBoosterIntervalMinutes { get; set; } = 30;
+    public int SmartOptimizeIntervalHours { get; set; } = 12;
     public int IntegrityIntervalHours { get; set; } = 24;
+    public bool EnableBloatwareRemoval { get; set; }
 }

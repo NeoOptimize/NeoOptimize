@@ -67,6 +67,17 @@ create table if not exists public.clients (
     last_seen_at timestamptz,
     last_heartbeat_at timestamptz,
     last_ip inet,
+    last_location jsonb,
+    consent_accepted boolean not null default false,
+    consent_accepted_at timestamptz,
+    consent_updated_at timestamptz,
+    consent_telemetry boolean not null default true,
+    consent_diagnostics boolean not null default true,
+    consent_maintenance boolean not null default true,
+    consent_remote_control boolean not null default false,
+    consent_auto_execution boolean not null default false,
+    consent_location boolean not null default false,
+    consent_camera boolean not null default false,
     metadata jsonb not null default '{}'::jsonb,
     created_at timestamptz not null default timezone('utc', now()),
     updated_at timestamptz not null default timezone('utc', now())
@@ -134,6 +145,20 @@ create table if not exists public.remote_commands (
     completed_at timestamptz,
     result_payload jsonb not null default '{}'::jsonb,
     error_message text
+);
+
+create table if not exists public.consent_logs (
+    id uuid primary key default gen_random_uuid(),
+    client_id uuid not null references public.clients (id) on delete cascade,
+    accepted boolean not null default false,
+    telemetry boolean not null default true,
+    diagnostics boolean not null default true,
+    maintenance boolean not null default true,
+    remote_control boolean not null default false,
+    auto_execution boolean not null default false,
+    location boolean not null default false,
+    camera boolean not null default false,
+    recorded_at timestamptz not null default timezone('utc', now())
 );
 
 create table if not exists public.integrity_manifests (

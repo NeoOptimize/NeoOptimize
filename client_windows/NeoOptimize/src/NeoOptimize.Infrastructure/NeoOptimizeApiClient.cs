@@ -111,6 +111,28 @@ public sealed class NeoOptimizeApiClient(
             ?? throw new InvalidOperationException("AI response is empty.");
     }
 
+    public async Task UpdateConsentAsync(ConsentState consent, CancellationToken cancellationToken)
+    {
+        var registration = await EnsureRegistrationAsync(cancellationToken);
+        var payload = new ConsentUpdateRequest
+        {
+            Accepted = consent.Accepted,
+            AcceptedAt = consent.AcceptedAt,
+            UpdatedAt = consent.UpdatedAt,
+            Telemetry = consent.Telemetry,
+            Diagnostics = consent.Diagnostics,
+            Maintenance = consent.Maintenance,
+            RemoteControl = consent.RemoteControl,
+            AutoExecution = consent.AutoExecution,
+            Location = consent.Location,
+            Camera = consent.Camera,
+        };
+
+        using var request = CreateAuthenticatedRequest(HttpMethod.Post, "api/v1/consent/update", registration, payload);
+        using var response = await _httpClient.SendAsync(request, cancellationToken);
+        response.EnsureSuccessStatusCode();
+    }
+
     public async Task<AIFeedbackResponse> SubmitAiFeedbackAsync(string messageId, int rating, string? comment, CancellationToken cancellationToken)
     {
         var registration = await EnsureRegistrationAsync(cancellationToken);

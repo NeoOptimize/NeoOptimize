@@ -1,0 +1,42 @@
+::Defrag After Repairs.
+::This is a defrag command file that takes the version of Windows into account.
+::Defrag on each version of Windows has different command line options.
+::So based on the Windows version we decide what command line options to use.
+
+@Echo off
+Title Defrag Windows Drive
+Setlocal
+set path=%SystemRoot%\system32;%SystemRoot%;%SystemRoot%\System32\Wbem
+::Get windows Version numbers
+For /f "tokens=2 delims=[]" %%G in ('ver') Do (set _version=%%G) 
+
+For /f "tokens=2,3,4 delims=. " %%G in ('echo %_version%') Do (set _major=%%G& set _minor=%%H& set _build=%%I) 
+
+if "%_major%" == "5" goto subxp
+
+if "%_major%" == "6" if "%_minor%" == "0" goto subvista
+
+if "%_major%" GEQ "6" if "%_minor%" GEQ "1" goto subnewer
+
+Echo unsupported version
+goto:eof
+
+:subxp
+::Windows XP
+ECHO PERFORMING DEFRAG...
+start /wait %systemroot%\system32\defrag.exe %SYSTEMDRIVE%
+goto:eof
+
+:subvista
+::Windows Vista
+ECHO PERFORMING DEFRAG...
+start /wait %SYSTEMDRIVE%\Windows\System32\defrag.exe -c -w
+goto:eof
+
+:subnewer
+::Windows 7, 8, 8.1 and 10
+ECHO PERFORMING DEFRAG...
+start /wait %SYSTEMDRIVE%\Windows\System32\defrag.exe %SYSTEMDRIVE% /H /V /U
+start /wait %SYSTEMDRIVE%\Windows\System32\defrag.exe %SYSTEMDRIVE% /H /V /X /U
+goto:eof
+
