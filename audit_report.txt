@@ -1,0 +1,11 @@
+Audit started: 03/10/2026 12:25:48
+Executable: D:\NeoOptimize\temp_smoke\App\NeoOptimize.App.exe
+\n--- File hashes & signatures (App) ---
+Hashes & signatures recorded to D:\NeoOptimize\audit_outputs
+\n--- Try --help ---
+\n--- Runtime execution (60s) ---
+Started process PID=17944
+Process still running after 60s, stopping.
+Process stopped.
+\n--- Summaries saved to D:\NeoOptimize\audit_outputs ---
+Audit completed: 03/10/2026 12:27:05

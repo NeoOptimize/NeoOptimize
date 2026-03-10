@@ -1,0 +1,1016 @@
+D:\NeoOptimize\temp_smoke\App\Accessibility.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\appsettings.json
+SignatureStatus: UnknownError
+D:\NeoOptimize\temp_smoke\App\clretwrc.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\clrgc.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\clrjit.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\coreclr.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\createdump.exe
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\D3DCompiler_47_cor3.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\DirectWriteForwarder.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\hostfxr.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\hostpolicy.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.CSharp.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.DiaSymReader.Native.x86.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Extensions.Configuration.Abstractions.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Extensions.Configuration.Binder.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Extensions.Configuration.CommandLine.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Extensions.Configuration.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Extensions.Configuration.EnvironmentVariables.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Extensions.Configuration.FileExtensions.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Extensions.Configuration.Json.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Extensions.Configuration.UserSecrets.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Extensions.DependencyInjection.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Extensions.Diagnostics.Abstractions.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Extensions.Diagnostics.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Extensions.FileProviders.Abstractions.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Extensions.FileProviders.Physical.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Extensions.FileSystemGlobbing.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Extensions.Hosting.Abstractions.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Extensions.Hosting.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Extensions.Http.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Extensions.Logging.Abstractions.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Extensions.Logging.Configuration.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Extensions.Logging.Console.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Extensions.Logging.Debug.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Extensions.Logging.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Extensions.Logging.EventLog.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Extensions.Logging.EventSource.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Extensions.Options.ConfigurationExtensions.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Extensions.Options.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Extensions.Primitives.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.VisualBasic.Core.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.VisualBasic.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.VisualBasic.Forms.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Web.WebView2.Core.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Web.WebView2.Core.xml
+SignatureStatus: UnknownError
+D:\NeoOptimize\temp_smoke\App\Microsoft.Web.WebView2.WinForms.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Web.WebView2.WinForms.xml
+SignatureStatus: UnknownError
+D:\NeoOptimize\temp_smoke\App\Microsoft.Web.WebView2.Wpf.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Web.WebView2.Wpf.xml
+SignatureStatus: UnknownError
+D:\NeoOptimize\temp_smoke\App\Microsoft.Win32.Primitives.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Win32.Registry.AccessControl.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Win32.Registry.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\Microsoft.Win32.SystemEvents.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\mscordaccore_x86_x86_8.0.2426.7010.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\mscordaccore.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\mscordbi.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\mscorlib.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\mscorrc.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\msquic.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\NeoOptimize.App.deps.json
+SignatureStatus: UnknownError
+D:\NeoOptimize\temp_smoke\App\NeoOptimize.App.dll
+SignatureStatus: NotSigned
+D:\NeoOptimize\temp_smoke\App\NeoOptimize.App.exe
+SignatureStatus: NotSigned
+D:\NeoOptimize\temp_smoke\App\NeoOptimize.App.runtimeconfig.json
+SignatureStatus: UnknownError
+D:\NeoOptimize\temp_smoke\App\NeoOptimize.Contracts.dll
+SignatureStatus: NotSigned
+D:\NeoOptimize\temp_smoke\App\NeoOptimize.Infrastructure.dll
+SignatureStatus: NotSigned
+D:\NeoOptimize\temp_smoke\App\netstandard.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\PenImc_cor3.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\PresentationCore.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\PresentationFramework-SystemCore.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\PresentationFramework-SystemData.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\PresentationFramework-SystemDrawing.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\PresentationFramework-SystemXml.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\PresentationFramework-SystemXmlLinq.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\PresentationFramework.Aero.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\PresentationFramework.Aero2.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\PresentationFramework.AeroLite.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\PresentationFramework.Classic.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\PresentationFramework.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\PresentationFramework.Luna.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\PresentationFramework.Royale.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\PresentationNative_cor3.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\PresentationUI.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ReachFramework.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.AppContext.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Buffers.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.CodeDom.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Collections.Concurrent.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Collections.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Collections.Immutable.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Collections.NonGeneric.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Collections.Specialized.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.ComponentModel.Annotations.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.ComponentModel.DataAnnotations.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.ComponentModel.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.ComponentModel.EventBasedAsync.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.ComponentModel.Primitives.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.ComponentModel.TypeConverter.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Configuration.ConfigurationManager.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Configuration.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Console.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Core.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Data.Common.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Data.DataSetExtensions.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Data.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Design.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Diagnostics.Contracts.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Diagnostics.Debug.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Diagnostics.DiagnosticSource.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Diagnostics.EventLog.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Diagnostics.EventLog.Messages.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Diagnostics.FileVersionInfo.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Diagnostics.PerformanceCounter.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Diagnostics.Process.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Diagnostics.StackTrace.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Diagnostics.TextWriterTraceListener.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Diagnostics.Tools.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Diagnostics.TraceSource.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Diagnostics.Tracing.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.DirectoryServices.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Drawing.Common.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Drawing.Design.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Drawing.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Drawing.Primitives.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Dynamic.Runtime.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Formats.Asn1.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Formats.Tar.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Globalization.Calendars.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Globalization.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Globalization.Extensions.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.IO.Compression.Brotli.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.IO.Compression.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.IO.Compression.FileSystem.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.IO.Compression.Native.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.IO.Compression.ZipFile.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.IO.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.IO.FileSystem.AccessControl.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.IO.FileSystem.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.IO.FileSystem.DriveInfo.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.IO.FileSystem.Primitives.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.IO.FileSystem.Watcher.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.IO.IsolatedStorage.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.IO.MemoryMappedFiles.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.IO.Packaging.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.IO.Pipelines.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.IO.Pipes.AccessControl.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.IO.Pipes.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.IO.UnmanagedMemoryStream.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Linq.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Linq.Expressions.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Linq.Parallel.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Linq.Queryable.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Management.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Memory.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Net.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Net.Http.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Net.Http.Json.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Net.HttpListener.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Net.Mail.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Net.NameResolution.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Net.NetworkInformation.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Net.Ping.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Net.Primitives.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Net.Quic.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Net.Requests.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Net.Security.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Net.ServicePoint.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Net.Sockets.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Net.WebClient.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Net.WebHeaderCollection.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Net.WebProxy.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Net.WebSockets.Client.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Net.WebSockets.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Numerics.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Numerics.Vectors.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.ObjectModel.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Printing.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Private.CoreLib.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Private.DataContractSerialization.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Private.Uri.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Private.Xml.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Private.Xml.Linq.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Reflection.DispatchProxy.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Reflection.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Reflection.Emit.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Reflection.Emit.ILGeneration.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Reflection.Emit.Lightweight.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Reflection.Extensions.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Reflection.Metadata.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Reflection.Primitives.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Reflection.TypeExtensions.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Resources.Extensions.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Resources.Reader.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Resources.ResourceManager.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Resources.Writer.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Runtime.CompilerServices.Unsafe.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Runtime.CompilerServices.VisualC.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Runtime.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Runtime.Extensions.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Runtime.Handles.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Runtime.InteropServices.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Runtime.InteropServices.JavaScript.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Runtime.InteropServices.RuntimeInformation.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Runtime.Intrinsics.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Runtime.Loader.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Runtime.Numerics.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Runtime.Serialization.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Runtime.Serialization.Formatters.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Runtime.Serialization.Json.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Runtime.Serialization.Primitives.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Runtime.Serialization.Xml.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Security.AccessControl.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Security.Claims.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Security.Cryptography.Algorithms.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Security.Cryptography.Cng.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Security.Cryptography.Csp.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Security.Cryptography.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Security.Cryptography.Encoding.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Security.Cryptography.OpenSsl.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Security.Cryptography.Pkcs.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Security.Cryptography.Primitives.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Security.Cryptography.ProtectedData.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Security.Cryptography.X509Certificates.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Security.Cryptography.Xml.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Security.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Security.Permissions.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Security.Principal.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Security.Principal.Windows.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Security.SecureString.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.ServiceModel.Web.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.ServiceProcess.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Text.Encoding.CodePages.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Text.Encoding.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Text.Encoding.Extensions.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Text.Encodings.Web.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Text.Json.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Text.RegularExpressions.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Threading.AccessControl.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Threading.Channels.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Threading.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Threading.Overlapped.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Threading.Tasks.Dataflow.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Threading.Tasks.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Threading.Tasks.Extensions.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Threading.Tasks.Parallel.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Threading.Thread.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Threading.ThreadPool.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Threading.Timer.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Transactions.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Transactions.Local.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.ValueTuple.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Web.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Web.HttpUtility.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Windows.Controls.Ribbon.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Windows.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Windows.Extensions.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Windows.Forms.Design.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Windows.Forms.Design.Editors.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Windows.Forms.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Windows.Forms.Primitives.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Windows.Input.Manipulations.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Windows.Presentation.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Xaml.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Xml.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Xml.Linq.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Xml.ReaderWriter.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Xml.Serialization.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Xml.XDocument.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Xml.XmlDocument.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Xml.XmlSerializer.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Xml.XPath.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\System.Xml.XPath.XDocument.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\UIAutomationClient.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\UIAutomationClientSideProviders.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\UIAutomationProvider.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\UIAutomationTypes.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\vcruntime140_cor3.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\WebView2Loader.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\WindowsBase.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\WindowsFormsIntegration.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\wpfgfx_cor3.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\cs\Microsoft.VisualBasic.Forms.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\cs\PresentationCore.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\cs\PresentationFramework.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\cs\PresentationUI.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\cs\ReachFramework.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\cs\System.Windows.Controls.Ribbon.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\cs\System.Windows.Forms.Design.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\cs\System.Windows.Forms.Primitives.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\cs\System.Windows.Forms.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\cs\System.Windows.Input.Manipulations.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\cs\System.Xaml.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\cs\UIAutomationClient.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\cs\UIAutomationClientSideProviders.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\cs\UIAutomationProvider.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\cs\UIAutomationTypes.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\cs\WindowsBase.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\cs\WindowsFormsIntegration.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\de\Microsoft.VisualBasic.Forms.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\de\PresentationCore.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\de\PresentationFramework.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\de\PresentationUI.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\de\ReachFramework.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\de\System.Windows.Controls.Ribbon.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\de\System.Windows.Forms.Design.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\de\System.Windows.Forms.Primitives.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\de\System.Windows.Forms.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\de\System.Windows.Input.Manipulations.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\de\System.Xaml.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\de\UIAutomationClient.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\de\UIAutomationClientSideProviders.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\de\UIAutomationProvider.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\de\UIAutomationTypes.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\de\WindowsBase.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\de\WindowsFormsIntegration.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\es\Microsoft.VisualBasic.Forms.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\es\PresentationCore.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\es\PresentationFramework.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\es\PresentationUI.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\es\ReachFramework.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\es\System.Windows.Controls.Ribbon.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\es\System.Windows.Forms.Design.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\es\System.Windows.Forms.Primitives.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\es\System.Windows.Forms.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\es\System.Windows.Input.Manipulations.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\es\System.Xaml.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\es\UIAutomationClient.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\es\UIAutomationClientSideProviders.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\es\UIAutomationProvider.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\es\UIAutomationTypes.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\es\WindowsBase.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\es\WindowsFormsIntegration.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\fr\Microsoft.VisualBasic.Forms.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\fr\PresentationCore.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\fr\PresentationFramework.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\fr\PresentationUI.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\fr\ReachFramework.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\fr\System.Windows.Controls.Ribbon.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\fr\System.Windows.Forms.Design.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\fr\System.Windows.Forms.Primitives.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\fr\System.Windows.Forms.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\fr\System.Windows.Input.Manipulations.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\fr\System.Xaml.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\fr\UIAutomationClient.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\fr\UIAutomationClientSideProviders.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\fr\UIAutomationProvider.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\fr\UIAutomationTypes.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\fr\WindowsBase.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\fr\WindowsFormsIntegration.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\it\Microsoft.VisualBasic.Forms.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\it\PresentationCore.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\it\PresentationFramework.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\it\PresentationUI.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\it\ReachFramework.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\it\System.Windows.Controls.Ribbon.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\it\System.Windows.Forms.Design.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\it\System.Windows.Forms.Primitives.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\it\System.Windows.Forms.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\it\System.Windows.Input.Manipulations.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\it\System.Xaml.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\it\UIAutomationClient.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\it\UIAutomationClientSideProviders.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\it\UIAutomationProvider.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\it\UIAutomationTypes.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\it\WindowsBase.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\it\WindowsFormsIntegration.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ja\Microsoft.VisualBasic.Forms.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ja\PresentationCore.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ja\PresentationFramework.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ja\PresentationUI.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ja\ReachFramework.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ja\System.Windows.Controls.Ribbon.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ja\System.Windows.Forms.Design.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ja\System.Windows.Forms.Primitives.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ja\System.Windows.Forms.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ja\System.Windows.Input.Manipulations.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ja\System.Xaml.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ja\UIAutomationClient.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ja\UIAutomationClientSideProviders.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ja\UIAutomationProvider.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ja\UIAutomationTypes.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ja\WindowsBase.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ja\WindowsFormsIntegration.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ko\Microsoft.VisualBasic.Forms.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ko\PresentationCore.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ko\PresentationFramework.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ko\PresentationUI.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ko\ReachFramework.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ko\System.Windows.Controls.Ribbon.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ko\System.Windows.Forms.Design.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ko\System.Windows.Forms.Primitives.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ko\System.Windows.Forms.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ko\System.Windows.Input.Manipulations.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ko\System.Xaml.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ko\UIAutomationClient.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ko\UIAutomationClientSideProviders.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ko\UIAutomationProvider.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ko\UIAutomationTypes.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ko\WindowsBase.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ko\WindowsFormsIntegration.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pl\Microsoft.VisualBasic.Forms.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pl\PresentationCore.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pl\PresentationFramework.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pl\PresentationUI.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pl\ReachFramework.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pl\System.Windows.Controls.Ribbon.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pl\System.Windows.Forms.Design.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pl\System.Windows.Forms.Primitives.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pl\System.Windows.Forms.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pl\System.Windows.Input.Manipulations.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pl\System.Xaml.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pl\UIAutomationClient.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pl\UIAutomationClientSideProviders.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pl\UIAutomationProvider.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pl\UIAutomationTypes.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pl\WindowsBase.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pl\WindowsFormsIntegration.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pt-BR\Microsoft.VisualBasic.Forms.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pt-BR\PresentationCore.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pt-BR\PresentationFramework.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pt-BR\PresentationUI.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pt-BR\ReachFramework.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pt-BR\System.Windows.Controls.Ribbon.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pt-BR\System.Windows.Forms.Design.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pt-BR\System.Windows.Forms.Primitives.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pt-BR\System.Windows.Forms.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pt-BR\System.Windows.Input.Manipulations.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pt-BR\System.Xaml.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pt-BR\UIAutomationClient.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pt-BR\UIAutomationClientSideProviders.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pt-BR\UIAutomationProvider.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pt-BR\UIAutomationTypes.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pt-BR\WindowsBase.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\pt-BR\WindowsFormsIntegration.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ru\Microsoft.VisualBasic.Forms.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ru\PresentationCore.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ru\PresentationFramework.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ru\PresentationUI.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ru\ReachFramework.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ru\System.Windows.Controls.Ribbon.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ru\System.Windows.Forms.Design.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ru\System.Windows.Forms.Primitives.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ru\System.Windows.Forms.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ru\System.Windows.Input.Manipulations.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ru\System.Xaml.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ru\UIAutomationClient.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ru\UIAutomationClientSideProviders.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ru\UIAutomationProvider.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ru\UIAutomationTypes.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ru\WindowsBase.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\ru\WindowsFormsIntegration.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\runtimes\win-x86\native\WebView2Loader.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\tr\Microsoft.VisualBasic.Forms.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\tr\PresentationCore.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\tr\PresentationFramework.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\tr\PresentationUI.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\tr\ReachFramework.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\tr\System.Windows.Controls.Ribbon.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\tr\System.Windows.Forms.Design.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\tr\System.Windows.Forms.Primitives.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\tr\System.Windows.Forms.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\tr\System.Windows.Input.Manipulations.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\tr\System.Xaml.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\tr\UIAutomationClient.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\tr\UIAutomationClientSideProviders.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\tr\UIAutomationProvider.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\tr\UIAutomationTypes.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\tr\WindowsBase.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\tr\WindowsFormsIntegration.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\WebApp\app.js
+SignatureStatus: NotSigned
+D:\NeoOptimize\temp_smoke\App\WebApp\index.html
+SignatureStatus: UnknownError
+D:\NeoOptimize\temp_smoke\App\WebApp\styles.css
+SignatureStatus: UnknownError
+D:\NeoOptimize\temp_smoke\App\WebApp\assets\icon.png
+SignatureStatus: UnknownError
+D:\NeoOptimize\temp_smoke\App\zh-Hans\Microsoft.VisualBasic.Forms.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hans\PresentationCore.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hans\PresentationFramework.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hans\PresentationUI.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hans\ReachFramework.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hans\System.Windows.Controls.Ribbon.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hans\System.Windows.Forms.Design.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hans\System.Windows.Forms.Primitives.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hans\System.Windows.Forms.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hans\System.Windows.Input.Manipulations.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hans\System.Xaml.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hans\UIAutomationClient.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hans\UIAutomationClientSideProviders.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hans\UIAutomationProvider.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hans\UIAutomationTypes.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hans\WindowsBase.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hans\WindowsFormsIntegration.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hant\Microsoft.VisualBasic.Forms.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hant\PresentationCore.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hant\PresentationFramework.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hant\PresentationUI.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hant\ReachFramework.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hant\System.Windows.Controls.Ribbon.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hant\System.Windows.Forms.Design.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hant\System.Windows.Forms.Primitives.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hant\System.Windows.Forms.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hant\System.Windows.Input.Manipulations.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hant\System.Xaml.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hant\UIAutomationClient.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hant\UIAutomationClientSideProviders.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hant\UIAutomationProvider.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hant\UIAutomationTypes.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hant\WindowsBase.resources.dll
+SignatureStatus: Valid
+D:\NeoOptimize\temp_smoke\App\zh-Hant\WindowsFormsIntegration.resources.dll
+SignatureStatus: Valid

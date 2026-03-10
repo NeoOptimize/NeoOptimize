@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8' />
+  <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+  <title>Health Check</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+    }
+    body { font-family: 'Segoe UI', sans-serif; background: #07101d; color: #edf4ff; padding: 32px; }
+    main { max-width: 880px; margin: 0 auto; background: #10203a; border-radius: 24px; padding: 32px; }
+    h1 { margin-top: 0; }
+    .meta { color: #8aa5c8; margin-bottom: 24px; }
+    ul { margin: 0 0 24px 18px; }
+    li { margin-bottom: 6px; }
+    .summary { margin-bottom: 16px; }
+    .footer { margin-top: 28px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1); }
+    .footer h3 { margin: 0 0 8px 0; }
+    .footer a { color: inherit; text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+    @media (prefers-color-scheme: light) {
+      body { background: #ffffff; color: #0f172a; }
+      main { background: #ffffff; border: 1px solid #e5e7eb; }
+      .meta { color: #475569; }
+      .footer { border-top: 1px solid #e5e7eb; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <p class='meta'>NeoOptimize report - 10 Mar 2026 18:51:44</p>
+    <h1>Health Check</h1>
+    <p class='summary'>Health Check selesai. Score 100, SFC clean, DISM clean, thermal unknown.</p>
+    <ul><li>Action: health_check</li>
+<li>Summary: Health Check selesai. Score 100, SFC clean, DISM clean, thermal unknown.</li>
+<li></li>
+<li>Output:</li>
+<li>{
+  &quot;overall_score&quot;: 100,
+  &quot;health_state&quot;: &quot;healthy&quot;,
+  &quot;report&quot;: {
+    &quot;generated_at_utc&quot;: &quot;2026-03-10T11:51:44.1415802+00:00&quot;,
+    &quot;machine_name&quot;: &quot;DESKTOP-Q2TCAUN&quot;,
+    &quot;os&quot;: &quot;Microsoft Windows 10.0.19045&quot;,
+    &quot;cpu_percent&quot;: 1,
+    &quot;ram_percent&quot;: 61.64,
+    &quot;gpu_percent&quot;: 0,
+    &quot;disk_usage_percent&quot;: 68.82,
+    &quot;disk_read_mbps&quot;: 0,
+    &quot;disk_write_mbps&quot;: 0,
+    &quot;temperature_celsius&quot;: null
+  },
+  &quot;recommendations&quot;: [],
+  &quot;issues&quot;: [],
+  &quot;sfc&quot;: {
+    &quot;status&quot;: &quot;clean&quot;,
+    &quot;exit_code&quot;: 0,
+    &quot;stdout&quot;: &quot;Beginning system scan.  This process will take some time.\r\r\n\r\r\nBeginning verification phase of system scan.\r\r\n\rVerification 0% complete.\rVerification 1% complete.\rVerification 1% complete.\rVerification 2% complete.\rVerification 2% complete.\rVerification 3% complete.\rVerification 4% complete.\rVerification 4% complete.\rVerification 5% complete.\rVerification 5% complete.\rVerification 6% complete.\rVerification 6% complete.\rVerification 7% complete.\rVerification 8% complete.\rVerification 8% complete.\rVerification 9% complete.\rVerification 9% complete.\rVerification 10% complete.\rVerification 10% complete.\rVerification 11% complete.\rVerification 12% complete.\rVerification 12% complete.\rVerification 13% complete.\rVerification 13% complete.\rVerification 14% complete.\rVerification 15% complete.\rVerification 15% complete.\rVerification 16% complete.\rVerification 16% complete.\rVerification 17% complete.\rVerification 17% complete.\rVerification 18% complete.\rVerification 19% complete.\rVerification 19% complete.\rVerification 20% complete.\rVerification 20% complete.\rVerification 21% complete.\rVerification 21% complete.\rVerification 22% complete.\rVerification 23% complete.\rVerification 23% complete.\rVerification 24% complete.\rVerification 24% complete.\rVerification 25% complete.\rVerification 26% complete.\rVerification 26% complete.\rVerification 27% complete.\rVerification 27% complete.\rVerification 28% complete.\rVerification 28% complete.\rVerification 29% complete.\rVerification 30% complete.\rVerification 30% complete.\rVerification 31% complete.\rVerification 31% complete.\rVerification 32% complete.\rVerification 32% complete.\rVerification 33% complete.\rVerification 34% complete.\rVerification 34% complete.\rVerification 35% complete.\rVerification 35% complete.\rVerification 36% complete.\rVerification 37% complete.\rVerification 37% complete.\rVerification 38% complete.\rVerification 38% complete.\rVerification 39% complete.\rVerification 39% complete.\rVerification 40% complete.\rVerification 41% complete.\rVerification 41% complete.\rVerification 42% complete.\rVerification 42% complete.\rVerification 43% complete.\rVerification 43% complete.\rVerification 44% complete.\rVerification 45% complete.\rVerification 45% complete.\rVerification 46% complete.\rVerification 46% complete.\rVerification 47% complete.\rVerification 48% complete.\rVerification 48% complete.\rVerification 49% complete.\rVerification 49% complete.\rVerification 50% complete.\rVerification 50% complete.\rVerification 51% complete.\rVerification 52% complete.\rVerification 52% complete.\rVerification 53% complete.\rVerification 53% complete.\rVerification 54% complete.\rVerification 54% complete.\rVerification 55% complete.\rVerification 56% complete.\rVerification 56% complete.\rVerification 57% complete.\rVerification 57% complete.\rVerification 58% complete.\rVerification 59% complete.\rVerification 59% complete.\rVerification 60% complete.\rVerification 60% complete.\rVerification 61% complete.\rVerification 61% complete.\rVerification 62% complete.\rVerification 63% complete.\rVerification 63% complete.\rVerification 64% complete.\rVerification 64% complete.\rVerification 65% complete.\rVerification 65% complete.\rVerification 66% complete.\rVerification 67% complete.\rVerification 67% complete.\rVerification 68% complete.\rVerification 68% complete.\rVerification 69% complete.\rVerification 70% complete.\rVerification 70% complete.\rVerification 71% complete.\rVerification 71% complete.\rVerification 72% complete.\rVerification 72% complete.\rVerification 73% complete.\rVerification 74% complete.\rVerification 74% complete.\rVerification 75% complete.\rVerification 75% complete.\rVerification 76% complete.\rVerification 76% complete.\rVerification 77% complete.\rVerification 78% complete.\rVerification 78% complete.\rVerification 79% complete.\rVerification 79% complete.\rVerification 80% complete.\rVerification 81% complete.\rVerification 81% complete.\rVerification 82% complete.\rVerification 82% complete.\rVerification 83% complete.\rVerification 83% complete.\rVerification 84% complete.\rVerification 85% complete.\rVerification 85% complete.\rVerification 86% complete.\rVerification 86% complete.\rVerification 87% complete.\rVerification 87% complete.\rVerification 88% complete.\rVerification 89% complete.\rVerification 89% complete.\rVerification 90% complete.\rVerification 90% complete.\rVerification 91% complete.\rVerification 92% complete.\rVerification 92% complete.\rVerification 93% complete.\rVerification 93% complete.\rVerification 94% complete.\rVerification 94% complete.\rVerification 95% complete.\rVerification 96% complete.\rVerification 96% complete.\rVerification 97% complete.\rVerification 97% complete.\rVerification 98% complete.\rVerification 98% complete.\rVerification 99% complete.\rVerification 100% complete.\r\n\r\r\nWindows Resource Protection did not find any integrity violations.&quot;,
+    &quot;stderr&quot;: &quot;&quot;
+  },
+  &quot;dism&quot;: {
+    &quot;status&quot;: &quot;clean&quot;,
+    &quot;exit_code&quot;: 0,
+    &quot;stdout&quot;: &quot;Deployment Image Servicing and Management tool\r\nVersion: 10.0.19041.3636\r\n\r\nImage Version: 10.0.19045.6937\r\n\r\nNo component store corruption detected.\r\nThe operation completed successfully.&quot;,
+    &quot;stderr&quot;: &quot;&quot;
+  },
+  &quot;errors&quot;: []
+}</li>
+<li></li>
+<li>Health Payload:</li>
+<li>{
+  &quot;overall_score&quot;: 100,
+  &quot;health_state&quot;: &quot;healthy&quot;,
+  &quot;sfc_status&quot;: &quot;clean&quot;,
+  &quot;dism_status&quot;: &quot;clean&quot;,
+  &quot;thermal_status&quot;: &quot;unknown&quot;,
+  &quot;integrity_status&quot;: &quot;local_manual_scan&quot;,
+  &quot;issues&quot;: [],
+  &quot;recommendations&quot;: [],
+  &quot;report&quot;: {
+    &quot;generated_at_utc&quot;: &quot;2026-03-10T11:51:44.1415802+00:00&quot;,
+    &quot;machine_name&quot;: &quot;DESKTOP-Q2TCAUN&quot;,
+    &quot;os&quot;: &quot;Microsoft Windows 10.0.19045&quot;,
+    &quot;cpu_percent&quot;: 1,
+    &quot;ram_percent&quot;: 61.64,
+    &quot;gpu_percent&quot;: 0,
+    &quot;disk_usage_percent&quot;: 68.82,
+    &quot;disk_read_mbps&quot;: 0,
+    &quot;disk_write_mbps&quot;: 0,
+    &quot;temperature_celsius&quot;: null
+  }
+}</li></ul>
+    <div class='footer'>
+      <h3>Kontak Developer: Sigit profesional IT</h3>
+      <p>WhatsApp: 087889911030<br/>Email: neooptimizeofficial@gmail.com</p>
+      <h3>Support</h3>
+      <p>
+        <a href='https://buymeacoffee.com/nol.eight'>BuyMeACoffee</a><br/>
+        <a href='https://saweria.co/dtechtive'>Saweria</a><br/>
+        <a href='https://ik.imagekit.io/dtechtive/Dana'>Dana</a>
+      </p>
+    </div>
+  </main>
+</body>
+</html>

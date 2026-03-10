@@ -39,6 +39,7 @@ class TelemetryPayload(BaseModel):
     disk_usage_percent: float | None = Field(default=None, ge=0, le=100)
     disk_read_mbps: float | None = Field(default=None, ge=0)
     disk_write_mbps: float | None = Field(default=None, ge=0)
+    network_mbps: float | None = Field(default=None, ge=0)
     temperature_celsius: float | None = None
     process_count: int | None = Field(default=None, ge=0)
     top_processes: list[dict[str, Any]] = Field(default_factory=list)

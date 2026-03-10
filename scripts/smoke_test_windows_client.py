@@ -22,7 +22,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--service-dll",
         default=r"d:\NeoOptimize\client_windows\NeoOptimize\src\NeoOptimize.Service\bin\Debug\net8.0\NeoOptimize.Service.dll",
-        help="Path to NeoOptimize.Service.dll",
+        help="Path to NeoOptimize.Service.dll when running framework-dependent builds.",
+    )
+    parser.add_argument(
+        "--service-exe",
+        default=None,
+        help="Path to NeoOptimize.Service.exe for self-contained publish outputs.",
     )
     parser.add_argument(
         "--app-exe",
@@ -121,10 +126,21 @@ def main() -> int:
         raise SystemExit("Missing --db-url or SUPABASE_DB_URL")
 
     backend_url = args.backend_url
+    service_exe = Path(args.service_exe) if args.service_exe else None
     service_dll = Path(args.service_dll)
     app_exe = Path(args.app_exe)
-    if not service_dll.exists():
-        raise SystemExit(f"Service DLL not found: {service_dll}")
+
+    if service_exe is not None:
+        if not service_exe.exists():
+            raise SystemExit(f"Service EXE not found: {service_exe}")
+        service_command = [str(service_exe)]
+        service_working_dir = service_exe.parent
+    else:
+        if not service_dll.exists():
+            raise SystemExit(f"Service DLL not found: {service_dll}")
+        service_command = ["dotnet", str(service_dll)]
+        service_working_dir = service_dll.parent
+
     if not app_exe.exists():
         raise SystemExit(f"App EXE not found: {app_exe}")
 
@@ -157,7 +173,7 @@ def main() -> int:
             "NeoOptimize__AppVersion": "0.2.1-service-smoke",
             "NeoOptimize__RegistrationStatePath": str(service_registration),
         }
-        service_process = start_process(["dotnet", str(service_dll)], service_dll.parent, service_env, service_log)
+        service_process = start_process(service_command, service_working_dir, service_env, service_log)
         service_registration_payload = wait_for_file(service_registration, args.timeout_seconds)
         service_client_id = read_registration_client_id(service_registration_payload)
         if not service_client_id:

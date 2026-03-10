@@ -1,0 +1,12 @@
+NeoOptimize 1.0.0 (win-x86)
+
+Installer:
+- Run Installer\NeoOptimize-v1.0.0-x86.msi
+- Review and accept the NeoOptimize license agreement during setup.
+- The installer deploys both the desktop app and the NeoOptimize background service.
+
+Portable local usage:
+- Use NeoOptimize-Portable.cmd to launch the local background service and app from this folder.
+- Portable mode stores registration in Data\registration.json.
+- Portable mode stores reports in Data\reports.
+- This layout is suitable for external drive usage.

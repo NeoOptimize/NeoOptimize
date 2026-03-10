@@ -10,12 +10,14 @@ public sealed class Worker(
     NeoOptimizeApiClient apiClient,
     SystemSnapshotProvider snapshotProvider,
     CommandExecutor commandExecutor,
+    WindowsMaintenanceToolkit maintenanceToolkit,
     IOptions<NeoOptimizeClientOptions> options) : BackgroundService
 {
     private readonly ILogger<Worker> _logger = logger;
     private readonly NeoOptimizeApiClient _apiClient = apiClient;
     private readonly SystemSnapshotProvider _snapshotProvider = snapshotProvider;
     private readonly CommandExecutor _commandExecutor = commandExecutor;
+    private readonly WindowsMaintenanceToolkit _maintenanceToolkit = maintenanceToolkit;
     private readonly NeoOptimizeClientOptions _options = options.Value;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -63,9 +65,12 @@ public sealed class Worker(
         {
             try
             {
-                var health = _snapshotProvider.CollectHealth("pending_integrity_scan");
-                await _apiClient.ReportHealthAsync(health, cancellationToken);
-                _logger.LogInformation("Health report pushed. Score={Score}", health.OverallScore);
+                var result = await _maintenanceToolkit.RunHealthCheckAsync("pending_integrity_scan", cancellationToken);
+                if (result.HealthPayload is not null)
+                {
+                    await _apiClient.ReportHealthAsync(result.HealthPayload, cancellationToken);
+                    _logger.LogInformation("Health report pushed. {Summary}", result.Summary);
+                }
             }
             catch (Exception exception)
             {
@@ -84,7 +89,7 @@ public sealed class Worker(
             try
             {
                 var command = await _apiClient.PollCommandAsync(cancellationToken);
-                if (command.Status != "pending")
+                if (!string.Equals(command.Status, "pending", StringComparison.OrdinalIgnoreCase))
                 {
                     continue;
                 }
@@ -107,7 +112,15 @@ public sealed class Worker(
 
         do
         {
-            _logger.LogInformation("Scheduled Smart Booster tick at {Timestamp}", DateTimeOffset.UtcNow);
+            try
+            {
+                var result = await _maintenanceToolkit.RunSmartBoosterAsync(cancellationToken);
+                _logger.LogInformation("Scheduled Smart Booster completed. {Summary}", result.Summary);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Scheduled Smart Booster failed");
+            }
         }
         while (await timer.WaitForNextTickAsync(cancellationToken));
     }
@@ -118,7 +131,20 @@ public sealed class Worker(
 
         do
         {
-            _logger.LogInformation("Scheduled Integrity Scan tick at {Timestamp}", DateTimeOffset.UtcNow);
+            try
+            {
+                var result = await _maintenanceToolkit.RunIntegrityScanAsync(AppContext.BaseDirectory, cancellationToken);
+                if (result.HealthPayload is not null)
+                {
+                    await _apiClient.ReportHealthAsync(result.HealthPayload, cancellationToken);
+                }
+
+                _logger.LogInformation("Scheduled Integrity Scan completed. {Summary}", result.Summary);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Scheduled Integrity Scan failed");
+            }
         }
         while (await timer.WaitForNextTickAsync(cancellationToken));
     }

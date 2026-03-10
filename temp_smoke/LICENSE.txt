@@ -1,0 +1,38 @@
+NeoOptimize Software License Agreement
+Version 1.0.0
+
+This Software License Agreement ("Agreement") governs the installation and use of NeoOptimize, including the NeoOptimize desktop application, background service, installer assets, bundled web interface, and related documentation.
+
+1. Grant of License
+NeoOptimize grants you a non-exclusive, non-transferable license to install and use the software on Windows devices that you own or administer for personal, internal business, evaluation, or managed support purposes.
+
+2. Restrictions
+You may not:
+- remove or alter copyright, trademark, or product notices;
+- redistribute modified installer packages as official NeoOptimize releases;
+- bypass client authentication, hardware fingerprint validation, or service protections;
+- use the software to perform unlawful access, monitoring, or destructive activity.
+
+3. Updates and Connectivity
+Some features rely on online services, including the Neo AI backend, Hugging Face Space, and Supabase-connected APIs. Availability of those services may affect feature completeness.
+
+4. Telemetry and Logs
+By using NeoOptimize, you understand that system telemetry, health reports, command results, and action logs may be transmitted to configured backend services for optimization, diagnostics, audit, and support workflows.
+
+5. Safety and Administrative Operations
+Certain maintenance operations may require elevated permissions or a registered Windows Service. You are responsible for reviewing and approving execution in your environment.
+
+6. No Warranty
+The software is provided "as is" without warranties of any kind, express or implied, including merchantability, fitness for a particular purpose, and non-infringement.
+
+7. Limitation of Liability
+To the maximum extent permitted by law, NeoOptimize and its contributors are not liable for indirect, incidental, special, consequential, or exemplary damages arising from installation or use of the software.
+
+8. Termination
+This Agreement terminates automatically if you violate its terms. Upon termination, you must stop using the software and remove installed copies.
+
+9. Contact
+Support: neooptimizeofficial@gmail.com
+Project: https://github.com/NeoOptimize/NeoOptimize
+
+By installing NeoOptimize, you acknowledge that you have read and agree to this Agreement.

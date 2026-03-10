@@ -6,7 +6,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     app_name: str = "NeoOptimasi AI Backend"
-    app_version: str = "0.1.0"
+    app_version: str = "1.0.0"
     app_env: str = "development"
     debug: bool = False
     app_host: str = "0.0.0.0"
@@ -67,3 +67,4 @@ class Settings(BaseSettings):
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
+

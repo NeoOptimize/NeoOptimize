@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8' />
+  <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+  <title>Health Check</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+    }
+    body { font-family: 'Segoe UI', sans-serif; background: #07101d; color: #edf4ff; padding: 32px; }
+    main { max-width: 880px; margin: 0 auto; background: #10203a; border-radius: 24px; padding: 32px; }
+    h1 { margin-top: 0; }
+    .meta { color: #8aa5c8; margin-bottom: 24px; }
+    ul { margin: 0 0 24px 18px; }
+    li { margin-bottom: 6px; }
+    .summary { margin-bottom: 16px; }
+    .footer { margin-top: 28px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1); }
+    .footer h3 { margin: 0 0 8px 0; }
+    .footer a { color: inherit; text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+    @media (prefers-color-scheme: light) {
+      body { background: #ffffff; color: #0f172a; }
+      main { background: #ffffff; border: 1px solid #e5e7eb; }
+      .meta { color: #475569; }
+      .footer { border-top: 1px solid #e5e7eb; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <p class='meta'>NeoOptimize report - 10 Mar 2026 12:23:36</p>
+    <h1>Health Check</h1>
+    <p class='summary'>Health Check selesai. Score 76, SFC requires_admin, DISM requires_admin, thermal unknown.</p>
+    <ul><li>Action: health_check</li>
+<li>Summary: Health Check selesai. Score 76, SFC requires_admin, DISM requires_admin, thermal unknown.</li>
+<li></li>
+<li>Output:</li>
+<li>{
+  &quot;overall_score&quot;: 76,
+  &quot;health_state&quot;: &quot;warning&quot;,
+  &quot;report&quot;: {
+    &quot;generated_at_utc&quot;: &quot;2026-03-10T05:23:36.5178459+00:00&quot;,
+    &quot;machine_name&quot;: &quot;DESKTOP-Q2TCAUN&quot;,
+    &quot;os&quot;: &quot;Microsoft Windows 10.0.19045&quot;,
+    &quot;cpu_percent&quot;: 86,
+    &quot;ram_percent&quot;: 54.69,
+    &quot;gpu_percent&quot;: 62,
+    &quot;disk_usage_percent&quot;: 68.74,
+    &quot;disk_read_mbps&quot;: 0,
+    &quot;disk_write_mbps&quot;: 0.11,
+    &quot;temperature_celsius&quot;: null
+  },
+  &quot;recommendations&quot;: [
+    &quot;CPU tinggi. Audit proses latar belakang dan pertimbangkan Smart Booster.&quot;,
+    &quot;SFC membutuhkan hak administrator. Jalankan lewat service atau terminal elevated.&quot;,
+    &quot;DISM membutuhkan hak administrator untuk verifikasi komponen OS.&quot;
+  ],
+  &quot;issues&quot;: [
+    {
+      &quot;type&quot;: &quot;cpu&quot;,
+      &quot;value&quot;: 86
+    },
+    {
+      &quot;type&quot;: &quot;sfc&quot;,
+      &quot;value&quot;: &quot;requires_admin&quot;
+    },
+    {
+      &quot;type&quot;: &quot;dism&quot;,
+      &quot;value&quot;: &quot;requires_admin&quot;
+    }
+  ],
+  &quot;sfc&quot;: {
+    &quot;status&quot;: &quot;requires_admin&quot;,
+    &quot;exit_code&quot;: 1,
+    &quot;stdout&quot;: &quot;You must be an administrator running a console session in order to \r\r\nuse the sfc utility.&quot;,
+    &quot;stderr&quot;: &quot;&quot;
+  },
+  &quot;dism&quot;: {
+    &quot;status&quot;: &quot;requires_admin&quot;,
+    &quot;exit_code&quot;: 740,
+    &quot;stdout&quot;: &quot;Error: 740\r\n\r\nElevated permissions are required to run DISM. \r\nUse an elevated command prompt to complete these tasks.&quot;,
+    &quot;stderr&quot;: &quot;&quot;
+  },
+  &quot;errors&quot;: []
+}</li>
+<li></li>
+<li>Health Payload:</li>
+<li>{
+  &quot;overall_score&quot;: 76,
+  &quot;health_state&quot;: &quot;warning&quot;,
+  &quot;sfc_status&quot;: &quot;requires_admin&quot;,
+  &quot;dism_status&quot;: &quot;requires_admin&quot;,
+  &quot;thermal_status&quot;: &quot;unknown&quot;,
+  &quot;integrity_status&quot;: &quot;local_manual_scan&quot;,
+  &quot;issues&quot;: [
+    {
+      &quot;type&quot;: &quot;cpu&quot;,
+      &quot;value&quot;: 86
+    },
+    {
+      &quot;type&quot;: &quot;sfc&quot;,
+      &quot;value&quot;: &quot;requires_admin&quot;
+    },
+    {
+      &quot;type&quot;: &quot;dism&quot;,
+      &quot;value&quot;: &quot;requires_admin&quot;
+    }
+  ],
+  &quot;recommendations&quot;: [
+    &quot;CPU tinggi. Audit proses latar belakang dan pertimbangkan Smart Booster.&quot;,
+    &quot;SFC membutuhkan hak administrator. Jalankan lewat service atau terminal elevated.&quot;,
+    &quot;DISM membutuhkan hak administrator untuk verifikasi komponen OS.&quot;
+  ],
+  &quot;report&quot;: {
+    &quot;generated_at_utc&quot;: &quot;2026-03-10T05:23:36.5178459+00:00&quot;,
+    &quot;machine_name&quot;: &quot;DESKTOP-Q2TCAUN&quot;,
+    &quot;os&quot;: &quot;Microsoft Windows 10.0.19045&quot;,
+    &quot;cpu_percent&quot;: 86,
+    &quot;ram_percent&quot;: 54.69,
+    &quot;gpu_percent&quot;: 62,
+    &quot;disk_usage_percent&quot;: 68.74,
+    &quot;disk_read_mbps&quot;: 0,
+    &quot;disk_write_mbps&quot;: 0.11,
+    &quot;temperature_celsius&quot;: null
+  }
+}</li></ul>
+    <div class='footer'>
+      <h3>Kontak Developer: Sigit profesional IT</h3>
+      <p>WhatsApp: 087889911030<br/>Email: neooptimizeofficial@gmail.com</p>
+      <h3>Support</h3>
+      <p>
+        <a href='https://buymeacoffee.com/nol.eight'>BuyMeACoffee</a><br/>
+        <a href='https://saweria.co/dtechtive'>Saweria</a><br/>
+        <a href='https://ik.imagekit.io/dtechtive/Dana'>Dana</a>
+      </p>
+    </div>
+  </main>
+</body>
+</html>

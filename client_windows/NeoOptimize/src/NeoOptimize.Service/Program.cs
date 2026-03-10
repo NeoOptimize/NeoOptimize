@@ -5,12 +5,18 @@ using NeoOptimize.Service;
 
 var builder = Host.CreateApplicationBuilder(args);
 
+builder.Services.AddWindowsService(options =>
+{
+    options.ServiceName = "NeoOptimize Service";
+});
+
 builder.Services.AddOptions<NeoOptimizeClientOptions>()
     .Bind(builder.Configuration.GetSection(NeoOptimizeClientOptions.SectionName));
 
 builder.Services.AddSingleton<HardwareFingerprintService>();
 builder.Services.AddSingleton<RegistrationStore>();
 builder.Services.AddSingleton<SystemSnapshotProvider>();
+builder.Services.AddSingleton<WindowsMaintenanceToolkit>();
 builder.Services.AddSingleton<CommandExecutor>();
 builder.Services.AddHttpClient<NeoOptimizeApiClient>((serviceProvider, client) =>
 {

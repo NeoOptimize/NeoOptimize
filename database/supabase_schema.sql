@@ -81,6 +81,7 @@ create table if not exists public.telemetry_logs (
     disk_usage_percent numeric(5,2),
     disk_read_mbps numeric(10,2),
     disk_write_mbps numeric(10,2),
+    network_mbps numeric(10,2),
     temperature_celsius numeric(6,2),
     process_count integer,
     alert_state text not null default 'normal',

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NeoOptimize Command Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
+  <link rel="stylesheet" href="./styles.css" />
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <div class="orb orb-left"></div>
+  <div class="orb orb-right"></div>
+  <div class="grid-noise"></div>
+
+  <main class="app-shell">
+    <header class="topbar panel reveal">
+      <div class="brand-lockup">
+        <img src="./assets/icon.png" alt="NeoOptimize mascot" class="brand-mark" />
+        <div>
+          <p class="eyebrow">Neo AI Windows Command Center</p>
+          <h1>NeoOptimize</h1>
+          <p class="subtle-copy" id="heroSubtitle">Client akan register ke Hugging Face Space, memantau kondisi lokal, lalu mengirim insight dan command execution ke Supabase.</p>
+        </div>
+      </div>
+
+      <div class="header-meta">
+        <div class="identity-strip">
+          <div class="status-chip status-live" id="connectionStatus">Menghubungkan</div>
+          <div class="identity-card">
+            <span class="identity-label">Client ID</span>
+            <strong id="clientId">Belum terdaftar</strong>
+          </div>
+          <div class="identity-card compact">
+            <span class="identity-label">Backend</span>
+            <strong id="backendUrl">-</strong>
+          </div>
+        </div>
+
+        <div class="control-strip">
+          <button class="update-button" id="checkUpdateBtn">Check Update</button>
+          <div class="chip-group" id="themeGroup">
+            <button data-theme="system" class="chip is-active">System</button>
+            <button data-theme="light" class="chip">Light</button>
+            <button data-theme="night" class="chip">Night</button>
+          </div>
+          <div class="chip-group" id="langGroup">
+            <button data-lang="id" class="chip is-active">ID</button>
+            <button data-lang="en" class="chip">EN</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="hero-grid reveal">
+      <article class="hero-panel panel">
+        <div class="hero-copy">
+          <p class="eyebrow" id="heroEyebrow">Live Operations</p>
+          <h2 id="heroTitle">Cockpit real-time untuk optimasi Windows, observability, dan AI execution loop.</h2>
+          <p class="hero-text" id="heroText">Semua panel di bawah ditenagai data lokal dari desktop client dan respons live dari backend Neo AI.</p>
+        </div>
+
+        <div class="hero-signals">
+          <article class="signal-card">
+            <span class="signal-label">Health State</span>
+            <strong id="healthStateBadge">unknown</strong>
+            <small id="healthDetail">Menunggu health report</small>
+          </article>
+          <article class="signal-card">
+            <span class="signal-label">Integrity</span>
+            <strong id="integrityBadge">pending</strong>
+            <small id="integrityDetail">Belum ada hasil scan</small>
+          </article>
+          <article class="signal-card">
+            <span class="signal-label">Processes</span>
+            <strong id="processCount">0</strong>
+            <small id="processDetail">Belum ada snapshot</small>
+          </article>
+          <article class="signal-card">
+            <span class="signal-label">Release</span>
+            <strong id="versionBadge">1.0.0</strong>
+            <small id="updateDetail">Belum cek update</small>
+          </article>
+        </div>
+      </article>
+
+      <aside class="assistant-panel panel">
+        <div class="section-head compact">
+          <div>
+            <p class="eyebrow">Neo AI</p>
+            <h3 id="aiPanelTitle">Copilot siap memberi analisis</h3>
+          </div>
+          <span class="status-chip status-neutral" id="aiStatus">Standby</span>
+        </div>
+
+        <div class="chat-stream" id="chatStream"></div>
+        <div class="memory-strip" id="memoryStrip"></div>
+        <div class="plan-list" id="plannedActions"></div>
+
+        <form id="aiForm" class="ai-form">
+          <textarea id="aiPrompt" rows="4" placeholder="Contoh: PC terasa lambat saat startup, analisa dan sarankan tindakan aman."></textarea>
+          <div class="ai-form-footer">
+            <label class="toggle-row">
+              <input type="checkbox" id="dispatchActions" />
+              <span id="dispatchLabel">Eksekusi tindakan yang disarankan</span>
+            </label>
+            <button type="submit" class="primary-button" id="aiSubmit">Analisa dengan Neo AI</button>
+          </div>
+        </form>
+      </aside>
+    </section>
+
+    <section class="stats-grid reveal" id="statsGrid"></section>
+
+    <section class="ops-grid reveal">
+      <article class="panel command-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Real Actions</p>
+            <h3 id="actionsTitle">Eksekusi lokal</h3>
+          </div>
+          <button class="secondary-button" id="refreshButton">Refresh Snapshot</button>
+        </div>
+
+        <div class="actions-grid">
+          <button class="action-card" data-action="smartBoost">
+            <span class="action-kicker">Quick boost</span>
+            <strong>Smart Boost</strong>
+            <p>Flush DNS, cleanup temp, dan reset jalur optimasi ringan secara lokal.</p>
+          </button>
+          <button class="action-card" data-action="smartOptimize">
+            <span class="action-kicker">AI workflow</span>
+            <strong>Smart Optimize</strong>
+            <p>Gabungkan booster, observasi proses, dan rekomendasi tindakan lanjutan.</p>
+          </button>
+          <button class="action-card" data-action="healthCheck">
+            <span class="action-kicker">Diagnostics</span>
+            <strong>Health Check</strong>
+            <p>Kumpulkan ringkasan health, skor sistem, dan status runtime OS.</p>
+          </button>
+          <button class="action-card" data-action="integrityScan">
+            <span class="action-kicker">Security</span>
+            <strong>Integrity Scan</strong>
+            <p>Hash folder aplikasi dan catat perubahan file yang terdeteksi.</p>
+          </button>
+        </div>
+
+        <div class="toast-zone" id="toastZone"></div>
+      </article>
+
+      <article class="panel telemetry-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Telemetry Timeline</p>
+            <h3 id="telemetryTitle">Live metric history</h3>
+          </div>
+          <span class="status-chip status-neutral" id="lastSample">Belum ada sample</span>
+        </div>
+
+        <div class="chart-shell">
+          <canvas id="telemetryChart" height="180"></canvas>
+        </div>
+
+        <div class="process-shell">
+          <div class="process-head">
+            <div>
+              <p class="eyebrow">Top Processes</p>
+              <h4>Working set teratas</h4>
+            </div>
+            <span class="muted" id="machineName">-</span>
+          </div>
+          <div class="process-list" id="processList"></div>
+        </div>
+      </article>
+    </section>
+
+    <section class="detail-grid reveal">
+      <article class="panel activity-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Recent Activity</p>
+            <h3 id="activityTitle">Execution timeline</h3>
+          </div>
+        </div>
+        <div class="activity-list" id="activityList"></div>
+      </article>
+
+      <article class="panel reports-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Reports</p>
+            <h3 id="reportsTitle">Laporan lokal</h3>
+          </div>
+          <button class="secondary-button" id="reloadReports">Reload Reports</button>
+        </div>
+        <div class="reports-grid" id="reportsGrid"></div>
+      </article>
+    </section>
+
+    <footer class="panel footer reveal">
+      <div>
+        <p class="eyebrow">Support Channels</p>
+        <h3>NeoOptimize support and release links</h3>
+      </div>
+      <div class="footer-links">
+        <a href="https://wa.me/6287889911030" target="_blank" rel="noreferrer">WhatsApp</a>
+        <a href="mailto:neooptimizeofficial@gmail.com">Email</a>
+        <a href="https://buymeacoffee.com/nol.eight" target="_blank" rel="noreferrer">BuyMeACoffee</a>
+        <a href="https://saweria.co/dtechtive" target="_blank" rel="noreferrer">Saweria</a>
+        <a id="releaseLink" href="https://github.com/NeoOptimize/NeoOptimize/releases" target="_blank" rel="noreferrer">Release</a>
+      </div>
+    </footer>
+  </main>
+</body>
+</html>
+
+

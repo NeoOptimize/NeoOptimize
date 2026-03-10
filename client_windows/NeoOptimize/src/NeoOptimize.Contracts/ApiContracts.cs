@@ -61,6 +61,9 @@ public sealed class TelemetryPayload
     [JsonPropertyName("disk_write_mbps")]
     public double? DiskWriteMbps { get; init; }
 
+    [JsonPropertyName("network_mbps")]
+    public double? NetworkMbps { get; init; }
+
     [JsonPropertyName("temperature_celsius")]
     public double? TemperatureCelsius { get; init; }
 

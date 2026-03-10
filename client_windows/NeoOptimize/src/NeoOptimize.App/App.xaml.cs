@@ -15,7 +15,10 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
-        var builder = Host.CreateApplicationBuilder();
+        var builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings
+        {
+            ContentRootPath = AppContext.BaseDirectory,
+        });
         builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
         builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
         builder.Configuration.AddEnvironmentVariables();
@@ -26,6 +29,7 @@ public partial class App : Application
         builder.Services.AddSingleton<HardwareFingerprintService>();
         builder.Services.AddSingleton<RegistrationStore>();
         builder.Services.AddSingleton<SystemSnapshotProvider>();
+        builder.Services.AddSingleton<WindowsMaintenanceToolkit>();
         builder.Services.AddSingleton<ReportStore>();
         builder.Services.AddSingleton<DesktopActionRunner>();
         builder.Services.AddHttpClient<NeoOptimizeApiClient>((serviceProvider, client) =>
@@ -55,3 +59,4 @@ public partial class App : Application
         base.OnExit(e);
     }
 }
+
