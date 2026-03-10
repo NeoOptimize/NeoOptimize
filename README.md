@@ -3,6 +3,8 @@
 [![Stars](https://img.shields.io/github/stars/NeoOptimize/NeoOptimize?style=flat-square)](https://github.com/NeoOptimize/NeoOptimize)
 [![Forks](https://img.shields.io/github/forks/NeoOptimize/NeoOptimize?style=flat-square)](https://github.com/NeoOptimize/NeoOptimize)
 [![Issues](https://img.shields.io/github/issues/NeoOptimize/NeoOptimize?style=flat-square)](https://github.com/NeoOptimize/NeoOptimize/issues)
+[![License](https://img.shields.io/badge/license-Custom-blue?style=flat-square)](#-license)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue?style=flat-square)](https://www.python.org)
 [![Windows 10/11/12](https://img.shields.io/badge/windows-10%2F11%2F12-blue?style=flat-square)](#-features)
 
 > Professional-grade AI-powered Windows optimization system | System cleaning, disk optimization, privacy protection, and autonomous monitoring with explicit consent.
@@ -13,53 +15,91 @@
 
 ## Features
 
-### Implemented in v1.0
+### Smart Cleaners
+- Temporary Files (Implemented)
+- Browser Cache (Planned)
+- Recycle Bin (Planned)
+- Registry Cleanup (Planned)
+- Prefetch Files (Planned)
 
-- Smart Boost: free RAM, flush DNS, clean temp, optimize priority.
-- Smart Optimize: deep cleanup, dump file cleanup, optional bloatware removal.
-- Health Check: OS diagnostics (SFC/DISM status checks).
-- Integrity Scan: SHA-256 verification for NeoOptimize installation files.
-- Real-time monitoring: CPU/RAM/GPU/Disk IO alerting.
-- HTML reports: clickable and viewable in browser.
-- Neo AI chat with voice commands (speech-to-text).
-- Consent gating and Auto/Manual execution toggle.
+### Disk Optimization
+- HDD Defragmentation (Planned)
+- SSD TRIM (Planned)
+- Disk Scanning and Repair (Planned)
+- Free Space Wipe (Planned)
 
-### In Progress / Planned
+### System Health
+- SFC Status Check (Implemented)
+- DISM Status Check (Implemented)
+- Driver Updates (Planned)
+- System Restore Point (Planned)
 
-- Browser cache cleaning (Chrome, Edge, Firefox).
-- Registry cleanup.
-- Disk optimization (defrag, TRIM, scan/repair).
-- Driver update scan and maintenance.
-- Privacy controls (telemetry and history cleanup).
-- Backup and restore point automation.
-- Remote troubleshooting (consent required).
+### Privacy and Security
+- Remove Bloatware (Implemented, optional)
+- Disable Telemetry (Planned)
+- Privacy Cleanup (Planned)
+
+### AI-Powered Features
+- Smart Boost (Implemented)
+- Smart Optimize (Implemented)
+- AI Chat Assistant (Implemented)
+- 24/7 Monitoring (Implemented)
+- Hugging Face Integration (Implemented)
+
+### Professional Interface
+- Web Dashboard (Implemented)
+- REST API (Implemented)
+- Swagger UI (Implemented at `/docs`)
+- Dry-run Preview (Planned)
 
 ---
 
-## Quick Start (End Users)
+## Quick Start
 
-1. Install x64 or x86 build and run as Administrator.
-2. Choose install location (C: or D:).
-3. Ensure WebView2 runtime is installed.
-4. Launch the app and review consent settings.
+### Prerequisites
+- Windows 10/11/12
+- Python 3.10+ (backend development)
+- Administrator privileges for maintenance actions
 
----
-
-## Quick Start (Backend Dev, Optional)
-
+### Installation
 ```bash
-cd backend
-pip install -r requirements.txt
-python -m uvicorn app.main:app --host 0.0.0.0 --port 7860
+# Clone repository
+git clone https://github.com/NeoOptimize/NeoOptimize.git
+cd NeoOptimize/backend
+
+# Run auto-setup
+start_backend.bat
+
+# In new terminal
+start_ui.bat
+
+# Open http://localhost:7861
 ```
 
-Required environment variables:
+---
 
-- `SUPABASE_URL`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `SUPABASE_ANON_KEY`
-- `HF_TOKEN`
-- `HF_MODEL_ID`
+## Features at a Glance
+
+| Category | Status |
+|----------|--------|
+| Cleaners | Implemented (core) + planned extensions |
+| Disk Optimization | Planned |
+| System Health | Implemented (SFC/DISM status) |
+| Privacy and Security | Implemented (bloatware optional) + planned |
+| Monitoring | Implemented |
+| AI Features | Implemented (chat, Smart Boost/Optimize) |
+| REST API | Implemented |
+| Web Interface | Implemented |
+
+---
+
+## Documentation
+
+- [Project Structure](./docs/project-structure.md)
+- [Backend Quickstart](./backend/QUICKSTART.md)
+- [Backend Integration](./backend/INTEGRATION.md)
+- [Tutorials](./TUTORIALS.md)
+- [Release Guide](./FINAL_RELEASE_GUIDE.md)
 
 ---
 
@@ -83,9 +123,50 @@ If a phrase does not match, Neo AI will fall back to chat assistance.
 
 ---
 
-## Reports
+## REST API
 
-Reports are generated as HTML files (format: `report-dd-MM-yyyy.html`) in the reports folder configured in app settings. They are clickable from the Reports panel.
+```bash
+# System info (example)
+curl -H "X-API-Key: <your_api_key>" http://localhost:7860/system-info
+
+# Smart advice (example)
+curl -H "X-API-Key: <your_api_key>" http://localhost:7860/smart-advice
+
+# Execute action (example)
+curl -X POST -H "X-API-Key: <your_api_key>" \
+  -H "Content-Type: application/json" \
+  -d '{"tool_name":"smart_boost","dry_run":true}' \
+  http://localhost:7860/execute-tool
+```
+
+Interactive API Docs: http://localhost:7860/docs
+
+---
+
+## Integration Examples
+
+### JavaScript (WebView2)
+```javascript
+const neoAI = new NeoAIClient('http://localhost:7860', 'api_key');
+const result = await neoAI.executeTool('smart_boost', {}, true);
+console.log(result);
+```
+
+### C# (.NET WPF)
+```csharp
+var service = new NeoAIBackendService();
+var info = await service.GetSystemInfoAsync();
+var result = await service.SmartBoostAsync(dryRun: true);
+```
+
+---
+
+## Safety Features
+
+- Explicit consent gating before execution
+- Full logging and audit trail
+- Safe error handling and rollback strategy
+- Requires admin for maintenance actions
 
 ---
 
@@ -114,25 +195,25 @@ Market test phase uses a 90-day trial that starts on first launch. After the tri
 ## System Requirements
 
 ### Minimum
-
 - OS: Windows 10 Version 1809+
 - RAM: 4 GB
 - Disk: 500 MB free
 
 ### Recommended
-
 - OS: Windows 11/12
 - RAM: 8 GB+
 
 ---
 
-## Security
+## License
 
-See [SECURITY.md](./SECURITY.md) for reporting issues.
+NeoOptimize Software License Agreement. See [LICENSE.txt](./LICENSE.txt).
+
+---
 
 ## Contributing
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md).
+We welcome contributions. See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ---
 
@@ -142,3 +223,5 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md).
 - Supabase
 - Hugging Face
 - WebView2
+- Anime.js
+- Lottie
