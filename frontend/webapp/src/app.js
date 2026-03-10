@@ -935,7 +935,8 @@ function animateTray() {
 }
 
 function initMiniTrayAnimations() {
-  if (!window.lottie) {
+  const lottie = window.lottie || window.bodymovin;
+  if (!lottie) {
     return;
   }
 
@@ -943,7 +944,7 @@ function initMiniTrayAnimations() {
   const cleanerContainer = document.getElementById('lottieCleaner');
 
   if (chatbotContainer) {
-    window.lottie.loadAnimation({
+    lottie.loadAnimation({
       container: chatbotContainer,
       renderer: 'svg',
       loop: true,
@@ -953,7 +954,7 @@ function initMiniTrayAnimations() {
   }
 
   if (cleanerContainer) {
-    window.lottie.loadAnimation({
+    lottie.loadAnimation({
       container: cleanerContainer,
       renderer: 'svg',
       loop: true,

@@ -20,7 +20,9 @@
         "clean_temp",
         "trim_working_set",
         "stop_optional_processes",
-        "priority_optimization"
+        "priority_optimization",
+        "dump_cleanup",
+        "bloatware_removal"
       ]
     },
     "health_check": {
