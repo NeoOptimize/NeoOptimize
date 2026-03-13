@@ -4,7 +4,7 @@ uvicorn[standard]==0.24.0
 python-multipart==0.0.6
 
 # Frontend
-gradio==4.15.0
+gradio==6.7.0
 
 # AI & ML
 langchain==0.1.0
