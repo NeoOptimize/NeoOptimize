@@ -1,0 +1,229 @@
+name: Build & Release NeoOptimize
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'          # Trigger on version tags: v1.1.0, v1.2.0, etc.
+  workflow_dispatch:       # Allow manual trigger from GitHub UI
+    inputs:
+      version:
+        description: 'Version to build (e.g. 1.1.0)'
+        required: true
+        default: '1.1.0'
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  PROJECT_PATH: client_windows/NeoOptimize/src/NeoOptimize.App/NeoOptimize.App.csproj
+  TEST_PROJECT:  client_windows/NeoOptimize/src/NeoOptimize.Tests/NeoOptimize.Tests.csproj
+  PUBLISH_DIR:   artifacts/publish
+  ARTIFACTS_DIR: artifacts
+
+jobs:
+  # ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  # JOB 1: Build & Test
+  # ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  build:
+    name: Build & Test (.NET ${{ env.DOTNET_VERSION }})
+    runs-on: windows-latest
+
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get Version
+        id: get_version
+        shell: pwsh
+        run: |
+          if ("${{ github.event_name }}" -eq "workflow_dispatch") {
+            $v = "${{ github.event.inputs.version }}"
+          } else {
+            $v = "${{ github.ref_name }}".TrimStart("v")
+          }
+          echo "version=$v" >> $env:GITHUB_OUTPUT
+          Write-Host "Building version: $v"
+
+      - name: Setup .NET ${{ env.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore ${{ env.PROJECT_PATH }}
+
+      - name: Build
+        run: dotnet build ${{ env.PROJECT_PATH }} --configuration Release --no-restore
+
+      - name: Run Unit Tests
+        run: |
+          dotnet test ${{ env.TEST_PROJECT }} `
+            --configuration Release `
+            --logger "trx;LogFileName=test_results.trx" `
+            --results-directory "${{ env.ARTIFACTS_DIR }}/test_results"
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: ${{ env.ARTIFACTS_DIR }}/test_results
+
+      - name: Publish (win-x64, framework-dependent)
+        run: |
+          dotnet publish ${{ env.PROJECT_PATH }} `
+            /p:PublishProfile=win-x64-release `
+            /p:Version=${{ steps.get_version.outputs.version }}
+
+      - name: Upload Publish Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: publish-win-x64
+          path: ${{ env.PUBLISH_DIR }}
+          retention-days: 3
+
+  # ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  # JOB 2: Package with Velopack + Inno Setup
+  # ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  package:
+    name: Package Installer
+    runs-on: windows-latest
+    needs: build
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Download Publish Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: publish-win-x64
+          path: ${{ env.PUBLISH_DIR }}
+
+      - name: Install Velopack CLI (vpk)
+        run: dotnet tool install -g vpk
+
+      - name: Create Velopack Package
+        shell: pwsh
+        run: |
+          $ver = "${{ needs.build.outputs.version }}"
+          New-Item -ItemType Directory -Force "artifacts/vpk" | Out-Null
+          vpk pack `
+            --packId NeoOptimize `
+            --packVersion $ver `
+            --packDir "${{ env.PUBLISH_DIR }}" `
+            --mainExe NeoOptimize.App.exe `
+            --outputDir artifacts/vpk `
+            --icon installer/resources/neooptimize.ico
+          Write-Host "Velopack package created for v$ver"
+
+      - name: Install Inno Setup
+        run: choco install innosetup --no-progress -y
+
+      - name: Compile Inno Setup Installer
+        shell: pwsh
+        env:
+          NEOOPTIMIZE_APP_SOURCE: ${{ github.workspace }}/${{ env.PUBLISH_DIR }}
+        run: |
+          $ver = "${{ needs.build.outputs.version }}"
+          # Patch version in .iss file
+          (Get-Content "installer/NeoOptimize.iss") `
+            -replace '#define AppVersion.*', "#define AppVersion `"$ver`"" |
+            Set-Content "installer/NeoOptimize.iss"
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "installer\NeoOptimize.iss"
+          Write-Host "Installer compiled: NeoOptimize-Setup-$ver.exe"
+
+      - name: Generate SHA256 Checksums
+        shell: pwsh
+        run: |
+          $ver   = "${{ needs.build.outputs.version }}"
+          $lines = @("# NeoOptimize v$ver ΓÇö SHA256 Checksums", "# Generated: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') UTC", "")
+
+          $targets = @(
+            "artifacts/NeoOptimize-Setup-$ver.exe",
+            "artifacts/vpk/*.nupkg"
+          )
+          foreach ($pattern in $targets) {
+            Get-ChildItem $pattern -ErrorAction SilentlyContinue | ForEach-Object {
+              $hash = (Get-FileHash $_ -Algorithm SHA256).Hash
+              $lines += "$hash  $($_.Name)"
+            }
+          }
+
+          # Create ZIP of publish dir
+          $zip = "artifacts/NeoOptimize-v$ver-win-x64.zip"
+          Compress-Archive -Path "${{ env.PUBLISH_DIR }}/*" -DestinationPath $zip -Force
+          $hash = (Get-FileHash $zip -Algorithm SHA256).Hash
+          $lines += "$hash  NeoOptimize-v$ver-win-x64.zip"
+
+          $lines | Set-Content "artifacts/CHECKSUMS-SHA256.txt"
+          Write-Host "Checksums written."
+
+      - name: Upload Installer Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: installer-artifacts
+          path: |
+            artifacts/NeoOptimize-Setup-*.exe
+            artifacts/NeoOptimize-*.zip
+            artifacts/CHECKSUMS-SHA256.txt
+            artifacts/vpk/
+
+  # ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  # JOB 3: GitHub Release
+  # ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [build, package]
+    if: startsWith(github.ref, 'refs/tags/')   # Only on tag push
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download Installer Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: installer-artifacts
+          path: release-files
+
+      - name: Read Changelog
+        id: changelog
+        run: |
+          # Extract the latest version block from CHANGELOG.md
+          BLOCK=$(awk '/^## \[/${{ needs.build.outputs.version }}\]/{found=1} found{print; if(/^## \[/ && !/^## \[${{ needs.build.outputs.version }}\]/) exit}' CHANGELOG.md)
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          echo "$BLOCK"    >> $GITHUB_OUTPUT
+          echo "EOF"       >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: NeoOptimize ${{ github.ref_name }}
+          body_path: ${{ github.workspace }}/CHANGELOG.md
+          draft: false
+          prerelease: false
+          files: |
+            release-files/NeoOptimize-Setup-*.exe
+            release-files/NeoOptimize-*.zip
+            release-files/CHECKSUMS-SHA256.txt

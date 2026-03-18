@@ -1,31 +1,189 @@
-# Logs
+# ============================================================
+# NEO OPTIMIZE AI - GIT IGNORE
+# ============================================================
+
+# Environment & Secrets =====================================
+.env
+.env.local
+.env.*.local
+secrets/
+.secrets/
+*.key
+*.pem
+client_secret_*.json
+credentials/
+
+# Python ==================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments ====================================
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# IDE & Editors ===========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+.code/
+.vscode-server/
+
+# Testing ================================================
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+*.coverage
+
+# Jupyter Notebook =======================================
+.ipynb_checkpoints
+*.ipynb
+
+# Logs & Logs ============================================
 logs/
 *.log
+*.log.*
+*.log~
+debug/
+trace/
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea/
+# Temporary Files ========================================
+*.tmp
+*.temp
+.tmp/
+*.bak
+*.backup
+*~
+*.swp
+.~*
+
+# OS Generated ===========================================
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# Build & Distribution ===================================
+/dist/
+/build/
+*.dist-info/
+.eggs/
+*.whl
+
+# Windows Specific =======================================
+*.exe
+*.dll
+*.pdb
+.vs/
+.vssettings
+
+# Database ================================================
+*.db
+*.sqlite
+*.sqlite3
+*.pkl
+*.pickle
+*.dbm
+
+# Cache ==================================================
+.cache/
+.pytest_cache/
+*.pyc
+*.pyo
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Node (if used) =========================================
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# Hugging Face ===========================================
+.cache/huggingface/
+*.bin
+*.pt
+*.pth
+*.ckpt
+models/
+
+# .NET & C# ==============================================
+bin/
+obj/
+*.user
 *.suo
-*.ntvs*
-*.njsproj
-*.sw?
+*.csproj.user
+.VS/
 
-# .NET build artifacts
-dotnet/**/bin/
-dotnet/**/obj/
-dotnet/out/
-dotnet/runtime/ai/
+# Artifacts & Test Outputs ===============================
+artifacts/*.log
+artifacts/test_results/
+test-results/
+coverage/
+# Publish output ΓÇö large binaries, distributed via GitHub Releases instead
+artifacts/publish/
+artifacts/vpk/
+artifacts/*.zip
+artifacts/*.nupkg
+# Keep the checksum file
+!artifacts/CHECKSUMS-SHA256.txt
+coverage/
 
-# Local runtime and release artifacts
-release/
-upload_release_output.txt
-msert x32.exe
-msert x64.exe
-NeoOptimize.rar
+# Diagnostic Data ========================================
+*.dmp
+*.dump
+core.*
+crash/
+memory.log
 
-# Local AI runtime/model artifacts
-gpt4all-installer-win64.exe
-OllamaSetup.exe
-*.gguf
+# Keep Important Files ===================================
+!.gitignore
+!README.md
+!LICENSE
+!.env.example
+!CHANGELOG.md
+!CONTRIBUTING.md
+
+# Neo Optimize Specific =================================
+DB admin supabase.txt
+temp/
+.backup/
+restore/
+old_versions/
