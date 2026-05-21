@@ -2,9 +2,12 @@
 
 AI-powered Windows optimization and maintenance client.
 
-NeoOptimize helps inspect, clean, diagnose, repair, and maintain Windows systems with a safety-first workflow. Public releases focus on the local Windows application only.
+NeoOptimize is a local Windows utility for inspecting system health, finding
+performance problems, cleaning safe junk files, auditing security posture,
+repairing common Windows issues, and producing before/after maintenance reports.
+Public releases focus on the NeoOptimize Windows client only.
 
-![NeoOptimize](assets/NeoOptimize_full_brand.png)
+![NeoOptimize Windows Client](assets/neooptimize-client-screenshot.png)
 
 ## Download
 
@@ -15,54 +18,170 @@ NeoOptimize helps inspect, clean, diagnose, repair, and maintain Windows systems
 | SHA-256 | `ee34b6733c7fb6958b84281937b18800bafb50fc0d903e7bb1d8ef6e2b5f0508` |
 | Release | https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.2.1-public-beta |
 
-Verify the checksum before running the installer.
+Verify the installer before running it:
 
 ```powershell
 Get-FileHash .\NeoOptimize.exe -Algorithm SHA256
 ```
 
-## Features
+The hash must match:
 
-- Professional Windows maintenance UI.
-- Real-time local monitoring for CPU, GPU, RAM, disk, network, process count, uptime, and device profile.
-- AI Doctor for health checks, anomaly review, maintenance suggestions, and safe script planning.
-- Safe Care Plan for audit, deep scan, diagnostics, light cleanup, and reports.
-- Disk cleaner, deep junk scan, Windows diagnostics, disk status, update audit, power audit, and profile checks.
-- Security audit mode for Defender, firewall, ASR, Controlled Folder Access, SMB, TLS, UAC, and exploit posture.
-- Defender Lab Recovery for restoring aggressive lab ASR/CFA/Network Protection settings to AuditMode without disabling Defender.
-- Secure Update Manager with credential gate, SHA-256 integrity verification, and repair flow.
-- Optional local AI provider support through NeoCore/Ollama style local workflows.
+```text
+ee34b6733c7fb6958b84281937b18800bafb50fc0d903e7bb1d8ef6e2b5f0508
+```
 
-## Safety
+## What NeoOptimize Does
 
-NeoOptimize is audit-first by default.
+NeoOptimize is designed for practical Windows maintenance, not cosmetic
+"one-click magic." It combines local telemetry, guided repair flows, and AI
+assisted recommendations so users can understand what is wrong before applying
+changes.
 
-- High-risk repair actions require confirmation.
-- Defender realtime protection is not silently disabled.
-- Public builds do not silently apply aggressive Defender hardening.
-- Risky Windows repair flows run in a visible console.
-- Reports are saved locally for review.
-- Camera, microphone, biometric data, browser secrets, private keys, and documents are not collected by default.
+Core goals:
+
+- Diagnose slow, unstable, or cluttered Windows systems.
+- Explain likely causes in plain language.
+- Recommend safe maintenance steps by risk level.
+- Run visible, user-approved repair and cleanup tasks.
+- Measure the result with before/after benchmark data.
+- Keep high-risk actions gated behind confirmation.
+
+## Main Features
+
+### System Overview
+
+- Health score summary for quick system status review.
+- CPU, GPU, RAM, disk, and network monitoring.
+- Device profile including OS, runtime, storage, and basic hardware data.
+- Process, thread, handle, uptime, and power-state visibility.
+- Fast snapshot report for support or personal troubleshooting.
+
+### AI Doctor
+
+- Health check workflow for common Windows performance problems.
+- Risk-ranked care plan with recommended next steps.
+- Anomaly review for unusual CPU, memory, disk, network, or process behavior.
+- Explanation-first output so the user can see why a task is recommended.
+- Maintenance report generation after scans and repairs.
+
+### Optimizer Modules
+
+- Safe Cleanup: removes temporary files, caches, logs, and common residual files.
+- Deep Junk Scan: searches deeper junk locations before deletion.
+- Startup Review: helps identify apps that slow down boot.
+- Service Review: audits services that may affect performance or stability.
+- Disk Diagnostics: checks free space, disk health indicators, and queue pressure.
+- Network Diagnostics: reviews DNS, adapter state, latency, and connectivity.
+- Power Audit: checks current power plan and performance-related settings.
+- Privacy Review: audits common telemetry and app permission settings.
+- Update Audit: reviews Windows Update state and repair options.
+- System Repair: guided SFC, DISM, WinRE, boot, and update reset workflows.
+- Benchmark: records before/after metrics for evidence-based maintenance.
+- Report Export: saves local reports for review.
+
+### Security And Recovery
+
+- Security audit for Defender, firewall, ASR, Controlled Folder Access, SMB, TLS,
+  UAC, and exploit posture.
+- Defender Lab Recovery mode for machines that were hardened too aggressively
+  during testing.
+- High-risk actions require user confirmation.
+- Repair flows run visibly instead of silently changing the system.
+- Public builds do not disable Defender realtime protection silently.
+
+### Update Manager
+
+- Update check and repair workflow.
+- Credential-gated update action.
+- SHA-256 integrity verification before applying packages.
+- Recovery path for incomplete or damaged installs.
+
+## AI Capabilities
+
+NeoOptimize includes a local-first AI workflow named **NEO AI**:
+
+### AI Doctor
+
+AI Doctor reads local health signals and turns them into a practical diagnosis.
+It looks at resource pressure, disk behavior, update state, startup load,
+security posture, and maintenance history to produce a care plan.
+
+### Care Plan Engine
+
+The care plan ranks suggested actions by:
+
+- expected benefit,
+- safety risk,
+- required privilege,
+- reversibility,
+- whether the action should be audit-only, cleanup, repair, or benchmark.
+
+### Anomaly Interpreter
+
+The interpreter helps explain symptoms such as:
+
+- high idle CPU,
+- RAM pressure,
+- disk queue spikes,
+- slow boot,
+- network instability,
+- update failures,
+- repeated repair failures,
+- unusual process growth.
+
+### Script Planning Assistant
+
+NEO AI can draft PowerShell or CMD maintenance plans for review. Public builds
+keep this as an assisted planning workflow: commands should be reviewed and
+approved before execution.
+
+### Benchmark Analyst
+
+The benchmark analyst compares pre-maintenance and post-maintenance metrics to
+show whether a cleanup or repair actually helped.
+
+### Local Model Support
+
+NeoOptimize is designed for local AI workflows. Local model support can be used
+for offline recommendations and privacy-preserving analysis when configured by
+the user.
+
+## Safety Model
+
+NeoOptimize is audit-first by default:
+
+- It shows what it is about to do.
+- It separates scan, report, cleanup, and repair actions.
+- It requires administrator approval for privileged maintenance.
+- It avoids hidden drivers, covert capture, and silent destructive repair.
+- It keeps reports local unless the user chooses to share them.
+- It does not collect camera, microphone, biometric data, browser secrets,
+  private keys, or documents by default.
 
 ## Install
 
-1. Download `NeoOptimize.exe` from the release page.
-2. Verify the SHA-256 checksum.
-3. Run the installer as Administrator.
-4. Open NeoOptimize from the Start Menu or desktop shortcut.
-5. Start with **Safe Care Plan** or **AI Doctor Health**.
+1. Open the release page.
+2. Download `NeoOptimize.exe`.
+3. Verify the SHA-256 checksum.
+4. Run the installer as Administrator.
+5. Open NeoOptimize from the Start Menu or desktop shortcut.
+6. Start with **AI Doctor** or **Safe Care Plan**.
 
 ## Windows Defender Notice
 
-Unsigned public beta installers can trigger SmartScreen or reputation warnings. Broad public distribution requires a trusted OV/EV code-signing certificate and download reputation over time.
+Unsigned public beta installers can trigger SmartScreen or reputation warnings.
+Broad public distribution requires a trusted OV/EV code-signing certificate and
+download reputation over time.
 
-If an older lab build made Windows Security too strict, open NeoOptimize and run:
+If an older lab build made Windows Security too strict, open NeoOptimize and run
+the Defender Lab Recovery action, or run:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy RemoteSigned -File .\NeoOptimize.ps1 -Action DefenderAuditMode
 ```
 
-This keeps Microsoft Defender enabled and moves aggressive lab ASR/CFA/Network Protection policies to AuditMode.
+This keeps Microsoft Defender enabled and moves aggressive lab ASR/CFA/Network
+Protection policies to AuditMode.
 
 ## System Requirements
 
@@ -73,6 +192,13 @@ This keeps Microsoft Defender enabled and moves aggressive lab ASR/CFA/Network P
 | Runtime | PowerShell 5.1+ |
 | Disk | 300 MB free |
 | Network | Optional, only for update/download features |
+
+## Public Beta Notes
+
+- Some advanced AI workflows may require additional local model configuration.
+- SmartScreen reputation may still be low until the project uses a trusted
+  production code-signing certificate.
+- Users should create a restore point before running high-impact repair tasks.
 
 ## Support
 
