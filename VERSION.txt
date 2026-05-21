@@ -1,0 +1,26 @@
+NeoOptimize v1.2.1-public-beta
+Released: May 21, 2026
+Package: NeoOptimize.exe
+SHA256: ee34b6733c7fb6958b84281937b18800bafb50fc0d903e7bb1d8ef6e2b5f0508
+
+Public Components:
+1. NeoOptimize Windows Client
+2. Neo AI local advisory workflow
+3. System health and maintenance tools
+4. Defender Lab Recovery mode
+5. Secure update and repair flow
+
+Maintenance Areas:
+- System cleanup
+- Performance tuning
+- Privacy review
+- Network diagnostics
+- Security audit
+- Windows repair
+- Update repair
+- Power plan tuning
+- Device snapshot
+- Before/after benchmark report
+
+Support:
+neooptimizeofficial@gmail.com

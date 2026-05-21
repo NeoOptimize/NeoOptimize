@@ -1,6 +1,7 @@
 # Security Policy
 
-NeoOptimize controls Windows maintenance workflows and must be treated as privileged software.
+NeoOptimize is a privileged Windows maintenance utility. Treat every installer,
+script, and update package as security-sensitive.
 
 ## Reporting
 
@@ -10,7 +11,7 @@ neooptimizeofficial@gmail.com
 
 Please include:
 
-- affected component,
+- affected version,
 - reproduction steps,
 - expected impact,
 - logs or screenshots with secrets removed,
@@ -18,22 +19,21 @@ Please include:
 
 ## Public Build Rules
 
-- Never commit private keys, service role keys, API keys, local admin credentials, lab certificates, or generated installers.
-- Keep Supabase service role keys server-side only.
-- Keep command signing private keys outside the repository.
-- Require SHA-256 verification for public update packages.
-- Keep camera, microphone, and biometric capture disabled unless a user explicitly enables a diagnostic flow.
-- Route privileged endpoint commands through signed RMM manifests and agent-side verification.
+- Never commit private keys, API keys, local credentials, certificates, or generated installer binaries.
+- Verify public downloads with the published SHA-256 checksum.
+- Keep update packages integrity-checked before installation or repair.
+- Keep camera, microphone, and precise location access disabled unless the user explicitly starts a diagnostic flow.
+- Require administrator elevation only for maintenance tasks that genuinely need it.
 
 ## Supported Security Surfaces
 
-- RMM authentication and authorization.
-- Agent enrollment.
-- Command signing and verification.
-- Update manager integrity checks.
-- Safety rollback and local recovery.
-- Supabase mirror queue and server-side integration secrets.
+- Installer and update integrity.
+- Local Windows maintenance workflows.
+- PowerShell execution policy and administrator prompts.
+- Defender-friendly safety and recovery mode.
+- Repair and rollback safeguards.
 
 ## Non-Goals
 
-NeoOptimize public builds do not include hidden drivers, covert capture, credential collection, or bundled VM guest tools.
+NeoOptimize public builds do not include hidden drivers, covert capture,
+credential collection, or bundled VM guest tools.

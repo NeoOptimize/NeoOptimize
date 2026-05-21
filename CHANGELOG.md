@@ -1,37 +1,31 @@
 # Changelog
 
-## 1.2.0 NeoCortex - Public Beta
+## 1.2.1 Public Beta
 
 Release date: 2026-05-21
 
 ### Added
 
-- Wider RMM system modal with page-friendly layout and 1 second telemetry refresh.
-- Expanded endpoint telemetry for CPU, GPU, RAM, disk, network, device profile, process counts, location summary, and security state.
-- Neo AI advisory workflow for local recommendations, script planning, safety context, and RMM/OpenFang handoff.
-- Secure update manager workflow with checksum verification and repair path.
-- About and support section moved to the NeoOptimize Windows client.
-- Public installer guardrails: no VM guest tools bundled, no private keys, no local credentials.
+- Public Windows client distribution for NeoOptimize.
+- About section with support contact, donation links, and update access.
+- Defender Lab Recovery mode for loosening overly strict lab hardening without disabling protection.
+- SHA-256 checksum file for download verification.
+- Public documentation focused only on NeoOptimize client usage.
 
 ### Improved
 
-- RMM About page removed from the dashboard navigation.
-- Dashboard telemetry API now supports richer historic fallback for offline agents.
-- Agent telemetry collector keeps camera and microphone capture disabled by default.
-- Release readiness uses an external secure signing key directory instead of repository-local keys.
-- README rebuilt for public distribution with clean ASCII Markdown.
+- Cleaner public repository layout.
+- Safer wording around security and administrator actions.
+- Installer package rebuilt as `NeoOptimize.exe`.
+- README rebuilt with professional public-facing content.
 
 ### Verification
 
-- Dashboard build passed.
-- .NET agent build passed.
-- Client self-test passed.
-- Installer self-test passed.
-- RMM read-only API audit passed.
-- Release readiness passed with 14 checks, 0 warnings, and 0 failures.
+- Client packaging completed.
+- Release checksum generated.
+- Public documentation scan completed with no private infrastructure wording.
 
-## 1.0.0 - Initial Lab Build
+## 1.0.0 Initial Lab Build
 
 - First Windows optimization modules.
-- Early RMM dashboard.
 - Initial installer and VM validation workflow.
