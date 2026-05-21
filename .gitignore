@@ -1,0 +1,105 @@
+# ── Node.js ──────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.tools/
+.playwright-cli/
+output/
+reports/
+
+# ── Environment (CRITICAL: never commit secrets) ─────────────
+.env
+.env.local
+.env.*.local
+server/.env
+dashboard/.env
+
+# ── Build outputs ────────────────────────────────────────────
+dashboard/dist/
+server/dist/
+dist/
+release/
+archive/
+program/
+lab-artifacts/
+installer/client/bin/
+*.exe
+*.dll
+*.pdb
+*.zip
+*.iso
+*.img
+*.msi
+*.nupkg
+
+# ── Logs ─────────────────────────────────────────────────────
+*.log
+logs/
+server/server.log
+dashboard/dashboard.log
+ai-engine/logs/
+client/reports/
+
+# ── PID files ────────────────────────────────────────────────
+*.pid
+server/server.pid
+dashboard/dashboard.pid
+
+# ── Security keys (CRITICAL: never commit private keys) ──────
+server/keys/*.pem
+server/keys/*.key
+!server/keys/.gitkeep
+agent/signing.pub.pem
+**/signing.pub.pem
+certs/*.pfx
+certs/*.key
+certs/*.crt
+certs/*.pem
+certs/*.pass
+
+# ── .NET / C# ────────────────────────────────────────────────
+agent/bin/
+agent/obj/
+wrapper/**/bin/
+wrapper/**/obj/
+optimizer/**/bin/
+optimizer/**/obj/
+
+# ── Python ───────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# ── OS ───────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDE ──────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.suo
+*.user
+
+# ── Docker local volumes ─────────────────────────────────────
+docker/data/
+docker/volumes/
+
+# ── Local admin credentials (NEVER commit) ───────────────────
+server/.local-admin.txt
+server/mock_agent.log
+
+# ── Local release and mirror queues ──────────────────────────
+reports/
+client/reports/
+server/logs/
+server/*.pid
+server/*.log
+
+# ── Generated public media source captures ───────────────────
+*.webm
+*.mp4.tmp

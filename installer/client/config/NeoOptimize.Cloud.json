@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "github": {
+    "repo_url": "https://github.com/NeoOptimize/NeoOptimize",
+    "releases_url": "https://github.com/NeoOptimize/NeoOptimize/releases",
+    "enabled": true
+  },
+  "huggingface": {
+    "space_url": "https://huggingface.co/spaces/neooptimize/NeoOptimize",
+    "enabled": true
+  },
+  "supabase": {
+    "url": "https://ohyaiyujvafqxfbpbryl.supabase.co",
+    "publishable_key": "sb_publishable_ZJmitCHz9ZLShmgZBy8G4g_Kl258F_F",
+    "enabled": true
+  },
+  "e2b": {
+    "dashboard_url": "https://e2b.dev/dashboard/neooptimizeofficial/templates/list",
+    "enabled": true
+  },
+  "nullclaw": {
+    "command": "nullclaw",
+    "enabled": true
+  },
+  "policy": {
+    "do_not_store_private_tokens": true,
+    "prefer_environment_variables_for_secrets": true,
+    "github_token_env": "NEOOPTIMIZE_GITHUB_TOKEN",
+    "supabase_service_key_env": "NEOOPTIMIZE_SUPABASE_SERVICE_KEY",
+    "e2b_api_key_env": "E2B_API_KEY"
+  }
+}
