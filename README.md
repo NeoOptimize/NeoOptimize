@@ -29,6 +29,12 @@ It combines a Windows client, a self-healing .NET agent, a web RMM console, real
 
 Download installers from the GitHub Releases page. Verify the SHA-256 checksum before running the installer.
 
+## Download
+
+- Windows installer: https://github.com/NeoOptimize/NeoOptimize/releases/download/v1.2.0-public-beta/NeoOptimize.exe
+- SHA-256 checksum: https://github.com/NeoOptimize/NeoOptimize/releases/download/v1.2.0-public-beta/NeoOptimize.exe.sha256
+- Release page: https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.2.0-public-beta
+
 ## Components
 
 | Component | Purpose |
