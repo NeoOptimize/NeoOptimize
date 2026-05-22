@@ -15,9 +15,9 @@ Public releases focus on NeoOptimize only.
 | --- | --- |
 | Version | `1.0.0` |
 | Installer | `NeoOptimize.exe` |
-| SHA-256 | `14e533f42e88488a642ecb25ce79c46e02084c1b5725add85f3cd02df7794987` |
+| SHA-256 | `5a2f824a5f75055f804c052a7e60c03352197c6c0278e3d83a122a16fb2d479f` |
 | Portable ZIP | `NeoOptimize-portable.zip` |
-| Portable SHA-256 | `8111652d65f501bbdb51abffc01711f8c8755d71b22f79325addb814a7dd1137` |
+| Portable SHA-256 | `3b0fc37e3ca9cbef1ead4c690b912689b6a1a723d0418d907c647e037ecaeb2d` |
 | Release | https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.0.0 |
 
 Verify the installer before running it:
@@ -29,7 +29,7 @@ Get-FileHash .\NeoOptimize.exe -Algorithm SHA256
 The hash must match:
 
 ```text
-14e533f42e88488a642ecb25ce79c46e02084c1b5725add85f3cd02df7794987
+5a2f824a5f75055f804c052a7e60c03352197c6c0278e3d83a122a16fb2d479f
 ```
 
 ## Package Managers
@@ -93,9 +93,9 @@ Core goals:
 
 ### Mini Tray
 
-- Lightweight tray companion in the lower-right Windows notification area.
+- Lightweight tray companion with a compact lower-right desktop monitor.
 - 1-second CPU, RAM, and disk status tooltip.
-- Compact realtime monitor window for quick desktop checks.
+- Compact realtime monitor window for CPU, RAM, disk, network, and last update.
 - NEO chat shortcut for local AI guidance.
 - Voice command shortcut using push-to-talk behavior.
 - Update Manager, reports, and provider status shortcuts.
@@ -220,6 +220,13 @@ show whether a cleanup or repair actually helped.
 NeoOptimize is designed for local AI workflows. Local model support can be used
 for offline recommendations and privacy-preserving analysis when configured by
 the user.
+
+### Provider And Skill Status
+
+The AI panel shows whether local model, NEO policy, skills, MCP connectors, and
+optional assistants are ready. Cloud providers remain optional and user
+configured; NeoOptimize keeps local diagnosis available even when no API key is
+set.
 
 ### Optional Tooling Skills
 

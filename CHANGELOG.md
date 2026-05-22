@@ -15,6 +15,7 @@ Release date: 2026-05-22
 - PowerShell launcher that works when Windows Script Host is disabled.
 - Linux Mint style Update Manager panel for check, verified install, repair, integrity scan, and release access.
 - Mini tray companion with realtime CPU/RAM/DISK monitor, NEO chat, voice command, reports, provider status, and Update Manager shortcuts.
+- Mini tray now opens a compact lower-right realtime monitor automatically after launch.
 - NEO Agentic Autopilot for local observe, diagnose, plan, approval, action, verification, and learning loops.
 - NEO role registry so AI Doctor, local model, Script Forge, MCP bridge, and update workflow each have clear task ownership.
 - Optional tooling registry for PowerToys readiness and Winbindex reference intelligence.
@@ -28,6 +29,8 @@ Release date: 2026-05-22
 - Lab guest tooling is no longer bundled in the public installer.
 - Support wording is consistent across public-facing screens.
 - Mini tray polling is lighter and no longer requests administrator elevation at login.
+- NEO panel remains accessible while maintenance tasks are running, while duplicate task execution is still throttled.
+- AI input focus is set automatically when the NEO page opens.
 
 ### Verification
 
@@ -35,3 +38,4 @@ Release date: 2026-05-22
 - NeoOptimize maintenance runtime build completed.
 - Safety manifest and NeoOptimize workflow tests passed.
 - Installer package inspected for updated application files and generated with SHA-256 verification.
+- Windows VM install verified: NeoOptimize opens, modules render, NEO page shows provider/skill/MCP status, and mini monitor displays realtime CPU/RAM/DISK/NETWORK data.
