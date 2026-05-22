@@ -15,9 +15,9 @@ Public releases focus on NeoOptimize only.
 | --- | --- |
 | Version | `1.0.0` |
 | Installer | `NeoOptimize.exe` |
-| SHA-256 | `5a2f824a5f75055f804c052a7e60c03352197c6c0278e3d83a122a16fb2d479f` |
+| SHA-256 | `be69438b23682fa305ef40eec448e0be7423ffaa3b529ce04b05f7110c3f2a2c` |
 | Portable ZIP | `NeoOptimize-portable.zip` |
-| Portable SHA-256 | `3b0fc37e3ca9cbef1ead4c690b912689b6a1a723d0418d907c647e037ecaeb2d` |
+| Portable SHA-256 | `0012c28564541a4f53950700b715e147487c7b67d17c5c76c9a0f529fbeb6461` |
 | Release | https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.0.0 |
 
 Verify the installer before running it:
@@ -29,7 +29,7 @@ Get-FileHash .\NeoOptimize.exe -Algorithm SHA256
 The hash must match:
 
 ```text
-5a2f824a5f75055f804c052a7e60c03352197c6c0278e3d83a122a16fb2d479f
+be69438b23682fa305ef40eec448e0be7423ffaa3b529ce04b05f7110c3f2a2c
 ```
 
 ## Package Managers
@@ -97,6 +97,7 @@ Core goals:
 - 1-second CPU, RAM, and disk status tooltip.
 - Compact realtime monitor window for CPU, RAM, disk, network, and last update.
 - NEO chat shortcut for local AI guidance.
+- Clear Chat control inside the mini tray NEO window.
 - Voice command shortcut using push-to-talk behavior.
 - Update Manager, reports, and provider status shortcuts.
 

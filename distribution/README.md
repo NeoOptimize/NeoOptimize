@@ -14,8 +14,8 @@ The current release is `1.0.0`.
 
 | Asset | SHA-256 |
 | --- | --- |
-| `NeoOptimize.exe` | `14e533f42e88488a642ecb25ce79c46e02084c1b5725add85f3cd02df7794987` |
-| `NeoOptimize-portable.zip` | `8111652d65f501bbdb51abffc01711f8c8755d71b22f79325addb814a7dd1137` |
+| `NeoOptimize.exe` | `be69438b23682fa305ef40eec448e0be7423ffaa3b529ce04b05f7110c3f2a2c` |
+| `NeoOptimize-portable.zip` | `0012c28564541a4f53950700b715e147487c7b67d17c5c76c9a0f529fbeb6461` |
 
 ## WinGet
 
