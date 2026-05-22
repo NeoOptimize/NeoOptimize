@@ -30,6 +30,8 @@ Release date: 2026-05-22
 - Update and repair documentation now highlights credential-gated SHA-256 verification.
 - Lab guest tooling is no longer bundled in the public installer.
 - Support wording is consistent across public-facing screens.
+- Installer no longer terminates itself when the public installer is named `NeoOptimize.exe`.
+- UI action handlers now catch module/dialog failures and keep the main interface alive.
 - Mini tray polling is lighter and no longer requests administrator elevation at login.
 - NEO panel remains accessible while maintenance tasks are running, while duplicate task execution is still throttled.
 - Main NeoOptimize AI page keeps monitoring and provider controls clean; interactive chat lives in the mini tray.
