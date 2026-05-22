@@ -13,10 +13,10 @@ Public releases focus on the NeoOptimize Windows client only.
 
 | Item | Value |
 | --- | --- |
-| Version | `1.2.1-public-beta` |
+| Version | `1.2.2-public-beta` |
 | Installer | `NeoOptimize.exe` |
-| SHA-256 | `ee34b6733c7fb6958b84281937b18800bafb50fc0d903e7bb1d8ef6e2b5f0508` |
-| Release | https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.2.1-public-beta |
+| SHA-256 | `9b9c2f6d10d0c0314062eab20e79259bdb1947719b97fcfb09b32a3860eaf67b` |
+| Release | https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.2.2-public-beta |
 
 Verify the installer before running it:
 
@@ -27,7 +27,7 @@ Get-FileHash .\NeoOptimize.exe -Algorithm SHA256
 The hash must match:
 
 ```text
-ee34b6733c7fb6958b84281937b18800bafb50fc0d903e7bb1d8ef6e2b5f0508
+9b9c2f6d10d0c0314062eab20e79259bdb1947719b97fcfb09b32a3860eaf67b
 ```
 
 ## What NeoOptimize Does
@@ -96,6 +96,23 @@ Core goals:
 - SHA-256 integrity verification before applying packages.
 - Recovery path for incomplete or damaged installs.
 
+### Remote Access Readiness
+
+- Optional readiness check for managed Windows maintenance environments.
+- Disabled by default and dry-run first.
+- Requires Administrator approval and explicit apply mode before changing WinRM,
+  OpenSSH, or local firewall settings.
+- Uses scoped firewall rules and blocks broad wildcard targets.
+- Does not bundle third-party guest tools in the public installer.
+
+### Secure Transport Guard
+
+- Request signing support for trusted maintenance channels.
+- Optional HTTPS enforcement and certificate pinning.
+- Private lab HTTP is limited to local/private networks when enabled.
+- Replay protection support for signed requests.
+- Input validation for telemetry, report, and check-in payloads.
+
 ## AI Capabilities
 
 NeoOptimize includes a local-first AI workflow named **NEO AI**:
@@ -146,6 +163,19 @@ NeoOptimize is designed for local AI workflows. Local model support can be used
 for offline recommendations and privacy-preserving analysis when configured by
 the user.
 
+### Operator Skills
+
+NEO AI is built around practical Windows maintenance skills:
+
+- system health triage,
+- cleanup planning,
+- repair planning,
+- update troubleshooting,
+- security posture explanation,
+- anomaly interpretation,
+- before/after benchmark review,
+- PowerShell and CMD maintenance draft generation.
+
 ## Safety Model
 
 NeoOptimize is audit-first by default:
@@ -157,6 +187,8 @@ NeoOptimize is audit-first by default:
 - It keeps reports local unless the user chooses to share them.
 - It does not collect camera, microphone, biometric data, browser secrets,
   private keys, or documents by default.
+- It keeps remote access bootstrap disabled unless an administrator explicitly
+  enables it for a trusted environment.
 
 ## Install
 
@@ -199,6 +231,8 @@ Protection policies to AuditMode.
 - SmartScreen reputation may still be low until the project uses a trusted
   production code-signing certificate.
 - Users should create a restore point before running high-impact repair tasks.
+- Remote access readiness features are for trusted maintenance environments and
+  stay disabled unless explicitly enabled by the administrator.
 
 ## Support
 
