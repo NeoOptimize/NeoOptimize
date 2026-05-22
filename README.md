@@ -328,7 +328,7 @@ Protection policies to AuditMode.
 
 ## About
 
-Made with love at Zenthralix-Lab with Codex.
+Made with love at Zenthralix-Lab 
 
 ## License
 
