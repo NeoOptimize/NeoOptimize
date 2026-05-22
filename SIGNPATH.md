@@ -10,11 +10,11 @@ is cleaner than signing a manually copied binary.
 
 ## Important Requirements
 
-The public repository must contain the NeoOptimize client source and installer
+The public repository must contain the NeoOptimize application source and installer
 build scripts needed to produce `NeoOptimize.exe`.
 
 The repository must not publish private infrastructure, credentials, tokens, or
-lab-only operational files. Only the public NeoOptimize client source, installer
+lab-only operational files. Only the public NeoOptimize application source, installer
 recipe, assets, module scripts, and documentation should be included.
 
 ## Code Signing Policy
@@ -62,7 +62,7 @@ It performs:
 ## Current Status
 
 The SignPath workflow is prepared but intentionally gated. It will fail with a
-clear message until the public repository contains the client build source:
+clear message until the public repository contains the application build source:
 
 ```text
 installer/client/build.sh

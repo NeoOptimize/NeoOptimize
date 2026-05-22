@@ -15,9 +15,9 @@ Public releases focus on NeoOptimize only.
 | --- | --- |
 | Version | `1.0.0` |
 | Installer | `NeoOptimize.exe` |
-| SHA-256 | `de18acc6247f091c948d2944becf24e856bba434c7a474449273732d93af2ef5` |
+| SHA-256 | `14e533f42e88488a642ecb25ce79c46e02084c1b5725add85f3cd02df7794987` |
 | Portable ZIP | `NeoOptimize-portable.zip` |
-| Portable SHA-256 | `d106fbd75967800afc25f7c28e0e013592371829560a0ab9c10d76bea831bd50` |
+| Portable SHA-256 | `8111652d65f501bbdb51abffc01711f8c8755d71b22f79325addb814a7dd1137` |
 | Release | https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.0.0 |
 
 Verify the installer before running it:
@@ -29,7 +29,7 @@ Get-FileHash .\NeoOptimize.exe -Algorithm SHA256
 The hash must match:
 
 ```text
-de18acc6247f091c948d2944becf24e856bba434c7a474449273732d93af2ef5
+14e533f42e88488a642ecb25ce79c46e02084c1b5725add85f3cd02df7794987
 ```
 
 ## Package Managers
@@ -52,7 +52,7 @@ NeoOptimize is preparing a SignPath-based signing workflow for public freeware
 releases. See `SIGNPATH.md`.
 
 The workflow is intentionally gated until the public repository contains the
-client source and installer build recipe required to build the installer inside
+application source and installer build recipe required to build the installer inside
 GitHub Actions.
 
 Team roles:

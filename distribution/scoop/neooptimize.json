@@ -4,7 +4,7 @@
   "homepage": "https://github.com/NeoOptimize/NeoOptimize",
   "license": "Apache-2.0",
   "url": "https://github.com/NeoOptimize/NeoOptimize/releases/download/v1.0.0/NeoOptimize-portable.zip",
-  "hash": "sha256:d106fbd75967800afc25f7c28e0e013592371829560a0ab9c10d76bea831bd50",
+  "hash": "sha256:8111652d65f501bbdb51abffc01711f8c8755d71b22f79325addb814a7dd1137",
   "shortcuts": [
     [
       "LAUNCH.bat",
@@ -30,4 +30,3 @@
     }
   }
 }
-

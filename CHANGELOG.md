@@ -34,4 +34,4 @@ Release date: 2026-05-22
 - NeoOptimize UI production build completed.
 - NeoOptimize maintenance runtime build completed.
 - Safety manifest and NeoOptimize workflow tests passed.
-- Installer package inspected for updated client files and generated with SHA-256 verification.
+- Installer package inspected for updated application files and generated with SHA-256 verification.
