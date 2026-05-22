@@ -1,7 +1,7 @@
-NeoOptimize v1.2.2-public-beta
+NeoOptimize v1.0.0
 Released: May 22, 2026
 Package: NeoOptimize.exe
-SHA256: 9b9c2f6d10d0c0314062eab20e79259bdb1947719b97fcfb09b32a3860eaf67b
+SHA256: 1451010709ebcd20685cb34a634e878fd50b7a20c99f81ea2043615ac11e3a87
 
 Public Components:
 1. NeoOptimize Windows Client

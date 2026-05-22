@@ -13,10 +13,10 @@ Public releases focus on the NeoOptimize Windows client only.
 
 | Item | Value |
 | --- | --- |
-| Version | `1.2.2-public-beta` |
+| Version | `1.0.0` |
 | Installer | `NeoOptimize.exe` |
-| SHA-256 | `9b9c2f6d10d0c0314062eab20e79259bdb1947719b97fcfb09b32a3860eaf67b` |
-| Release | https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.2.2-public-beta |
+| SHA-256 | `1451010709ebcd20685cb34a634e878fd50b7a20c99f81ea2043615ac11e3a87` |
+| Release | https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.0.0 |
 
 Verify the installer before running it:
 
@@ -27,7 +27,7 @@ Get-FileHash .\NeoOptimize.exe -Algorithm SHA256
 The hash must match:
 
 ```text
-9b9c2f6d10d0c0314062eab20e79259bdb1947719b97fcfb09b32a3860eaf67b
+1451010709ebcd20685cb34a634e878fd50b7a20c99f81ea2043615ac11e3a87
 ```
 
 ## What NeoOptimize Does
@@ -201,7 +201,7 @@ NeoOptimize is audit-first by default:
 
 ## Windows Defender Notice
 
-Unsigned public beta installers can trigger SmartScreen or reputation warnings.
+Unsigned public installers can trigger SmartScreen or reputation warnings.
 Broad public distribution requires a trusted OV/EV code-signing certificate and
 download reputation over time.
 
@@ -225,7 +225,7 @@ Protection policies to AuditMode.
 | Disk | 300 MB free |
 | Network | Optional, only for update/download features |
 
-## Public Beta Notes
+## Release Notes
 
 - Some advanced AI workflows may require additional local model configuration.
 - SmartScreen reputation may still be low until the project uses a trusted
