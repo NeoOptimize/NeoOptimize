@@ -7,7 +7,7 @@ performance problems, cleaning safe junk files, auditing security posture,
 repairing common Windows issues, and producing before/after maintenance reports.
 Public releases focus on NeoOptimize only.
 
-![NeoOptimize](assets/neooptimize-client-screenshot.png)
+![NeoOptimize](assets/neooptimize-screenshot.png)
 
 ## Download
 
@@ -15,7 +15,7 @@ Public releases focus on NeoOptimize only.
 | --- | --- |
 | Version | `1.0.0` |
 | Installer | `NeoOptimize.exe` |
-| SHA-256 | `f6a5cbaea4d8eef1ca9eee5757b3a636f923f4830296caea0b6092b062c1f15e` |
+| SHA-256 | `535043606d60028d88efd2b7e308a5429bcd25d5bb42606a5975e8f4c022409f` |
 | Release | https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.0.0 |
 
 Verify the installer before running it:
@@ -27,7 +27,7 @@ Get-FileHash .\NeoOptimize.exe -Algorithm SHA256
 The hash must match:
 
 ```text
-f6a5cbaea4d8eef1ca9eee5757b3a636f923f4830296caea0b6092b062c1f15e
+535043606d60028d88efd2b7e308a5429bcd25d5bb42606a5975e8f4c022409f
 ```
 
 ## What NeoOptimize Does
@@ -55,6 +55,15 @@ Core goals:
 - Device profile including OS, runtime, storage, and basic hardware data.
 - Process, thread, handle, uptime, and power-state visibility.
 - Fast snapshot report for support or personal troubleshooting.
+
+### Mini Tray
+
+- Lightweight tray companion in the lower-right Windows notification area.
+- 1-second CPU, RAM, and disk status tooltip.
+- Compact realtime monitor window for quick desktop checks.
+- NEO chat shortcut for local AI guidance.
+- Voice command shortcut using push-to-talk behavior.
+- Update Manager, reports, and provider status shortcuts.
 
 ### AI Doctor
 
@@ -117,7 +126,11 @@ Core goals:
 
 ## AI Capabilities
 
-NeoOptimize includes a local-first AI workflow named **NEO AI**:
+NeoOptimize includes a local-first AI workflow named **NEO**:
+
+If asked who it is, NEO answers:
+
+> Saya adalah NEO (Neural Execution Operator), artificial intelligence yang dibangun di zenthralix-lab oleh nol_eight.
 
 ### AI Doctor
 
@@ -150,7 +163,7 @@ The interpreter helps explain symptoms such as:
 
 ### Script Planning Assistant
 
-NEO AI can draft PowerShell or CMD maintenance plans for review. Public builds
+NEO can draft PowerShell or CMD maintenance plans for review. Public builds
 keep this as an assisted planning workflow: commands should be reviewed and
 approved before execution.
 
@@ -165,9 +178,20 @@ NeoOptimize is designed for local AI workflows. Local model support can be used
 for offline recommendations and privacy-preserving analysis when configured by
 the user.
 
+### Role Ownership
+
+NEO separates AI responsibilities so the system stays auditable:
+
+- NEO: local orchestrator, chat, voice, telemetry summary, and safe action planning.
+- AI Doctor: Windows health scoring, anomaly detection, and treatment ranking.
+- Local Model / Ollama: offline reasoning, diagnostics explanation, and script drafting.
+- Script Forge: PowerShell and CMD audit script generation with SHA-256 metadata.
+- MCP Bridge: local inventory of skills, connectors, tools, and runtime readiness.
+- Update Manager: credential-gated update checks, verified install, and repair flow.
+
 ### Operator Skills
 
-NEO AI is built around practical Windows maintenance skills:
+NEO is built around practical Windows maintenance skills:
 
 - system health triage,
 - cleanup planning,
@@ -238,6 +262,8 @@ Protection policies to AuditMode.
 - The launcher no longer depends on Windows Script Host; it starts through
   PowerShell so systems with Windows Script Host disabled can still open
   NeoOptimize.
+- The installer now includes the mini tray, NEO role registry, MCP bridge,
+  skills, local model policy, and Update Manager repair workflow.
 
 ## Support
 

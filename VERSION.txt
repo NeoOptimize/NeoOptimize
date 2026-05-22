@@ -1,15 +1,17 @@
 NeoOptimize v1.0.0
 Released: May 22, 2026
 Package: NeoOptimize.exe
-SHA256: f6a5cbaea4d8eef1ca9eee5757b3a636f923f4830296caea0b6092b062c1f15e
+SHA256: 535043606d60028d88efd2b7e308a5429bcd25d5bb42606a5975e8f4c022409f
 
 Public Components:
 1. NeoOptimize Windows application
-2. Neo AI local advisory workflow
+2. NEO local advisory workflow
 3. System health and maintenance tools
 4. Defender Lab Recovery mode
 5. Secure update and repair flow
 6. Secure transport signing and remote access readiness
+7. Mini tray realtime monitor, chat, and voice command shortcuts
+8. AI role registry, local MCP bridge, and skills catalog
 
 Maintenance Areas:
 - System cleanup
