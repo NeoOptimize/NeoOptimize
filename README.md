@@ -1,13 +1,13 @@
 # NeoOptimize
 
-AI-powered Windows optimization and maintenance client.
+AI-powered Windows optimization and maintenance platform.
 
 NeoOptimize is a local Windows utility for inspecting system health, finding
 performance problems, cleaning safe junk files, auditing security posture,
 repairing common Windows issues, and producing before/after maintenance reports.
-Public releases focus on the NeoOptimize Windows client only.
+Public releases focus on NeoOptimize only.
 
-![NeoOptimize Windows Client](assets/neooptimize-client-screenshot.png)
+![NeoOptimize](assets/neooptimize-client-screenshot.png)
 
 ## Download
 
@@ -15,7 +15,7 @@ Public releases focus on the NeoOptimize Windows client only.
 | --- | --- |
 | Version | `1.0.0` |
 | Installer | `NeoOptimize.exe` |
-| SHA-256 | `1451010709ebcd20685cb34a634e878fd50b7a20c99f81ea2043615ac11e3a87` |
+| SHA-256 | `f6a5cbaea4d8eef1ca9eee5757b3a636f923f4830296caea0b6092b062c1f15e` |
 | Release | https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.0.0 |
 
 Verify the installer before running it:
@@ -27,7 +27,7 @@ Get-FileHash .\NeoOptimize.exe -Algorithm SHA256
 The hash must match:
 
 ```text
-1451010709ebcd20685cb34a634e878fd50b7a20c99f81ea2043615ac11e3a87
+f6a5cbaea4d8eef1ca9eee5757b3a636f923f4830296caea0b6092b062c1f15e
 ```
 
 ## What NeoOptimize Does
@@ -95,6 +95,8 @@ Core goals:
 - Credential-gated update action.
 - SHA-256 integrity verification before applying packages.
 - Recovery path for incomplete or damaged installs.
+- Linux Mint style Update Manager flow: check first, review metadata, then
+  install verified updates or repair NeoOptimize.
 
 ### Remote Access Readiness
 
@@ -233,11 +235,14 @@ Protection policies to AuditMode.
 - Users should create a restore point before running high-impact repair tasks.
 - Remote access readiness features are for trusted maintenance environments and
   stay disabled unless explicitly enabled by the administrator.
+- The launcher no longer depends on Windows Script Host; it starts through
+  PowerShell so systems with Windows Script Host disabled can still open
+  NeoOptimize.
 
 ## Support
 
 - Email: neooptimizeofficial@gmail.com
-- Buy Me a Coffee: https://buymeacoffee.com/nol.eight
+- Buy Me a Coffee support: https://buymeacoffee.com/nol.eight
 - Saweria: https://saweria.co/dtechtive
 - Dana: https://ik.imagekit.io/dtechtive/Dana
 

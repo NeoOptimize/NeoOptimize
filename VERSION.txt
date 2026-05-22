@@ -1,10 +1,10 @@
 NeoOptimize v1.0.0
 Released: May 22, 2026
 Package: NeoOptimize.exe
-SHA256: 1451010709ebcd20685cb34a634e878fd50b7a20c99f81ea2043615ac11e3a87
+SHA256: f6a5cbaea4d8eef1ca9eee5757b3a636f923f4830296caea0b6092b062c1f15e
 
 Public Components:
-1. NeoOptimize Windows Client
+1. NeoOptimize Windows application
 2. Neo AI local advisory workflow
 3. System health and maintenance tools
 4. Defender Lab Recovery mode
