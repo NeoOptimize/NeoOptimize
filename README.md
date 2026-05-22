@@ -45,6 +45,26 @@ Package manager manifests are prepared under `distribution/`:
 The official registry submissions are staged. Until each registry accepts the
 package, use the GitHub Release download and verify the SHA-256 checksum.
 
+## Code signing policy
+
+Free code signing provided by SignPath.io, certificate by SignPath Foundation.
+NeoOptimize is preparing a SignPath-based signing workflow for public freeware
+releases. See `SIGNPATH.md`.
+
+The workflow is intentionally gated until the public repository contains the
+client source and installer build recipe required to build the installer inside
+GitHub Actions.
+
+Team roles:
+
+- Committers and reviewers: NeoOptimize maintainers.
+- Approvers: Zenthralix-Lab release owners.
+
+Privacy policy:
+
+This program will not transfer information to other networked systems unless
+specifically requested by the user or the person installing or operating it.
+
 ## What NeoOptimize Does
 
 NeoOptimize is designed for practical Windows maintenance, not cosmetic
@@ -261,8 +281,8 @@ NeoOptimize is audit-first by default:
 ## Windows Defender Notice
 
 Unsigned public installers can trigger SmartScreen or reputation warnings.
-Broad public distribution requires a trusted OV/EV code-signing certificate and
-download reputation over time.
+Signed releases will use the SignPath Foundation path once the project is
+approved. SmartScreen reputation can still take time to build even after signing.
 
 If an older lab build made Windows Security too strict, open NeoOptimize and run
 the Defender Lab Recovery action, or run:

@@ -1,0 +1,105 @@
+name: SignPath Release Signing
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: NeoOptimize version to sign
+        required: true
+        default: "1.0.0"
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  build-unsigned:
+    name: Build unsigned NeoOptimize installer
+    runs-on: ubuntu-latest
+    outputs:
+      unsigned-artifact-id: ${{ steps.upload-unsigned-artifact.outputs.artifact-id }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify public client source is present
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f installer/client/build.sh || {
+            echo "installer/client/build.sh is missing."
+            echo "Publish the NeoOptimize client source and installer recipe before requesting SignPath signing."
+            exit 1
+          }
+          test -f wrapper/NeoOptimizeUIWrapper/NeoOptimizeUIWrapper.csproj || {
+            echo "Native UI wrapper source is missing."
+            exit 1
+          }
+          test -d client/modules || {
+            echo "NeoOptimize modules are missing."
+            exit 1
+          }
+
+      - name: Install build dependencies
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nsis p7zip-full rsync
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Build unsigned installer
+        shell: bash
+        run: |
+          set -euo pipefail
+          PUBLIC_LIGHT=1 bash installer/client/build.sh
+          sha256sum release/NeoOptimize.exe | tee release/NeoOptimize.exe.sha256
+
+      - name: Upload unsigned installer
+        id: upload-unsigned-artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: unsigned-neooptimize
+          path: |
+            release/NeoOptimize.exe
+            release/NeoOptimize.exe.sha256
+          if-no-files-found: error
+
+  sign:
+    name: Sign with SignPath
+    needs: build-unsigned
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Submit signing request
+        uses: signpath/github-action-submit-signing-request@v2
+        with:
+          api-token: "${{ secrets.SIGNPATH_API_TOKEN }}"
+          organization-id: "${{ secrets.SIGNPATH_ORGANIZATION_ID }}"
+          project-slug: "${{ secrets.SIGNPATH_PROJECT_SLUG }}"
+          signing-policy-slug: "${{ secrets.SIGNPATH_SIGNING_POLICY_SLUG }}"
+          artifact-configuration-slug: "neooptimize-installer"
+          github-artifact-id: "${{ needs.build-unsigned.outputs.unsigned-artifact-id }}"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          wait-for-completion: true
+          output-artifact-directory: "signed"
+
+      - name: Create signed checksum
+        shell: bash
+        run: |
+          set -euo pipefail
+          find signed -type f -name '*.exe' -print -quit | xargs -I{} cp "{}" NeoOptimize.exe
+          sha256sum NeoOptimize.exe | tee NeoOptimize.exe.sha256
+
+      - name: Upload signed installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: signed-neooptimize-${{ inputs.version }}
+          path: |
+            NeoOptimize.exe
+            NeoOptimize.exe.sha256
+          if-no-files-found: error
