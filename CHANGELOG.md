@@ -13,7 +13,9 @@ Release date: 2026-05-22
 - PowerShell launcher that works when Windows Script Host is disabled.
 - Linux Mint style Update Manager panel for check, verified install, repair, integrity scan, and release access.
 - Mini tray companion with realtime CPU/RAM/DISK monitor, NEO chat, voice command, reports, provider status, and Update Manager shortcuts.
+- NEO Agentic Autopilot for local observe, diagnose, plan, approval, action, verification, and learning loops.
 - NEO role registry so AI Doctor, local model, Script Forge, MCP bridge, and update workflow each have clear task ownership.
+- Optional tooling registry for PowerToys readiness and Winbindex reference intelligence.
 - NEO identity response: Neural Execution Operator, artificial intelligence built at zenthralix-lab by nol_eight.
 
 ### Improved

@@ -15,7 +15,7 @@ Public releases focus on NeoOptimize only.
 | --- | --- |
 | Version | `1.0.0` |
 | Installer | `NeoOptimize.exe` |
-| SHA-256 | `983dafd2cbcf121576a8da5a4b0c0a7ace8464a3c2d1a6d64cb1d54203e5972b` |
+| SHA-256 | `70864f39c4d111c4071061381f0127f30afa406fda95f6e02ad52293635937af` |
 | Release | https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.0.0 |
 
 Verify the installer before running it:
@@ -27,7 +27,7 @@ Get-FileHash .\NeoOptimize.exe -Algorithm SHA256
 The hash must match:
 
 ```text
-983dafd2cbcf121576a8da5a4b0c0a7ace8464a3c2d1a6d64cb1d54203e5972b
+70864f39c4d111c4071061381f0127f30afa406fda95f6e02ad52293635937af
 ```
 
 ## What NeoOptimize Does
@@ -72,6 +72,14 @@ Core goals:
 - Anomaly review for unusual CPU, memory, disk, network, or process behavior.
 - Explanation-first output so the user can see why a task is recommended.
 - Maintenance report generation after scans and repairs.
+
+### NEO Agentic Autopilot
+
+- Local observe, diagnose, plan, approve, act, verify, and learn loop.
+- Runs through allowlisted NeoOptimize modules instead of arbitrary hidden commands.
+- Requires user confirmation before executing maintenance actions.
+- Writes local agentic reports and outcome memory for later review.
+- Can be launched from the main UI, CLI, or mini tray.
 
 ### Optimizer Modules
 
@@ -178,11 +186,21 @@ NeoOptimize is designed for local AI workflows. Local model support can be used
 for offline recommendations and privacy-preserving analysis when configured by
 the user.
 
+### Optional Tooling Skills
+
+NEO can recommend optional helper tooling only with user consent:
+
+- Microsoft PowerToys via WinGet for technician productivity workflows.
+- Winbindex reference intelligence for Windows binary version/hash investigation.
+
+These are not required dependencies and are not installed silently.
+
 ### Role Ownership
 
 NEO separates AI responsibilities so the system stays auditable:
 
 - NEO: local orchestrator, chat, voice, telemetry summary, and safe action planning.
+- NEO Agentic Autopilot: local observe-plan-approve-act-verify-learn runtime.
 - AI Doctor: Windows health scoring, anomaly detection, and treatment ranking.
 - Local Model / Ollama: offline reasoning, diagnostics explanation, and script drafting.
 - Script Forge: PowerShell and CMD audit script generation with SHA-256 metadata.
@@ -263,7 +281,8 @@ Protection policies to AuditMode.
   PowerShell so systems with Windows Script Host disabled can still open
   NeoOptimize.
 - The installer now includes the mini tray, NEO role registry, MCP bridge,
-  skills, local model policy, and Update Manager repair workflow.
+  skills, optional tooling registry, NEO Agentic Autopilot, local model policy,
+  and Update Manager repair workflow.
 
 ## Support
 
