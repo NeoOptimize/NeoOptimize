@@ -23,6 +23,7 @@ Release date: 2026-05-22
 - Update and repair documentation now highlights credential-gated SHA-256 verification.
 - Lab guest tooling is no longer bundled in the public installer.
 - Support wording is consistent across public-facing screens.
+- Mini tray polling is lighter and no longer requests administrator elevation at login.
 
 ### Verification
 

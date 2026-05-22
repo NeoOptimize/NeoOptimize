@@ -15,7 +15,7 @@ Public releases focus on NeoOptimize only.
 | --- | --- |
 | Version | `1.0.0` |
 | Installer | `NeoOptimize.exe` |
-| SHA-256 | `535043606d60028d88efd2b7e308a5429bcd25d5bb42606a5975e8f4c022409f` |
+| SHA-256 | `983dafd2cbcf121576a8da5a4b0c0a7ace8464a3c2d1a6d64cb1d54203e5972b` |
 | Release | https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.0.0 |
 
 Verify the installer before running it:
@@ -27,7 +27,7 @@ Get-FileHash .\NeoOptimize.exe -Algorithm SHA256
 The hash must match:
 
 ```text
-535043606d60028d88efd2b7e308a5429bcd25d5bb42606a5975e8f4c022409f
+983dafd2cbcf121576a8da5a4b0c0a7ace8464a3c2d1a6d64cb1d54203e5972b
 ```
 
 ## What NeoOptimize Does
