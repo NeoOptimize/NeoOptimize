@@ -15,9 +15,9 @@ Public releases focus on NeoOptimize only.
 | --- | --- |
 | Version | `1.0.0` |
 | Installer | `NeoOptimize.exe` |
-| SHA-256 | `b5a756017d3ea88a75187fe943a6c507f09c1c7a2c1455c2ccccaf3ccc55fc71` |
+| SHA-256 | `de18acc6247f091c948d2944becf24e856bba434c7a474449273732d93af2ef5` |
 | Portable ZIP | `NeoOptimize-portable.zip` |
-| Portable SHA-256 | `e2fd728c6611df5fe659ad924c70f23a91b4add6b3f9a5617793567e4b7d4831` |
+| Portable SHA-256 | `d106fbd75967800afc25f7c28e0e013592371829560a0ab9c10d76bea831bd50` |
 | Release | https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.0.0 |
 
 Verify the installer before running it:
@@ -29,7 +29,7 @@ Get-FileHash .\NeoOptimize.exe -Algorithm SHA256
 The hash must match:
 
 ```text
-b5a756017d3ea88a75187fe943a6c507f09c1c7a2c1455c2ccccaf3ccc55fc71
+de18acc6247f091c948d2944becf24e856bba434c7a474449273732d93af2ef5
 ```
 
 ## Package Managers
