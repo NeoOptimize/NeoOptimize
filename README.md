@@ -16,6 +16,8 @@ Public releases focus on NeoOptimize only.
 | Version | `1.0.0` |
 | Installer | `NeoOptimize.exe` |
 | SHA-256 | `70864f39c4d111c4071061381f0127f30afa406fda95f6e02ad52293635937af` |
+| Portable ZIP | `NeoOptimize-portable.zip` |
+| Portable SHA-256 | `3fa2c27b3c63a9413b110477af161f5d04e3bf379c102c36aab8bf385cfaf6f4` |
 | Release | https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.0.0 |
 
 Verify the installer before running it:
@@ -29,6 +31,19 @@ The hash must match:
 ```text
 70864f39c4d111c4071061381f0127f30afa406fda95f6e02ad52293635937af
 ```
+
+## Package Managers
+
+Package manager manifests are prepared under `distribution/`:
+
+| Channel | Package | Status |
+| --- | --- | --- |
+| WinGet | `ZenthralixLab.NeoOptimize` | Manifest prepared for registry submission. |
+| Chocolatey | `neooptimize` | Package template prepared for moderation submission. |
+| Scoop | `neooptimize` | Portable manifest prepared for bucket submission. |
+
+The official registry submissions are staged. Until each registry accepts the
+package, use the GitHub Release download and verify the SHA-256 checksum.
 
 ## What NeoOptimize Does
 

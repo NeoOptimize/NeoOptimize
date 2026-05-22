@@ -6,6 +6,8 @@ Release date: 2026-05-22
 
 ### Added
 
+- Package manager distribution manifests for WinGet, Chocolatey, and Scoop.
+- Portable ZIP release asset for Scoop-style user-space installation.
 - Remote Access Readiness tool for trusted Windows maintenance environments.
 - Secure transport configuration for request signing, HTTPS enforcement, and certificate pinning.
 - Replay protection support for signed maintenance requests.

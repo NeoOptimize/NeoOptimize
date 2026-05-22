@@ -1,0 +1,33 @@
+{
+  "version": "1.0.0",
+  "description": "AI-powered Windows optimization and maintenance platform.",
+  "homepage": "https://github.com/NeoOptimize/NeoOptimize",
+  "license": "Apache-2.0",
+  "url": "https://github.com/NeoOptimize/NeoOptimize/releases/download/v1.0.0/NeoOptimize-portable.zip",
+  "hash": "sha256:3fa2c27b3c63a9413b110477af161f5d04e3bf379c102c36aab8bf385cfaf6f4",
+  "shortcuts": [
+    [
+      "LAUNCH.bat",
+      "NeoOptimize"
+    ]
+  ],
+  "persist": [
+    "reports",
+    "logs"
+  ],
+  "notes": [
+    "Run as Administrator for maintenance actions that modify Windows settings.",
+    "The portable package is intended for local diagnostics and maintenance workflows."
+  ],
+  "checkver": {
+    "github": "https://github.com/NeoOptimize/NeoOptimize"
+  },
+  "autoupdate": {
+    "url": "https://github.com/NeoOptimize/NeoOptimize/releases/download/v$version/NeoOptimize-portable.zip",
+    "hash": {
+      "url": "https://github.com/NeoOptimize/NeoOptimize/releases/download/v$version/NeoOptimize-portable.zip.sha256",
+      "find": "^([a-fA-F0-9]{64})"
+    }
+  }
+}
+

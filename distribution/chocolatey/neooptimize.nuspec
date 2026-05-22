@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>neooptimize</id>
+    <version>1.0.0</version>
+    <packageSourceUrl>https://github.com/NeoOptimize/NeoOptimize</packageSourceUrl>
+    <owners>Zenthralix-Lab</owners>
+    <title>NeoOptimize</title>
+    <authors>Zenthralix-Lab</authors>
+    <projectUrl>https://github.com/NeoOptimize/NeoOptimize</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/NeoOptimize/NeoOptimize/main/assets/NeoOptimize_full_brand.png</iconUrl>
+    <copyright>Copyright (c) Zenthralix-Lab</copyright>
+    <licenseUrl>https://github.com/NeoOptimize/NeoOptimize/blob/main/LICENSE</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <projectSourceUrl>https://github.com/NeoOptimize/NeoOptimize</projectSourceUrl>
+    <docsUrl>https://github.com/NeoOptimize/NeoOptimize#readme</docsUrl>
+    <mailingListUrl>mailto:neooptimizeofficial@gmail.com</mailingListUrl>
+    <bugTrackerUrl>https://github.com/NeoOptimize/NeoOptimize/issues</bugTrackerUrl>
+    <tags>windows optimizer maintenance diagnostics cleanup repair ai neooptimize</tags>
+    <summary>AI-powered Windows optimization and maintenance platform.</summary>
+    <description>
+NeoOptimize is a local Windows utility for diagnostics, safe cleanup, repair planning, update checks, NEO Agentic Autopilot, and before/after maintenance reports.
+
+Maintenance actions are designed to be visible and user-approved. Administrator approval may be required for privileged Windows repair operations.
+    </description>
+    <releaseNotes>https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.0.0</releaseNotes>
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>
+

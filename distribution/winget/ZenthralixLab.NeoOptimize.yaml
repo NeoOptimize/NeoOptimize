@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.singleton.1.9.0.schema.json
+PackageIdentifier: ZenthralixLab.NeoOptimize
+PackageVersion: 1.0.0
+PackageLocale: en-US
+Publisher: Zenthralix-Lab
+PublisherUrl: https://github.com/NeoOptimize
+PublisherSupportUrl: https://github.com/NeoOptimize/NeoOptimize/issues
+Author: Zenthralix-Lab
+PackageName: NeoOptimize
+PackageUrl: https://github.com/NeoOptimize/NeoOptimize
+License: Apache-2.0
+LicenseUrl: https://github.com/NeoOptimize/NeoOptimize/blob/main/LICENSE
+Copyright: Copyright (c) Zenthralix-Lab
+ShortDescription: AI-powered Windows optimization and maintenance platform.
+Description: NeoOptimize is a local Windows utility for diagnostics, safe cleanup, repair planning, update checks, NEO Agentic Autopilot, and before/after maintenance reports.
+Moniker: neooptimize
+Tags:
+- windows
+- optimizer
+- maintenance
+- diagnostics
+- cleanup
+- repair
+- ai
+ReleaseNotesUrl: https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.0.0
+Installers:
+- Architecture: x64
+  InstallerType: nullsoft
+  Scope: machine
+  InstallerUrl: https://github.com/NeoOptimize/NeoOptimize/releases/download/v1.0.0/NeoOptimize.exe
+  InstallerSha256: 70864f39c4d111c4071061381f0127f30afa406fda95f6e02ad52293635937af
+  InstallerSwitches:
+    Silent: /S
+    SilentWithProgress: /S
+ManifestType: singleton
+ManifestVersion: 1.9.0
+
