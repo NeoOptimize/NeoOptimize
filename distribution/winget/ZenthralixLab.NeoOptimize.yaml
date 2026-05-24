@@ -28,7 +28,7 @@ Installers:
   InstallerType: nullsoft
   Scope: machine
   InstallerUrl: https://github.com/NeoOptimize/NeoOptimize/releases/download/v1.0.0/NeoOptimize.exe
-  InstallerSha256: 8657d576ac92563415ab8ee9aa971821864928a3b74b4c0b66b100d3daf45471
+  InstallerSha256: CFFF4AE2316A75106B9141C08CA0EF33220FA062C06D528D8784ADDCE3ABC7D3
   InstallerSwitches:
     Silent: /S
     SilentWithProgress: /S

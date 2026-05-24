@@ -2,12 +2,11 @@
 
 ## 1.0.0 Public Release
 
-Release date: 2026-05-22
+Release date: 2026-05-25
 
 ### Added
 
 - Package manager distribution manifests for WinGet, Chocolatey, and Scoop.
-- Portable ZIP release asset for Scoop-style user-space installation.
 - Remote Access Readiness tool for trusted Windows maintenance environments.
 - Secure transport configuration for request signing, HTTPS enforcement, and certificate pinning.
 - Replay protection support for signed maintenance requests.
@@ -15,7 +14,6 @@ Release date: 2026-05-22
 - PowerShell launcher that works when Windows Script Host is disabled.
 - Linux Mint style Update Manager panel for check, verified install, repair, integrity scan, and release access.
 - Mini tray companion with realtime CPU/RAM/DISK monitor, NEO chat, voice command, reports, provider status, and Update Manager shortcuts.
-- NeoOptimize local profile login with name and phone number, separate from managed admin credentials.
 - Clear Chat control in the mini tray NEO chat window.
 - Mini tray now opens a compact lower-right realtime monitor automatically after launch.
 - NEO Agentic Autopilot for local observe, diagnose, plan, approval, action, verification, and learning loops.
@@ -35,6 +33,8 @@ Release date: 2026-05-22
 - Mini tray polling is lighter and no longer requests administrator elevation at login.
 - NEO panel remains accessible while maintenance tasks are running, while duplicate task execution is still throttled.
 - Main NeoOptimize AI page keeps monitoring and provider controls clean; interactive chat lives in the mini tray.
+- Installer stops the existing endpoint sync service before replacing agent files, then reinstalls the service to `C:\Program Files\NeoOptimize\Agent`.
+- Windows VM final install verified with endpoint sync agent `1.0.0`.
 
 ### Verification
 
@@ -42,4 +42,4 @@ Release date: 2026-05-22
 - NeoOptimize maintenance runtime build completed.
 - Safety manifest and NeoOptimize workflow tests passed.
 - Installer package inspected for updated application files and generated with SHA-256 verification.
-- Windows VM install verified: NeoOptimize opens, modules render, NEO page shows provider/skill/MCP status, and mini monitor displays realtime CPU/RAM/DISK/NETWORK data.
+- Windows VM install verified: NeoOptimize installed, endpoint sync agent reconnected as version `1.0.0`, safe command dispatch works, and telemetry continues to arrive.

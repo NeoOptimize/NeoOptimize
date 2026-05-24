@@ -6,7 +6,7 @@ NeoOptimize prepares three public Windows distribution paths:
 | --- | --- | --- |
 | WinGet | `ZenthralixLab.NeoOptimize` | Uses the public NSIS installer. |
 | Chocolatey | `neooptimize` | Uses the public NSIS installer with SHA-256 verification. |
-| Scoop | `neooptimize` | Uses the portable ZIP package. |
+| Scoop | `neooptimize` | Planned for a later user-space package. |
 
 The current release is `1.0.0`.
 
@@ -14,8 +14,7 @@ The current release is `1.0.0`.
 
 | Asset | SHA-256 |
 | --- | --- |
-| `NeoOptimize.exe` | `8657d576ac92563415ab8ee9aa971821864928a3b74b4c0b66b100d3daf45471` |
-| `NeoOptimize-portable.zip` | `5c5770c1869944b9239a7c682f6583618a7e8c658680eaf3ed3dd53deea5a807` |
+| `NeoOptimize.exe` | `cfff4ae2316a75106b9141c08ca0ef33220fa062c06d528d8784addce3abc7d3` |
 
 ## WinGet
 
@@ -57,11 +56,12 @@ Manifest:
 distribution/scoop/neooptimize.json
 ```
 
-Scoop uses `NeoOptimize-portable.zip`, not the admin installer. This keeps the
-Scoop package aligned with portable package expectations.
+Scoop should use a later user-space package, not the admin installer. This keeps
+the Scoop package aligned with portable package expectations.
 
 Suggested publication path:
 
-1. Add `neooptimize.json` to a maintained bucket.
-2. Test with `scoop install ./neooptimize.json`.
-3. Submit to a community bucket after the package has stable download history.
+1. Produce and sign a user-space package after the installer release is stable.
+2. Update `distribution/scoop/neooptimize.json` with the final URL and SHA-256.
+3. Test with `scoop install ./neooptimize.json`.
+4. Submit to a community bucket after the package has stable download history.

@@ -15,9 +15,7 @@ Public releases focus on NeoOptimize only.
 | --- | --- |
 | Version | `1.0.0` |
 | Installer | `NeoOptimize.exe` |
-| SHA-256 | `8657d576ac92563415ab8ee9aa971821864928a3b74b4c0b66b100d3daf45471` |
-| Portable ZIP | `NeoOptimize-portable.zip` |
-| Portable SHA-256 | `5c5770c1869944b9239a7c682f6583618a7e8c658680eaf3ed3dd53deea5a807` |
+| SHA-256 | `cfff4ae2316a75106b9141c08ca0ef33220fa062c06d528d8784addce3abc7d3` |
 | Release | https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.0.0 |
 
 Verify the installer before running it:
@@ -29,7 +27,7 @@ Get-FileHash .\NeoOptimize.exe -Algorithm SHA256
 The hash must match:
 
 ```text
-8657d576ac92563415ab8ee9aa971821864928a3b74b4c0b66b100d3daf45471
+cfff4ae2316a75106b9141c08ca0ef33220fa062c06d528d8784addce3abc7d3
 ```
 
 ## Package Managers
@@ -40,7 +38,7 @@ Package manager manifests are prepared under `distribution/`:
 | --- | --- | --- |
 | WinGet | `ZenthralixLab.NeoOptimize` | Manifest prepared for registry submission. |
 | Chocolatey | `neooptimize` | Package template prepared for moderation submission. |
-| Scoop | `neooptimize` | Portable manifest prepared for bucket submission. |
+| Scoop | `neooptimize` | Planned after a signed portable package is produced. |
 
 The official registry submissions are staged. Until each registry accepts the
 package, use the GitHub Release download and verify the SHA-256 checksum.
@@ -336,7 +334,7 @@ Protection policies to AuditMode.
 
 ## About
 
-Made with love at Zenthralix-Lab 
+Made with love at Zenthralix-Lab with Codex.
 
 ## License
 
