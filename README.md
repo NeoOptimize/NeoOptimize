@@ -1,13 +1,13 @@
 # NeoOptimize
 
-AI-powered Windows optimization and maintenance platform.
+NeoOptimize is an AI-empowered Windows optimization and maintenance platform for
+local diagnostics, safe cleanup, repair guidance, update integrity checks,
+real-time system monitoring, and before/after maintenance reporting.
 
-NeoOptimize is a local Windows utility for inspecting system health, finding
-performance problems, cleaning safe junk files, auditing security posture,
-repairing common Windows issues, and producing before/after maintenance reports.
-Public releases focus on NeoOptimize only.
+The public release focuses on the NeoOptimize desktop application, local safety
+workflow, mini tray companion, update manager, and NEO local assistant features.
 
-![NeoOptimize](assets/neooptimize-screenshot.png)
+![NeoOptimize dashboard and mini tray](assets/neooptimize-screenshot.png)
 
 ## Download
 
@@ -30,250 +30,155 @@ The hash must match:
 cfff4ae2316a75106b9141c08ca0ef33220fa062c06d528d8784addce3abc7d3
 ```
 
-## Package Managers
-
-Package manager manifests are prepared under `distribution/`:
-
-| Channel | Package | Status |
-| --- | --- | --- |
-| WinGet | `ZenthralixLab.NeoOptimize` | Manifest prepared for registry submission. |
-| Chocolatey | `neooptimize` | Package template prepared for moderation submission. |
-| Scoop | `neooptimize` | Planned after a signed portable package is produced. |
-
-The official registry submissions are staged. Until each registry accepts the
-package, use the GitHub Release download and verify the SHA-256 checksum.
-
-## Code signing policy
-
-Free code signing provided by SignPath.io, certificate by SignPath Foundation.
-NeoOptimize is preparing a SignPath-based signing workflow for public freeware
-releases. See `SIGNPATH.md`.
-
-The workflow is intentionally gated until the public repository contains the
-application source and installer build recipe required to build the installer inside
-GitHub Actions.
-
-Team roles:
-
-- Committers and reviewers: NeoOptimize maintainers.
-- Approvers: Zenthralix-Lab release owners.
-
-Privacy policy:
-
-This program will not transfer information to other networked systems unless
-specifically requested by the user or the person installing or operating it.
-
 ## What NeoOptimize Does
 
-NeoOptimize is designed for practical Windows maintenance, not cosmetic
-"one-click magic." It combines local telemetry, guided repair flows, and AI
-assisted recommendations so users can understand what is wrong before applying
-changes.
+NeoOptimize is built for practical Windows maintenance. It is not a cosmetic
+one-click optimizer. The application reads local system signals, explains
+probable causes, recommends safe actions, and keeps high-impact changes behind
+explicit user approval.
 
 Core goals:
 
-- Diagnose slow, unstable, or cluttered Windows systems.
-- Explain likely causes in plain language.
-- Recommend safe maintenance steps by risk level.
-- Run visible, user-approved repair and cleanup tasks.
-- Measure the result with before/after benchmark data.
-- Keep high-risk actions gated behind confirmation.
+- Detect performance bottlenecks across CPU, GPU, RAM, disk, network, startup,
+  services, updates, and power configuration.
+- Explain system health in a format normal users and technicians can act on.
+- Separate scan, report, cleanup, repair, benchmark, and update operations.
+- Reduce accidental damage by ranking actions by risk and reversibility.
+- Produce before/after reports so maintenance results can be measured.
+- Keep local-first operation available without requiring a cloud account.
+
+## Product Components
+
+| Component | Purpose |
+| --- | --- |
+| Main desktop UI | Central dashboard for monitoring, AI Doctor, optimization modules, reports, settings, and update checks. |
+| Mini tray companion | Compact lower-right monitor for CPU, RAM, disk, NEO chat, voice command, clear chat, and quick-open actions. |
+| AI Doctor | Converts local telemetry into a risk-ranked care plan with practical maintenance recommendations. |
+| Optimizer modules | Runs guided cleanup, diagnostics, repair, privacy review, update audit, power audit, and benchmark workflows. |
+| Safety engine | Keeps privileged actions visible, confirmation-gated, and separated from read-only scans. |
+| Update Manager | Checks release metadata, verifies SHA-256 integrity, installs updates, and repairs damaged installs. |
+| Report engine | Generates local reports for health checks, benchmark results, repairs, and maintenance history. |
+| NEO assistant | Local AI workflow for text guidance, voice entry, anomaly explanation, and script planning assistance. |
 
 ## Main Features
 
-### System Overview
+### Real-Time Monitoring
 
-- Health score summary for quick system status review.
-- CPU, GPU, RAM, disk, and network monitoring.
-- Device profile including OS, runtime, storage, and basic hardware data.
-- Process, thread, handle, uptime, and power-state visibility.
-- Fast snapshot report for support or personal troubleshooting.
-
-### Mini Tray
-
-- Lightweight tray companion with a compact lower-right desktop monitor.
-- 1-second CPU, RAM, and disk status tooltip.
-- Compact realtime monitor window for CPU, RAM, disk, network, and last update.
-- NEO chat shortcut for local AI guidance.
-- Clear Chat control inside the mini tray NEO window.
-- Voice command shortcut using push-to-talk behavior.
-- Update Manager, reports, and provider status shortcuts.
+- CPU usage, kernel pressure, and clock information.
+- GPU availability and usage when the local system exposes compatible counters.
+- RAM usage, available memory, committed memory pressure, and cache indicators.
+- Disk free space, read/write pressure, queue length, and latency indicators.
+- Network throughput, adapter status, local IP information, and connectivity state.
+- Uptime, process count, thread count, handle count, and power-state visibility.
 
 ### AI Doctor
 
-- Health check workflow for common Windows performance problems.
-- Risk-ranked care plan with recommended next steps.
-- Anomaly review for unusual CPU, memory, disk, network, or process behavior.
-- Explanation-first output so the user can see why a task is recommended.
-- Maintenance report generation after scans and repairs.
+AI Doctor turns local telemetry into a practical care plan. It prioritizes
+actions based on expected benefit, risk level, privilege requirement, and
+reversibility.
 
-### NEO Agentic Autopilot
+It can help explain:
 
-- Local observe, diagnose, plan, approve, act, verify, and learn loop.
-- Runs through allowlisted NeoOptimize modules instead of arbitrary hidden commands.
-- Requires user confirmation before executing maintenance actions.
-- Writes local agentic reports and outcome memory for later review.
-- Can be launched from the main UI, CLI, or mini tray.
-
-### Optimizer Modules
-
-- Safe Cleanup: removes temporary files, caches, logs, and common residual files.
-- Deep Junk Scan: searches deeper junk locations before deletion.
-- Startup Review: helps identify apps that slow down boot.
-- Service Review: audits services that may affect performance or stability.
-- Disk Diagnostics: checks free space, disk health indicators, and queue pressure.
-- Network Diagnostics: reviews DNS, adapter state, latency, and connectivity.
-- Power Audit: checks current power plan and performance-related settings.
-- Privacy Review: audits common telemetry and app permission settings.
-- Update Audit: reviews Windows Update state and repair options.
-- System Repair: guided SFC, DISM, WinRE, boot, and update reset workflows.
-- Benchmark: records before/after metrics for evidence-based maintenance.
-- Report Export: saves local reports for review.
-
-### Security And Recovery
-
-- Security audit for Defender, firewall, ASR, Controlled Folder Access, SMB, TLS,
-  UAC, and exploit posture.
-- Defender Lab Recovery mode for machines that were hardened too aggressively
-  during testing.
-- High-risk actions require user confirmation.
-- Repair flows run visibly instead of silently changing the system.
-- Public builds do not disable Defender realtime protection silently.
-
-### Update Manager
-
-- Update check and repair workflow.
-- Credential-gated update action.
-- SHA-256 integrity verification before applying packages.
-- Recovery path for incomplete or damaged installs.
-- Linux Mint style Update Manager flow: check first, review metadata, then
-  install verified updates or repair NeoOptimize.
-
-### Remote Access Readiness
-
-- Optional readiness check for managed Windows maintenance environments.
-- Disabled by default and dry-run first.
-- Requires Administrator approval and explicit apply mode before changing WinRM,
-  OpenSSH, or local firewall settings.
-- Uses scoped firewall rules and blocks broad wildcard targets.
-- Does not bundle third-party guest tools in the public installer.
-
-### Secure Transport Guard
-
-- Request signing support for trusted maintenance channels.
-- Optional HTTPS enforcement and certificate pinning.
-- Private lab HTTP is limited to local/private networks when enabled.
-- Replay protection support for signed requests.
-- Input validation for telemetry, report, and check-in payloads.
-
-## AI Capabilities
-
-NeoOptimize includes a local-first AI workflow named **NEO**:
-
-If asked who it is, NEO answers:
-
-> Saya adalah NEO (Neural Execution Operator), artificial intelligence yang dibangun di zenthralix-lab oleh nol_eight.
-
-### AI Doctor
-
-AI Doctor reads local health signals and turns them into a practical diagnosis.
-It looks at resource pressure, disk behavior, update state, startup load,
-security posture, and maintenance history to produce a care plan.
-
-### Care Plan Engine
-
-The care plan ranks suggested actions by:
-
-- expected benefit,
-- safety risk,
-- required privilege,
-- reversibility,
-- whether the action should be audit-only, cleanup, repair, or benchmark.
-
-### Anomaly Interpreter
-
-The interpreter helps explain symptoms such as:
-
-- high idle CPU,
+- high idle CPU usage,
 - RAM pressure,
 - disk queue spikes,
 - slow boot,
 - network instability,
-- update failures,
+- Windows Update failures,
 - repeated repair failures,
-- unusual process growth.
+- unusual process growth,
+- common security posture problems.
 
-### Script Planning Assistant
+### Mini Tray Companion
 
-NEO can draft PowerShell or CMD maintenance plans for review. Public builds
-keep this as an assisted planning workflow: commands should be reviewed and
-approved before execution.
+The mini tray is designed to stay lightweight while the main window is minimized.
+It gives quick access to monitoring and NEO interaction without opening extra
+PowerShell windows.
 
-### Benchmark Analyst
+Mini tray capabilities:
 
-The benchmark analyst compares pre-maintenance and post-maintenance metrics to
-show whether a cleanup or repair actually helped.
+- compact live CPU, RAM, and disk status,
+- NEO text conversation panel,
+- voice command entry point,
+- clear chat action,
+- quick-open button for the main interface,
+- update and provider status shortcuts,
+- automatic chat retention cleanup to avoid long local chat buildup.
 
-### Local Model Support
+### NEO Local Assistant
 
-NeoOptimize is designed for local AI workflows. Local model support can be used
-for offline recommendations and privacy-preserving analysis when configured by
-the user.
+NEO stands for Neural Execution Operator. It is the local assistant layer inside
+NeoOptimize.
 
-### Provider And Skill Status
+When asked who it is, NEO answers:
 
-The AI panel shows whether local model, NEO policy, skills, MCP connectors, and
-optional assistants are ready. Cloud providers remain optional and user
-configured; NeoOptimize keeps local diagnosis available even when no API key is
-set.
+> I am NEO, Neural Execution Operator, an artificial intelligence built at Zenthralix-Lab by nol_eight.
 
-### Optional Tooling Skills
+NEO responsibilities:
 
-NEO can recommend optional helper tooling only with user consent:
+- summarize local telemetry,
+- explain anomalies,
+- draft safe maintenance plans,
+- guide the user through repair workflows,
+- prepare PowerShell or CMD maintenance drafts for review,
+- support text and voice interaction from the mini tray,
+- keep actions tied to allowlisted NeoOptimize modules,
+- require approval before executing privileged maintenance.
 
-- Microsoft PowerToys via WinGet for technician productivity workflows.
-- Winbindex reference intelligence for Windows binary version/hash investigation.
+Local model support is designed for privacy-preserving offline diagnosis when a
+local provider such as Ollama is installed and configured. Optional cloud
+providers can be configured by the user, but core local diagnostics remain
+available without requiring an API key.
 
-These are not required dependencies and are not installed silently.
+### Update Manager
 
-### Role Ownership
+The Update Manager follows a cautious, Linux Mint style workflow:
 
-NEO separates AI responsibilities so the system stays auditable:
+1. Check for update metadata.
+2. Show release information and version details.
+3. Verify SHA-256 before install.
+4. Apply the update only after confirmation.
+5. Repair the local installation if required files are missing or damaged.
 
-- NEO: local orchestrator, chat, voice, telemetry summary, and safe action planning.
-- NEO Agentic Autopilot: local observe-plan-approve-act-verify-learn runtime.
-- AI Doctor: Windows health scoring, anomaly detection, and treatment ranking.
-- Local Model / Ollama: offline reasoning, diagnostics explanation, and script drafting.
-- Script Forge: PowerShell and CMD audit script generation with SHA-256 metadata.
-- MCP Bridge: local inventory of skills, connectors, tools, and runtime readiness.
-- Update Manager: credential-gated update checks, verified install, and repair flow.
+Update actions are credential-gated and integrity-checked so an update package
+cannot be silently replaced without detection.
 
-### Operator Skills
+## Optimization Module Catalog
 
-NEO is built around practical Windows maintenance skills:
-
-- system health triage,
-- cleanup planning,
-- repair planning,
-- update troubleshooting,
-- security posture explanation,
-- anomaly interpretation,
-- before/after benchmark review,
-- PowerShell and CMD maintenance draft generation.
+| Module | Function |
+| --- | --- |
+| Disk Cleaner | Removes temporary files, caches, dumps, logs, and common residual files. |
+| Deep Scan | Searches deeper junk locations before removal and reports findings first. |
+| System Repair | Guides SFC, DISM, WinRE, boot repair, and Windows Update reset workflows. |
+| Privacy Review | Reviews telemetry-related settings and application permission posture. |
+| Network Diagnose | Checks adapter state, DNS, latency, routing, and connectivity symptoms. |
+| Update Audit | Reviews Windows Update state and repair options. |
+| Power Audit | Reviews active power plan, battery posture, and performance-related settings. |
+| Startup Review | Helps identify startup entries that slow down boot. |
+| Service Review | Reviews service state and startup behavior before any change is applied. |
+| Security Audit | Reviews Defender, firewall, ASR, UAC, SMB, TLS, and exploit protection posture. |
+| Benchmark | Captures before/after metrics so maintenance impact can be measured. |
+| Report Export | Saves local reports for later troubleshooting or support review. |
 
 ## Safety Model
 
-NeoOptimize is audit-first by default:
+NeoOptimize is audit-first by default.
 
-- It shows what it is about to do.
-- It separates scan, report, cleanup, and repair actions.
-- It requires administrator approval for privileged maintenance.
-- It avoids hidden drivers, covert capture, and silent destructive repair.
-- It keeps reports local unless the user chooses to share them.
-- It does not collect camera, microphone, biometric data, browser secrets,
-  private keys, or documents by default.
-- It keeps remote access bootstrap disabled unless an administrator explicitly
-  enables it for a trusted environment.
+- Scan and report actions are separated from cleanup and repair actions.
+- High-impact actions require administrator approval.
+- Repair workflows are visible and confirmation-gated.
+- Cleanup tasks are scoped to known safe locations.
+- Privileged execution is not hidden behind silent background changes.
+- Remote access readiness features are disabled unless explicitly enabled by an administrator.
+- Camera, microphone, browser secrets, private keys, documents, and biometric data are not collected by default.
+- Reports stay local unless the user chooses to share them.
+
+## Privacy
+
+NeoOptimize is designed as a local-first maintenance utility. The public build
+does not require a user account for local diagnosis. Network access is used for
+release downloads, update metadata, optional support links, and optional
+user-configured AI providers.
 
 ## Install
 
@@ -282,13 +187,13 @@ NeoOptimize is audit-first by default:
 3. Verify the SHA-256 checksum.
 4. Run the installer as Administrator.
 5. Open NeoOptimize from the Start Menu or desktop shortcut.
-6. Start with **AI Doctor** or **Safe Care Plan**.
+6. Start with AI Doctor, Safe Cleanup, or Benchmark.
 
 ## Windows Defender Notice
 
 Unsigned public installers can trigger SmartScreen or reputation warnings.
-Signed releases will use the SignPath Foundation path once the project is
-approved. SmartScreen reputation can still take time to build even after signing.
+NeoOptimize is preparing a SignPath-based signing workflow for public freeware
+releases. SmartScreen reputation can still take time to build even after signing.
 
 If an older lab build made Windows Security too strict, open NeoOptimize and run
 the Defender Lab Recovery action, or run:
@@ -297,38 +202,49 @@ the Defender Lab Recovery action, or run:
 powershell -NoProfile -ExecutionPolicy RemoteSigned -File .\NeoOptimize.ps1 -Action DefenderAuditMode
 ```
 
-This keeps Microsoft Defender enabled and moves aggressive lab ASR/CFA/Network
-Protection policies to AuditMode.
+This keeps Microsoft Defender enabled and moves aggressive lab ASR, Controlled
+Folder Access, and Network Protection policies to AuditMode.
 
 ## System Requirements
 
 | Requirement | Minimum |
 | --- | --- |
-| OS | Windows 10/11 |
+| OS | Windows 10 or Windows 11 |
 | Privilege | Administrator approval for maintenance actions |
-| Runtime | PowerShell 5.1+ |
+| Runtime | PowerShell 5.1 or later |
 | Disk | 300 MB free |
-| Network | Optional, only for update/download features |
+| Network | Optional, used for updates, downloads, and optional providers |
 
-## Release Notes
+## Package Managers
 
-- Some advanced AI workflows may require additional local model configuration.
-- SmartScreen reputation may still be low until the project uses a trusted
-  production code-signing certificate.
-- Users should create a restore point before running high-impact repair tasks.
-- Remote access readiness features are for trusted maintenance environments and
-  stay disabled unless explicitly enabled by the administrator.
-- The launcher no longer depends on Windows Script Host; it starts through
-  PowerShell so systems with Windows Script Host disabled can still open
-  NeoOptimize.
-- The installer now includes the mini tray, NEO role registry, MCP bridge,
-  skills, optional tooling registry, NEO Agentic Autopilot, local model policy,
-  and Update Manager repair workflow.
+Package manager manifests are prepared under `distribution/`.
 
-## Support
+| Channel | Package | Status |
+| --- | --- | --- |
+| WinGet | `ZenthralixLab.NeoOptimize` | Manifest prepared for registry submission. |
+| Chocolatey | `neooptimize` | Package template prepared for moderation submission. |
+| Scoop | `neooptimize` | Planned for a later user-space package. |
 
-- Email: neooptimizeofficial@gmail.com
-- Buy Me a Coffee support: https://buymeacoffee.com/nol.eight
+Until each registry accepts the package, use the GitHub Release download and
+verify the SHA-256 checksum.
+
+## Code Signing
+
+Free code signing is planned through SignPath.io with certificates from the
+SignPath Foundation. The signing workflow is intentionally gated until the
+public repository contains the complete application source and installer build
+recipe required for reproducible signing.
+
+See `SIGNPATH.md` for the signing plan.
+
+## Support Zenthralix-Lab
+
+NeoOptimize is released as a free public utility. Support helps Zenthralix-Lab
+fund testing hardware, build infrastructure, documentation, security review,
+release maintenance, and future free software projects for the community.
+
+- Email: [neooptimizeofficial@gmail.com](mailto:neooptimizeofficial@gmail.com)
+- Buy Me a Coffee: https://buymeacoffee.com/nol.eight
 - Saweria: https://saweria.co/dtechtive
 - Dana: https://ik.imagekit.io/dtechtive/Dana
 
