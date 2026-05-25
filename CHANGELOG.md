@@ -1,5 +1,30 @@
 # Changelog
 
+## 1.0.4 No-CMD Runtime & Local AI Bootstrap
+
+Release date: 2026-05-26
+
+### Fixed
+
+- NeoOptimize runtime workers no longer spawn visible CMD/PowerShell windows from the native UI.
+- Installer, update repair, maintenance, uninstall, service checks, RMM bootstrap, `taskkill`, `chkdsk`, and Ollama setup now use hidden worker execution.
+- Legacy Windows App Paths registration now points to `NeoOptimize.exe` instead of `LAUNCH.bat`.
+
+### Added
+
+- Installer bootstrap downloads and installs Ollama when missing.
+- Installer starts `ollama serve` hidden and prepares `neo-light:latest`, `neo:latest`, and `neo-latest:latest`.
+- Local NEO model alias fallback can create Ollama aliases when direct NEO model pull is unavailable.
+
+### Verification
+
+- RMM live endpoint smoke passed for `/health`, `/healthz`, `/readyz`, `/livez`, `/api/v1/health`, and `/downloads/NeoOptimize.exe`.
+- RMM download asset SHA-256 matched the local release artifact.
+- Server Jest suite passed: `57/57` tests across `17` suites.
+- Python AI engine tests passed: `3/3`.
+- Public bundle verifier, static no-CMD-popup scan, module allowlist check, Rust/Tauri Windows build, and installer rebuild passed.
+- Installer rebuilt and verified with SHA-256 `e1aa5037023f156fd3343962c1688bc6ea469153af146c53b6558370d47e286f`.
+
 ## 1.0.3 RMM Runtime Health & VM Release Gate
 
 Release date: 2026-05-26

@@ -16,10 +16,10 @@ _Latest release-gate screenshot captured from the Windows VM validation run._
 
 | Item | Value |
 | --- | --- |
-| Version | `1.0.3` |
+| Version | `1.0.4` |
 | Installer | `NeoOptimize.exe` |
-| SHA-256 | `3667a2cb5ff7dfa6aed7ac7a131b6997ffb764fda3a5f4e6bfdb81bcc90620cc` |
-| Release | https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.0.3 |
+| SHA-256 | `e1aa5037023f156fd3343962c1688bc6ea469153af146c53b6558370d47e286f` |
+| Release | https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.0.4 |
 
 Verify the installer before running it:
 
@@ -30,7 +30,7 @@ Get-FileHash .\NeoOptimize.exe -Algorithm SHA256
 The hash must match:
 
 ```text
-3667a2cb5ff7dfa6aed7ac7a131b6997ffb764fda3a5f4e6bfdb81bcc90620cc
+e1aa5037023f156fd3343962c1688bc6ea469153af146c53b6558370d47e286f
 ```
 
 ## What NeoOptimize Does
@@ -58,7 +58,7 @@ Core goals:
 | Mini tray companion | Compact lower-right monitor for CPU, RAM, disk, NEO chat, voice command, clear chat, and quick-open actions. |
 | AI Doctor | Converts local telemetry into a risk-ranked care plan with practical maintenance recommendations. |
 | Optimizer modules | Runs guided cleanup, diagnostics, repair, debloat review, privacy review, update audit, power audit, and benchmark workflows. |
-| Safety engine | Keeps privileged actions visible, confirmation-gated, and separated from read-only scans. |
+| Safety engine | Keeps privileged actions confirmation-gated, logged, and separated from read-only scans. |
 | Update Manager | Checks release metadata, verifies SHA-256 integrity, installs updates, and repairs damaged installs. |
 | Report engine | Generates local reports for health checks, benchmark results, repairs, and maintenance history. |
 | NEO assistant | Local AI workflow for text guidance, voice entry, anomaly explanation, and script planning assistance. |
@@ -129,10 +129,11 @@ NEO responsibilities:
 - keep actions tied to allowlisted NeoOptimize modules,
 - require approval before executing privileged maintenance.
 
-Local model support is designed for privacy-preserving offline diagnosis when a
-local provider such as Ollama is installed and configured. Optional cloud
-providers can be configured by the user, but core local diagnostics remain
-available without requiring an API key.
+Local model support is designed for privacy-preserving offline diagnosis. The
+installer can download and install Ollama locally, start the local API hidden,
+and prepare `neo-light:latest`, `neo:latest`, and `neo-latest:latest` for NEO.
+Optional cloud providers can be configured by the user, but core local
+diagnostics remain available without requiring an API key.
 
 ### Update Manager
 
@@ -176,13 +177,13 @@ cannot be silently replaced without detection.
 
 ## Release Validation
 
-The `1.0.3` release gate completed with:
+The `1.0.4` release gate completed with:
 
 - RMM live endpoint smoke for `/health`, `/healthz`, `/readyz`, `/livez`, `/api/v1/health`, `/api/v1/metrics`, and `/downloads/NeoOptimize.exe`.
 - RMM browser smoke across dashboard routes with no console errors and no HTTP 4xx/5xx responses.
-- Server Jest suite: `55/55` tests across `16` suites.
+- Server Jest suite: `57/57` tests across `17` suites.
 - Python AI engine tests: `3/3`.
-- Client-nextgen production build, .NET agent build, UI wrapper build, public bundle verifier, and installer rebuild.
+- Client-nextgen production build, Rust/Tauri Windows build, public bundle verifier, static no-CMD-popup scan, and installer rebuild.
 
 ## Safety Model
 
@@ -190,9 +191,9 @@ NeoOptimize is audit-first by default.
 
 - Scan and report actions are separated from cleanup and repair actions.
 - High-impact actions require administrator approval.
-- Repair workflows are visible and confirmation-gated.
+- Repair workflows are confirmation-gated and run behind the native UI through hidden workers.
 - Cleanup tasks are scoped to known safe locations.
-- Privileged execution is not hidden behind silent background changes.
+- Privileged execution still requires Windows Administrator approval when required.
 - Remote access readiness features are disabled unless explicitly enabled by an administrator.
 - Camera, microphone, browser secrets, private keys, documents, and biometric data are not collected by default.
 - Reports stay local unless the user chooses to share them.
@@ -210,8 +211,9 @@ user-configured AI providers.
 2. Download `NeoOptimize.exe`.
 3. Verify the SHA-256 checksum.
 4. Run the installer as Administrator.
-5. Open NeoOptimize from the Start Menu or desktop shortcut.
-6. Start with AI Doctor, Safe Cleanup, or Benchmark.
+5. Let the installer finish local AI setup. It downloads/installs Ollama if needed, starts `ollama serve` hidden, and prepares `neo-light:latest`, `neo:latest`, and `neo-latest:latest`.
+6. Open NeoOptimize from the Start Menu or desktop shortcut.
+7. Start with AI Doctor, Safe Cleanup, or Benchmark.
 
 ## Windows Defender Notice
 
@@ -223,7 +225,7 @@ If an older lab build made Windows Security too strict, open NeoOptimize and run
 the Defender Lab Recovery action, or run:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy RemoteSigned -File .\NeoOptimize.ps1 -Action DefenderAuditMode
+powershell -NoProfile -ExecutionPolicy Bypass -File .\NeoOptimize.ps1 -Action DefenderAuditMode
 ```
 
 This keeps Microsoft Defender enabled and moves aggressive lab ASR, Controlled
@@ -236,7 +238,7 @@ Folder Access, and Network Protection policies to AuditMode.
 | OS | Windows 10 or Windows 11 |
 | Privilege | Administrator approval for maintenance actions |
 | Runtime | PowerShell 5.1 or later |
-| Disk | 300 MB free |
+| Disk | 300 MB for the app, plus additional space for Ollama and local model files |
 | Network | Optional, used for updates, downloads, and optional providers |
 
 ## Package Managers

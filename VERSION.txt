@@ -1,10 +1,7 @@
-NeoOptimize v1.0.3
+NeoOptimize v1.0.4
 Released: May 26, 2026
 Package: NeoOptimize.exe
-SHA256: 3667a2cb5ff7dfa6aed7ac7a131b6997ffb764fda3a5f4e6bfdb81bcc90620cc
-Portable Package: NeoOptimize-portable.zip
-Portable SHA256: 0012c28564541a4f53950700b715e147487c7b67d17c5c76c9a0f529fbeb6461
-
+SHA256: e1aa5037023f156fd3343962c1688bc6ea469153af146c53b6558370d47e286f
 Public Components:
 1. NeoOptimize Windows application
 2. NEO local advisory and agentic workflow
@@ -16,6 +13,8 @@ Public Components:
 8. AI role registry, local MCP bridge, optional tooling registry, and skills catalog
 9. NEO Agentic Autopilot
 10. RMM runtime health, metrics, and release-gate validation
+11. Hidden worker execution for no-CMD-popup UI operation
+12. Ollama local AI bootstrap for neo-light:latest, neo:latest, and neo-latest:latest
 
 Maintenance Areas:
 - System cleanup
