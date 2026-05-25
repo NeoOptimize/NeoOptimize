@@ -5,18 +5,21 @@ local diagnostics, safe cleanup, repair guidance, update integrity checks,
 real-time system monitoring, and before/after maintenance reporting.
 
 The public release focuses on the NeoOptimize desktop application, local safety
-workflow, mini tray companion, update manager, and NEO local assistant features.
+workflow, mini tray companion, update manager, NEO local assistant features, and
+RMM release-gate validation.
 
-![NeoOptimize dashboard and mini tray](assets/neooptimize-screenshot.png)
+![NeoOptimize running in a Windows VM with RMM connected](assets/neooptimize-screenshot.png)
+
+_Latest release-gate screenshot captured from the Windows VM validation run._
 
 ## Download
 
 | Item | Value |
 | --- | --- |
-| Version | `1.0.0` |
+| Version | `1.0.3` |
 | Installer | `NeoOptimize.exe` |
-| SHA-256 | `cfff4ae2316a75106b9141c08ca0ef33220fa062c06d528d8784addce3abc7d3` |
-| Release | https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.0.0 |
+| SHA-256 | `3667a2cb5ff7dfa6aed7ac7a131b6997ffb764fda3a5f4e6bfdb81bcc90620cc` |
+| Release | https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.0.3 |
 
 Verify the installer before running it:
 
@@ -27,7 +30,7 @@ Get-FileHash .\NeoOptimize.exe -Algorithm SHA256
 The hash must match:
 
 ```text
-cfff4ae2316a75106b9141c08ca0ef33220fa062c06d528d8784addce3abc7d3
+3667a2cb5ff7dfa6aed7ac7a131b6997ffb764fda3a5f4e6bfdb81bcc90620cc
 ```
 
 ## What NeoOptimize Does
@@ -54,11 +57,12 @@ Core goals:
 | Main desktop UI | Central dashboard for monitoring, AI Doctor, optimization modules, reports, settings, and update checks. |
 | Mini tray companion | Compact lower-right monitor for CPU, RAM, disk, NEO chat, voice command, clear chat, and quick-open actions. |
 | AI Doctor | Converts local telemetry into a risk-ranked care plan with practical maintenance recommendations. |
-| Optimizer modules | Runs guided cleanup, diagnostics, repair, privacy review, update audit, power audit, and benchmark workflows. |
+| Optimizer modules | Runs guided cleanup, diagnostics, repair, debloat review, privacy review, update audit, power audit, and benchmark workflows. |
 | Safety engine | Keeps privileged actions visible, confirmation-gated, and separated from read-only scans. |
 | Update Manager | Checks release metadata, verifies SHA-256 integrity, installs updates, and repairs damaged installs. |
 | Report engine | Generates local reports for health checks, benchmark results, repairs, and maintenance history. |
 | NEO assistant | Local AI workflow for text guidance, voice entry, anomaly explanation, and script planning assistance. |
+| RMM release gate | Verifies local health probes, Prometheus metrics, dashboard routes, installer download, and VM evidence before release. |
 
 ## Main Features
 
@@ -150,15 +154,35 @@ cannot be silently replaced without detection.
 | Disk Cleaner | Removes temporary files, caches, dumps, logs, and common residual files. |
 | Deep Scan | Searches deeper junk locations before removal and reports findings first. |
 | System Repair | Guides SFC, DISM, WinRE, boot repair, and Windows Update reset workflows. |
+| Windows Repair | Runs conservative Windows repair planning for image, file integrity, recovery, and service state issues. |
+| Update Repair | Reviews Windows Update component health and prepares confirmation-gated repair actions. |
 | Privacy Review | Reviews telemetry-related settings and application permission posture. |
 | Network Diagnose | Checks adapter state, DNS, latency, routing, and connectivity symptoms. |
+| Containerization & Hyper-V | Audits WSL2, Hyper-V, virtualization, and container-related performance posture. |
+| Zero-Trust Security | Reviews Defender, firewall, ASR, SMB, TLS, UAC, exploit protection, and credential protection posture. |
+| Game Mode Ultra | Reviews gaming-related CPU, GPU, scheduler, power, and latency settings before applying high-impact changes. |
+| AI & NPU Caching | Audits local AI, NPU, memory pressure, and model-cache limits for workstation tuning. |
+| NVMe DirectStorage & Storage Tiering | Reviews SSD health, TRIM, BypassIO/DirectStorage readiness, and storage tiering posture. |
 | Update Audit | Reviews Windows Update state and repair options. |
 | Power Audit | Reviews active power plan, battery posture, and performance-related settings. |
+| Power Plan Tuning | Prepares balanced, high-performance, or workstation-specific power recommendations. |
+| Device Snapshot | Captures hardware, driver, OS, and security posture inventory before changes. |
 | Startup Review | Helps identify startup entries that slow down boot. |
 | Service Review | Reviews service state and startup behavior before any change is applied. |
 | Security Audit | Reviews Defender, firewall, ASR, UAC, SMB, TLS, and exploit protection posture. |
 | Benchmark | Captures before/after metrics so maintenance impact can be measured. |
+| Remote Access Readiness | Checks RDP, WinRM, firewall, network profile, and admin readiness without silently enabling access. |
 | Report Export | Saves local reports for later troubleshooting or support review. |
+
+## Release Validation
+
+The `1.0.3` release gate completed with:
+
+- RMM live endpoint smoke for `/health`, `/healthz`, `/readyz`, `/livez`, `/api/v1/health`, `/api/v1/metrics`, and `/downloads/NeoOptimize.exe`.
+- RMM browser smoke across dashboard routes with no console errors and no HTTP 4xx/5xx responses.
+- Server Jest suite: `55/55` tests across `16` suites.
+- Python AI engine tests: `3/3`.
+- Client-nextgen production build, .NET agent build, UI wrapper build, public bundle verifier, and installer rebuild.
 
 ## Safety Model
 

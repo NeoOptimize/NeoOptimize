@@ -1,5 +1,33 @@
 # Changelog
 
+## 1.0.3 RMM Runtime Health & VM Release Gate
+
+Release date: 2026-05-26
+
+### Fixed
+
+- RMM health checks no longer mark a healthy Node.js process as degraded from small-heap startup memory ratios.
+- Prometheus metrics export now uses the live application metrics registry and emits valid quoted labels.
+- Fastify request metrics middleware now completes callback flow correctly.
+- Bootstrap authentication tests use a lower bcrypt cost because they validate session flow, not password-hash benchmark timing.
+
+### Improved
+
+- Windows VM release-gate evidence now includes QEMU guest-agent status, detected guest IP, remote-control port scan, and screenshot capture.
+- Guest execution is marked blocked when QGA, SSH, WinRM, and RDP are unavailable instead of silently skipping guest validation.
+- Public README now shows the latest VM validation screenshot and v1.0.3 installer checksum.
+
+### Verification
+
+- RMM live endpoint smoke passed for `/health`, `/healthz`, `/readyz`, `/livez`, `/api/v1/health`, `/api/v1/metrics`, and `/downloads/NeoOptimize.exe`.
+- RMM browser smoke passed across dashboard routes with no console errors and no HTTP 4xx/5xx responses.
+- Server Jest suite passed: `55/55` tests across `16` suites.
+- Python AI engine tests passed: `3/3`.
+- Client-nextgen production build passed.
+- .NET agent and UI wrapper builds passed.
+- Public bundle verifier passed.
+- Installer rebuilt and verified with SHA-256 `3667a2cb5ff7dfa6aed7ac7a131b6997ffb764fda3a5f4e6bfdb81bcc90620cc`.
+
 ## 1.0.0 Public Release
 
 Release date: 2026-05-25

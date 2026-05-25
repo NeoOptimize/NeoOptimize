@@ -1,7 +1,7 @@
-NeoOptimize v1.0.0
-Released: May 22, 2026
+NeoOptimize v1.0.3
+Released: May 26, 2026
 Package: NeoOptimize.exe
-SHA256: be69438b23682fa305ef40eec448e0be7423ffaa3b529ce04b05f7110c3f2a2c
+SHA256: 3667a2cb5ff7dfa6aed7ac7a131b6997ffb764fda3a5f4e6bfdb81bcc90620cc
 Portable Package: NeoOptimize-portable.zip
 Portable SHA256: 0012c28564541a4f53950700b715e147487c7b67d17c5c76c9a0f529fbeb6461
 
@@ -15,12 +15,18 @@ Public Components:
 7. Mini tray realtime monitor, chat, clear chat, and voice command shortcuts
 8. AI role registry, local MCP bridge, optional tooling registry, and skills catalog
 9. NEO Agentic Autopilot
+10. RMM runtime health, metrics, and release-gate validation
 
 Maintenance Areas:
 - System cleanup
 - Performance tuning
 - Privacy review
 - Network diagnostics
+- Containerization and Hyper-V tuning
+- Zero-Trust Security hardening
+- Game Mode Ultra
+- AI and NPU caching limits
+- NVMe DirectStorage and storage tiering
 - Security audit
 - Windows repair
 - Update repair

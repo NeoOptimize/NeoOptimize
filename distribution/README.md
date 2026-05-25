@@ -8,13 +8,13 @@ NeoOptimize prepares three public Windows distribution paths:
 | Chocolatey | `neooptimize` | Uses the public NSIS installer with SHA-256 verification. |
 | Scoop | `neooptimize` | Planned for a later user-space package. |
 
-The current release is `1.0.0`.
+The current release is `1.0.3`.
 
 ## Release Assets
 
 | Asset | SHA-256 |
 | --- | --- |
-| `NeoOptimize.exe` | `cfff4ae2316a75106b9141c08ca0ef33220fa062c06d528d8784addce3abc7d3` |
+| `NeoOptimize.exe` | `3667a2cb5ff7dfa6aed7ac7a131b6997ffb764fda3a5f4e6bfdb81bcc90620cc` |
 
 ## WinGet
 
