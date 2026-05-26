@@ -4,12 +4,11 @@ NeoOptimize is an AI-empowered Windows optimization and maintenance platform for
 local diagnostics, safe cleanup, repair guidance, update integrity checks,
 real-time system monitoring, and before/after maintenance reporting.
 
-The public source release focuses on the NeoOptimize desktop application,
-local safety workflow, mini tray companion, update manager, NEO local assistant
-features, installer scripts, Windows modules, local AI tooling, and
-documentation.
+The public release focuses on the NeoOptimize desktop application, local safety
+workflow, mini tray companion, update manager, NEO local assistant features, and
+RMM release-gate validation.
 
-![NeoOptimize running in a Windows VM](assets/neooptimize-screenshot-v1.0.5-current-vm.png)
+![NeoOptimize running in a Windows VM with RMM connected](assets/neooptimize-screenshot-v1.0.5-current-vm.png)
 
 _Latest release-gate screenshot captured from the Windows VM validation run._
 
@@ -63,23 +62,7 @@ Core goals:
 | Update Manager | Checks release metadata, verifies SHA-256 integrity, installs updates, and repairs damaged installs. |
 | Report engine | Generates local reports for health checks, benchmark results, repairs, and maintenance history. |
 | NEO assistant | Local AI workflow for text guidance, voice entry, anomaly explanation, and script planning assistance. |
-
-## Public Source Layout
-
-This repository now includes the public NeoOptimize source tree for review and
-community contribution. The private remote-management backend, dashboard,
-endpoint connector, lab infrastructure, credentials, generated binaries,
-dependency caches, VM reports, and release artifacts are intentionally excluded.
-
-Included source areas:
-
-- `client/` - PowerShell client, modules, local AI scripts, assets, policy, and skills.
-- `client-nextgen/` - React and Tauri desktop UI.
-- `modules/` - standalone Windows optimization and maintenance modules.
-- `ai-engine/` - local Python AI and predictive maintenance engine.
-- `wrapper/` and `optimizer/` - .NET launcher and supporting Windows utilities.
-- `installer/` - public standalone installer build scripts.
-- `tools/`, `scripts/`, `docs/`, and `distribution/` - public build, validation, documentation, and package metadata.
+| RMM release gate | Verifies local health probes, Prometheus metrics, dashboard routes, installer download, and VM evidence before release. |
 
 ## Main Features
 
@@ -201,9 +184,9 @@ The `1.0.6` release gate completed with:
 - NEO Mini voice command label and tooltip validation.
 - NEO Mini local AI fallback validation for status, anomaly scan, code repair guidance, corpus-aware suggestions, and Local AI setup prompts.
 - Hidden Ollama setup validation: installer starts the Local AI helper in a background worker with no visible CMD/PowerShell window.
-- Local release endpoint smoke for health probes and installer download.
-- Public source export excludes private backend, dashboard, endpoint connector, generated binaries, dependency caches, local reports, credentials, and lab artifacts.
-- Server-side release-gate Jest suite: `69/69` tests across `21` suites.
+- RMM live endpoint smoke for `/health`, `/healthz`, `/readyz`, `/livez`, `/api/v1/health`, `/api/v1/metrics`, and `/downloads/NeoOptimize.exe`.
+- RMM browser smoke across dashboard routes with no console errors and no HTTP 4xx/5xx responses.
+- Server Jest suite: `69/69` tests across `21` suites.
 - Python AI engine tests: `3/3`.
 - Client-nextgen production build, Rust/Tauri Windows build, public bundle verifier, static no-CMD-popup scan, and installer rebuild.
 
