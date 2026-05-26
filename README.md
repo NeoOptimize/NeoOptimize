@@ -8,9 +8,9 @@ The public release focuses on the NeoOptimize desktop application, local safety
 workflow, mini tray companion, update manager, NEO local assistant features, and
 RMM release-gate validation.
 
-![NeoOptimize NEO Mini local AI validation](assets/neooptimize-screenshot-v1.0.6-neo-mini.png)
+![NeoOptimize running in a Windows VM with RMM connected](assets/neooptimize-screenshot-v1.0.5-current-vm.png)
 
-_Latest release-gate screenshot captured from the NEO Mini local AI smoke validation._
+_Latest release-gate screenshot captured from the Windows VM validation run._
 
 ## Download
 
