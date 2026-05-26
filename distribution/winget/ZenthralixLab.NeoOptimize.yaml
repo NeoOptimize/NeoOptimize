@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://aka.ms/winget-manifest.singleton.1.9.0.schema.json
 PackageIdentifier: ZenthralixLab.NeoOptimize
-PackageVersion: 1.0.4
+PackageVersion: 1.0.5
 PackageLocale: en-US
 Publisher: Zenthralix-Lab
 PublisherUrl: https://github.com/NeoOptimize
@@ -22,13 +22,13 @@ Tags:
 - cleanup
 - repair
 - ai
-ReleaseNotesUrl: https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.0.4
+ReleaseNotesUrl: https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.0.5
 Installers:
 - Architecture: x64
   InstallerType: nullsoft
   Scope: machine
-  InstallerUrl: https://github.com/NeoOptimize/NeoOptimize/releases/download/v1.0.4/NeoOptimize.exe
-  InstallerSha256: E1AA5037023F156FD3343962C1688BC6EA469153AF146C53B6558370D47E286F
+  InstallerUrl: https://github.com/NeoOptimize/NeoOptimize/releases/download/v1.0.5/NeoOptimize.exe
+  InstallerSha256: 7432E2BB2BACB82215E58967B21A09938CA1C9919F5DAEDA1BC154D097F5D3F4
   InstallerSwitches:
     Silent: /S
     SilentWithProgress: /S

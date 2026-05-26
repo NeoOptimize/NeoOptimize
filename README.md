@@ -16,10 +16,10 @@ _Latest release-gate screenshot captured from the Windows VM validation run._
 
 | Item | Value |
 | --- | --- |
-| Version | `1.0.4` |
+| Version | `1.0.5` |
 | Installer | `NeoOptimize.exe` |
-| SHA-256 | `e1aa5037023f156fd3343962c1688bc6ea469153af146c53b6558370d47e286f` |
-| Release | https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.0.4 |
+| SHA-256 | `7432e2bb2bacb82215e58967b21a09938ca1c9919f5daeda1bc154d097f5d3f4` |
+| Release | https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.0.5 |
 
 Verify the installer before running it:
 
@@ -30,7 +30,7 @@ Get-FileHash .\NeoOptimize.exe -Algorithm SHA256
 The hash must match:
 
 ```text
-e1aa5037023f156fd3343962c1688bc6ea469153af146c53b6558370d47e286f
+7432e2bb2bacb82215e58967b21a09938ca1c9919f5daeda1bc154d097f5d3f4
 ```
 
 ## What NeoOptimize Does
@@ -177,8 +177,11 @@ cannot be silently replaced without detection.
 
 ## Release Validation
 
-The `1.0.4` release gate completed with:
+The `1.0.5` release gate completed with:
 
+- Fixed-scale desktop UI validation at `1024x680` from the current Windows VM screenshot.
+- Single-instance desktop guard validation for NeoOptimize startup.
+- NEO Mini voice command label and tooltip validation.
 - RMM live endpoint smoke for `/health`, `/healthz`, `/readyz`, `/livez`, `/api/v1/health`, `/api/v1/metrics`, and `/downloads/NeoOptimize.exe`.
 - RMM browser smoke across dashboard routes with no console errors and no HTTP 4xx/5xx responses.
 - Server Jest suite: `57/57` tests across `17` suites.

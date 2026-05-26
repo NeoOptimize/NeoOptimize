@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.0.5 Fixed-Scale UI, Single Instance & Voice Label
+
+Release date: 2026-05-26
+
+### Fixed
+
+- Main NeoOptimize desktop window is fixed at `1024x680` and no longer resizes or drifts into horizontal/vertical scroll.
+- NeoOptimize now blocks duplicate desktop instances with a Windows single-instance mutex.
+- NEO Mini voice command control now has an explicit accessible voice label and tooltip.
+
+### Updated
+
+- README screenshot refreshed from the current Windows VM validation screen.
+- Public release metadata, WinGet manifest, Chocolatey manifest, and checksum updated to `1.0.5`.
+
+### Verification
+
+- Client-nextgen production build passed.
+- Rust/Tauri Windows target check passed.
+- Rust/Tauri desktop executable and NSIS installer rebuilt.
+- Installer rebuilt and verified with SHA-256 `7432e2bb2bacb82215e58967b21a09938ca1c9919f5daeda1bc154d097f5d3f4`.
+
 ## 1.0.4 No-CMD Runtime & Local AI Bootstrap
 
 Release date: 2026-05-26

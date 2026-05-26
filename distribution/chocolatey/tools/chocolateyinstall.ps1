@@ -1,8 +1,8 @@
 $ErrorActionPreference = 'Stop'
 
 $packageName = 'neooptimize'
-$url64 = 'https://github.com/NeoOptimize/NeoOptimize/releases/download/v1.0.4/NeoOptimize.exe'
-$checksum64 = 'e1aa5037023f156fd3343962c1688bc6ea469153af146c53b6558370d47e286f'
+$url64 = 'https://github.com/NeoOptimize/NeoOptimize/releases/download/v1.0.5/NeoOptimize.exe'
+$checksum64 = '7432e2bb2bacb82215e58967b21a09938ca1c9919f5daeda1bc154d097f5d3f4'
 
 $packageArgs = @{
   packageName    = $packageName
