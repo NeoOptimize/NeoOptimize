@@ -1,0 +1,33 @@
+{
+  "SchemaVersion": "1.0",
+  "DefaultProfile": "Safe",
+  "Thresholds": {
+    "DiskCriticalFreePercent": 8,
+    "DiskWarnFreePercent": 15,
+    "TempWarnMB": 2048,
+    "StartupWarnCount": 35,
+    "DefinitionWarnDays": 7,
+    "UptimeWarnDays": 14,
+    "RestorePointWarnDays": 7,
+    "RamPressureWarnPercent": 15
+  },
+  "SeverityImpact": {
+    "Critical": 20,
+    "High": 14,
+    "Medium": 8,
+    "Low": 4,
+    "Info": 0
+  },
+  "SafeRemediationRuleIds": [
+    "NEO-RP-001",
+    "NEO-FW-001",
+    "NEO-DEF-001",
+    "NEO-DEF-002",
+    "NEO-SMB-001",
+    "NEO-RDP-001",
+    "NEO-SVC-001",
+    "NEO-WU-001"
+  ],
+  "ReportRetentionDays": 30,
+  "ScheduledTaskName": "NeoOptimize-Endpoint-Sync"
+}

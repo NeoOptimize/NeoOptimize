@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "skills": [
+    {
+      "id": "neo_anomaly_detection",
+      "name": "NEO Anomaly Detection",
+      "action": "WindowsDoctor",
+      "type": "diagnostic",
+      "risk": "read_only",
+      "description": "Ranks boot, service, disk, driver, update, and security anomalies from endpoint telemetry."
+    },
+    {
+      "id": "neo_windows_error_fix",
+      "name": "Windows Error Fix",
+      "action": "WindowsErrorFix",
+      "type": "repair",
+      "risk": "high_human_confirmed",
+      "description": "Runs the conservative repair lane only after diagnostics justify it and the user confirms the action."
+    },
+    {
+      "id": "neo_rmm_telemetry",
+      "name": "NEO to RMM Telemetry",
+      "action": "AgentAudit",
+      "type": "telemetry",
+      "risk": "read_only",
+      "description": "Sends debug, verbose, health, audit, and anomaly context to RMM/OpenFang without exposing local secrets."
+    },
+    {
+      "id": "neo_capability_catalog",
+      "name": "NEO Capability Catalog",
+      "action": "AICatalog",
+      "type": "planning",
+      "risk": "read_only",
+      "description": "Maps maintenance goals to safe capabilities with risk level, preflight, rollback, verification, telemetry, and official reference metadata."
+    },
+    {
+      "id": "openfang_authorized_terminal",
+      "name": "OpenFang Authorized Terminal",
+      "action": "OpenFangTerminal",
+      "type": "operator",
+      "risk": "critical_signed_manifest",
+      "description": "Runs short operator scripts only through signed dispatch, SHA-256 validation, timeout, deny policy, and full audit reporting."
+    }
+  ]
+}

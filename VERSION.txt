@@ -12,7 +12,7 @@ Public Components:
 7. Mini tray realtime monitor, chat, clear chat, and voice command shortcuts
 8. AI role registry, local MCP bridge, optional tooling registry, and skills catalog
 9. NEO Agentic Autopilot
-10. RMM runtime health, metrics, and release-gate validation
+10. Public source package with private backend and lab artifacts excluded
 11. Hidden worker execution for no-CMD-popup UI operation
 12. Ollama local AI bootstrap for neo-light:latest, neo:latest, and neo-latest:latest
 

@@ -1,0 +1,157 @@
+{
+  "schema_version": "1.1",
+  "enabled": true,
+  "mode": "advisory_only",
+  "provider_order": [
+    "ollama",
+    "neocore",
+    "rule_based"
+  ],
+  "neocore": {
+    "enabled": true,
+    "policy_path": "models\\NeoCore.Policy.json",
+    "min_confidence": 0.25,
+    "trainer": "tools\\Train-NeoCore.ps1"
+  },
+  "ollama": {
+    "enabled": true,
+    "endpoint": "http://127.0.0.1:11434/api/generate",
+    "tags_endpoint": "http://127.0.0.1:11434/api/tags",
+    "fallback_hosts": [
+      "http://192.168.122.1:11434"
+    ],
+    "installer": {
+      "helper": "tools\\Install-NeoOptimizeOllama.ps1",
+      "bundled_installer": "tools\\OllamaSetup.exe",
+      "download_url": "https://ollama.com/download/OllamaSetup.exe",
+      "default_model": "neo-light:latest",
+      "pull_model_after_install": true,
+      "bundled_model_store": "tools\\ollama-models\\models",
+      "model_store": "%ProgramData%\\NeoOptimize\\ollama\\models",
+      "required_models": [
+        "neo-light:latest",
+        "neo:latest",
+        "neo-latest:latest"
+      ]
+    },
+    "model_roles": {
+      "fast": "neo-light:latest",
+      "default": "neo-light:latest",
+      "deep": "neo:latest"
+    },
+    "preferred_models": [
+      "neo-light:latest",
+      "neo:latest",
+      "neo-latest:latest"
+    ],
+    "temperature": 0.2,
+    "num_predict": 900,
+    "timeout_seconds": 75
+  },
+  "nullclaw": {
+    "enabled": true,
+    "command": "tools\\nullclaw.ps1",
+    "arguments": [
+      "agent",
+      "-m"
+    ],
+    "status_arguments": [
+      "status"
+    ],
+    "doctor_arguments": [
+      "doctor"
+    ],
+    "docs_url": "https://nullclaw.io/nullclaw/docs/getting-started",
+    "repo_url": "https://github.com/nullclaw/nullclaw",
+    "timeout_seconds": 75,
+    "max_prompt_chars": 6000
+  },
+  "provider_activation": {
+    "auto_enable_from_env": true,
+    "allow_public_huggingface": false,
+    "never_persist_env_keys": true
+  },
+  "openai_compatible": {
+    "enabled": false,
+    "endpoint": "https://api.openai.com/v1/chat/completions",
+    "model": "gpt-4.1-mini",
+    "api_key": "",
+    "timeout_seconds": 60,
+    "max_tokens": 1200,
+    "temperature": 0.2
+  },
+  "huggingface": {
+    "enabled": false,
+    "model": "",
+    "api_key": "",
+    "timeout_seconds": 60,
+    "max_new_tokens": 900,
+    "temperature": 0.2
+  },
+  "gemini": {
+    "enabled": false,
+    "model": "gemini-1.5-flash",
+    "api_key": "",
+    "timeout_seconds": 60,
+    "max_output_tokens": 1200,
+    "temperature": 0.2
+  },
+  "voice": {
+    "enabled": true,
+    "language": "id-ID",
+    "wake_phrase": "neo optimize",
+    "mode": "push_to_talk"
+  },
+  "interactive": {
+    "enabled": true,
+    "default_mode": "operator",
+    "allow_confirmed_local_actions": true,
+    "require_confirmation_for_all_actions": true,
+    "transcript_enabled": true,
+    "max_turns": 80
+  },
+  "script_forge": {
+    "enabled": true,
+    "default_shell": "powershell",
+    "output_dir": "reports\\ai\\scripts",
+    "read_only_by_default": true,
+    "require_apply_switch_for_changes": true,
+    "max_goal_chars": 500
+  },
+  "corpus": {
+    "enabled": true,
+    "path": "knowledge\\neo-ai-corpus.jsonl",
+    "manifest_path": "knowledge\\neo-ai-corpus.manifest.json",
+    "additional_paths": [
+      "knowledge\\linux-optimization-corpus.jsonl"
+    ],
+    "additional_manifest_paths": [
+      "knowledge\\linux-optimization-corpus.manifest.json"
+    ],
+    "max_prompt_snippets": 5,
+    "max_snippet_chars": 700
+  },
+  "rmm_telemetry": {
+    "enabled": true,
+    "sample_kind": "neo_ai_audit",
+    "send_on_plan": true,
+    "send_on_interactive_turn": false,
+    "send_on_interactive_close": true,
+    "include_verbose": true,
+    "include_snapshot": true,
+    "include_neocore_plan": true,
+    "max_recommendations": 8,
+    "max_transcript_chars": 4000
+  },
+  "rule_based": {
+    "enabled": true
+  },
+  "policy": {
+    "allow_remote_execution": false,
+    "allow_secret_collection": false,
+    "allow_camera_capture": false,
+    "allow_microphone_capture": false,
+    "allow_biometric_collection": false,
+    "require_human_confirmation_for_remediation": true
+  }
+}

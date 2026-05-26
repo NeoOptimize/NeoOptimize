@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "id": "neo_windows_doctor",
+  "name": "NEO Windows Doctor",
+  "action": "WindowsDoctor",
+  "repair_action": "WindowsErrorFix",
+  "type": "diagnostic_and_repair",
+  "risk": "read_only_default",
+  "description": "Scans Windows health, detects anomalies, correlates event logs, and produces a repair plan with human-confirmed fix mode.",
+  "signals": [
+    "boot_configuration",
+    "winre_state",
+    "critical_services",
+    "windows_event_logs",
+    "driver_health",
+    "disk_health",
+    "windows_image_health",
+    "defender_firewall_posture",
+    "rmm_agent_status",
+    "benchmark_history"
+  ],
+  "safe_repairs": [
+    "create_restore_point",
+    "enable_winre",
+    "dism_restore_health",
+    "sfc_scannow",
+    "windows_update_component_reset",
+    "restart_recoverable_services"
+  ],
+  "guardrails": {
+    "default_mode": "scan",
+    "fix_requires_action": "WindowsErrorFix",
+    "fix_requires_confirmation": true,
+    "never_collect_secrets": true,
+    "never_disable_security": true,
+    "rmm_reports_do_not_include_api_keys": true
+  }
+}

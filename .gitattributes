@@ -1,0 +1,19 @@
+*.md linguist-documentation
+docs/** linguist-documentation
+CHANGELOG.md linguist-documentation
+README.md linguist-documentation
+
+*.png linguist-generated
+*.ico linguist-generated
+*.ttf linguist-generated
+*.lock linguist-generated
+*.jsonl linguist-generated
+client/knowledge/** linguist-generated
+client/datasets/** linguist-generated
+client/models/** linguist-generated
+client-nextgen/src-tauri/gen/** linguist-generated
+
+release/** export-ignore
+program/** export-ignore
+reports/** export-ignore
+output/** export-ignore

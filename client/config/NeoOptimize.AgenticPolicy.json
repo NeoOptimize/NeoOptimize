@@ -1,0 +1,93 @@
+{
+  "schema_version": "1.0",
+  "name": "NEO Agentic Runtime Policy",
+  "operator": "NEO - Neural Execution Operator",
+  "identity_response": "Saya adalah NEO (Neural Execution Operator), artificial intelligence yang dibangun di zenthralix-lab oleh nol_eight.",
+  "default_mode": "observe_plan_confirm_act_verify",
+  "autonomous_execution": false,
+  "loop": {
+    "enabled": true,
+    "default_interval_seconds": 300,
+    "max_actions_per_cycle": 3,
+    "max_cycles_without_user": 0
+  },
+  "state_machine": [
+    "OBSERVE",
+    "DIAGNOSE",
+    "PLAN",
+    "ASK_APPROVAL",
+    "ACT",
+    "VERIFY",
+    "LEARN",
+    "REPORT"
+  ],
+  "approval": {
+    "require_confirmation_for_all_actions": true,
+    "read_only_actions_can_run_in_execute_mode": true,
+    "high_risk_requires_yes_literal": true,
+    "critical_requires_yes_literal": true
+  },
+  "memory": {
+    "enabled": true,
+    "path": "reports\\agentic\\memory.jsonl",
+    "store": [
+      "goal",
+      "snapshot_before",
+      "planned_actions",
+      "executed_actions",
+      "snapshot_after",
+      "verification",
+      "outcome"
+    ],
+    "redact": [
+      "password",
+      "token",
+      "api_key",
+      "cookie",
+      "secret"
+    ]
+  },
+  "action_lanes": [
+    {
+      "id": "observe",
+      "risk": "read_only",
+      "actions": ["Collect", "AIPlan", "SystemDiagnostics", "WindowsDoctor", "AIEnvironment", "AIProviders"]
+    },
+    {
+      "id": "cleanup",
+      "risk": "low",
+      "actions": ["DeepScan", "Cleaner", "CleanAll"]
+    },
+    {
+      "id": "optimize",
+      "risk": "medium",
+      "actions": ["SmartOptimize", "Performance", "Power", "DiskOptimize"]
+    },
+    {
+      "id": "repair",
+      "risk": "high",
+      "actions": ["SystemRepair", "WindowsErrorFix", "Updates", "Network"]
+    },
+    {
+      "id": "security",
+      "risk": "high",
+      "actions": ["Security", "ThreatMonitor", "IntegrityScan", "DefenderAuditMode"]
+    },
+    {
+      "id": "remote_operator",
+      "risk": "critical",
+      "actions": ["RemoteAccess", "NeoUpdate"]
+    }
+  ],
+  "denylist": [
+    "format",
+    "diskpart",
+    "cipher /w",
+    "bcdedit",
+    "set-executionpolicy unrestricted",
+    "invoke-expression",
+    "remove-item -recurse c:\\",
+    "disable-defender",
+    "disable firewall"
+  ]
+}

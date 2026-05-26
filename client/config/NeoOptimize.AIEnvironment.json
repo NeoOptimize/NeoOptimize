@@ -1,0 +1,218 @@
+{
+  "schema_version": "1.0",
+  "environment_name": "NeoOptimize AI-Empowered Environment",
+  "default_operator": "NEO - Neural Execution Operator",
+  "safety_mode": "human_confirmed",
+  "skills": [
+    {
+      "id": "ai_doctor",
+      "name": "AI Doctor",
+      "action": "AIPlan",
+      "type": "diagnostic",
+      "risk": "read_only",
+      "description": "Diagnose endpoint health, rank risks, and propose a safe module order."
+    },
+    {
+      "id": "interactive_operator",
+      "name": "NEO - Neural Execution Operator",
+      "action": "AIInteractive",
+      "type": "agentic",
+      "risk": "human_confirmed",
+      "description": "Conversational operator with snapshot awareness, local model fallback, skill catalog, and confirmed action execution."
+    },
+    {
+      "id": "neo_agentic_autopilot",
+      "name": "NEO Agentic Autopilot",
+      "action": "NEOAgentic",
+      "type": "agentic_runtime",
+      "risk": "human_confirmed",
+      "description": "Observe, diagnose, plan, request approval, execute allowlisted modules, verify before/after state, and write local outcome memory."
+    },
+    {
+      "id": "script_forge",
+      "name": "NEO Script Forge",
+      "action": "AIScriptForge",
+      "type": "computer_use",
+      "risk": "read_only_default",
+      "description": "Generate signed-audit PowerShell or CMD maintenance scripts with dry-run defaults, SHA-256 metadata, and rollback notes."
+    },
+    {
+      "id": "neo_computer_use",
+      "name": "NEO Computer Use",
+      "action": "AIInteractive",
+      "type": "agentic_computer_use",
+      "risk": "human_confirmed",
+      "description": "Read system state, write reports/scripts, act through allowlisted modules, dispatch signed RMM commands, and self-learn from benchmark deltas."
+    },
+    {
+      "id": "dependency_readiness",
+      "name": "Dependency Readiness",
+      "action": "AIEnvironment",
+      "type": "runtime_inventory",
+      "risk": "read_only",
+      "description": "Inventories local model, skill, MCP, memory, library, PowerShell, .NET, and optional tool readiness before NEO recommends installation."
+    },
+    {
+      "id": "capability_catalog",
+      "name": "Capability Catalog",
+      "action": "AICatalog",
+      "type": "planning",
+      "risk": "read_only",
+      "description": "Authoritative safety map for diagnostics, cleanup, repair, security, storage, networking, updates, AI scripting, and OpenFang terminal workflows."
+    },
+    {
+      "id": "safe_care",
+      "name": "Safe Care",
+      "action": "SmartOptimize",
+      "type": "optimization",
+      "risk": "medium",
+      "description": "Balanced cleanup, memory care, disk scan, and TRIM/defrag workflow."
+    },
+    {
+      "id": "deep_diagnostics",
+      "name": "Deep Diagnostics",
+      "action": "SystemDiagnostics",
+      "type": "diagnostic",
+      "risk": "read_only",
+      "description": "Check boot, WinRE, services, event logs, disk, and Windows component health."
+    },
+    {
+      "id": "neo_windows_doctor",
+      "name": "NEO Windows Doctor",
+      "action": "WindowsDoctor",
+      "type": "diagnostic",
+      "risk": "read_only",
+      "description": "Correlate diagnostics, anomaly scoring, AI plan, MCP context, NullClaw bridge, and repair recommendations."
+    },
+    {
+      "id": "windows_error_fix",
+      "name": "Windows Error Fix",
+      "action": "WindowsErrorFix",
+      "type": "repair",
+      "risk": "high_human_confirmed",
+      "description": "Run conservative Windows repair only after review and explicit confirmation."
+    },
+    {
+      "id": "integrity_scan",
+      "name": "Integrity Scan",
+      "action": "AgentAudit",
+      "type": "security",
+      "risk": "read_only",
+      "description": "Audit endpoint policy, local files, agent status, and safety posture."
+    },
+    {
+      "id": "secure_update",
+      "name": "Secure Update Manager",
+      "action": "NeoUpdate",
+      "type": "update",
+      "risk": "critical",
+      "description": "Credential-gated update with SHA-256 verification and automatic repair."
+    },
+    {
+      "id": "remote_access_bootstrap",
+      "name": "Remote Access Bootstrap",
+      "action": "RemoteAccess",
+      "type": "endpoint_recovery",
+      "risk": "critical_admin_confirmed",
+      "description": "Dry-run-first WinRM, OpenSSH, and lab QEMU Guest Agent readiness flow for endpoints without an existing remote-management channel."
+    },
+    {
+      "id": "powertoys_productivity",
+      "name": "PowerToys Productivity Skill",
+      "action": "AIEnvironment",
+      "type": "optional_dependency",
+      "risk": "operator_confirmed_install",
+      "description": "Optional Microsoft PowerToys install/readiness lane via WinGet for support workflows such as process/window inspection and technician productivity."
+    },
+    {
+      "id": "winbindex_file_intelligence",
+      "name": "Winbindex File Intelligence",
+      "action": "IntegrityScan",
+      "type": "reference_intelligence",
+      "risk": "read_only",
+      "description": "Optional reference provider for Windows binary version/hash intelligence using the public Winbindex dataset and Microsoft symbol-backed metadata."
+    },
+    {
+      "id": "rollback_guard",
+      "name": "Rollback Guard",
+      "action": "RollbackLast",
+      "type": "safety",
+      "risk": "human_confirmed",
+      "description": "Restore the latest local safety snapshot when a treatment regresses endpoint health."
+    }
+  ],
+  "mcp_connectors": [
+    {
+      "id": "rmm",
+      "name": "RMM Control Plane",
+      "enabled": true,
+      "access": "server",
+      "secret_policy": "server_only",
+      "description": "Dispatch signed safety manifests and receive endpoint telemetry."
+    },
+    {
+      "id": "supabase",
+      "name": "Supabase Mirror",
+      "enabled": true,
+      "access": "server",
+      "secret_policy": "service_role_never_frontend",
+      "description": "Mirror safety events, action logs, and fleet state for realtime analytics."
+    },
+    {
+      "id": "huggingface_spaces",
+      "name": "Hugging Face Spaces",
+      "enabled": true,
+      "access": "cloud",
+      "secret_policy": "environment_variable",
+      "description": "Optional hosted model registry and cloud inference endpoint."
+    },
+    {
+      "id": "e2b",
+      "name": "E2B Sandbox",
+      "enabled": true,
+      "access": "server",
+      "secret_policy": "environment_variable",
+      "description": "Preflight script simulation before risky rollout."
+    },
+    {
+      "id": "nullclaw",
+      "name": "NullClaw Local Operator",
+      "enabled": true,
+      "access": "local",
+      "secret_policy": "local_cli",
+      "description": "Local low-level assistant used only through explicit operator actions."
+    },
+    {
+      "id": "openfang",
+      "name": "OpenFang Bridge",
+      "enabled": true,
+      "access": "server",
+      "secret_policy": "server_only",
+      "description": "Security audit and operator bridge for safe command recommendations."
+    },
+    {
+      "id": "local_model",
+      "name": "Ollama / Local Model",
+      "enabled": true,
+      "access": "local",
+      "secret_policy": "no_secret_required",
+      "description": "Offline local AI model for interactive diagnosis and operator guidance."
+    },
+    {
+      "id": "neo_mcp_bridge",
+      "name": "NEO MCP Bridge",
+      "enabled": true,
+      "access": "local",
+      "secret_policy": "no_secret_output",
+      "description": "Local read-only bridge that inventories skills, connectors, tools, and runtime readiness for NEO."
+    },
+    {
+      "id": "remote_access_bootstrap",
+      "name": "Remote Access Bootstrap",
+      "enabled": true,
+      "access": "local_admin_opt_in",
+      "secret_policy": "no_credentials_stored",
+      "description": "Optional WinRM, OpenSSH, and lab guest-agent bootstrap with scoped firewall, audit log, and explicit administrator consent."
+    }
+  ]
+}

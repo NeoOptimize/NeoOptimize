@@ -1,0 +1,195 @@
+{
+  "schema_version": "1.0",
+  "name": "NeoOptimize AI Role Registry",
+  "description": "Explicit task ownership map so each AI/provider has a clear job and shared safety contract.",
+  "default_orchestrator": "neo",
+  "safety_contract": {
+    "execution_mode": "offline_first_advisory_then_confirmed_action",
+    "secrets": "never_collect_or_print",
+    "camera": "user_visible_opt_in_only",
+    "microphone": "push_to_talk_only",
+    "remote_execution": "signed_manifest_only",
+    "terminal": "sha256_timeout_denylist_audited",
+    "update": "credential_gated_sha256_verified",
+    "rollback": "restore_point_or_snapshot_before_high_risk_change"
+  },
+  "roles": [
+    {
+      "id": "neo",
+      "name": "NEO - Neural Execution Operator",
+      "scope": "endpoint_orchestrator",
+      "runs_on": "windows_endpoint",
+      "online_required": false,
+      "identity_response": "Saya adalah NEO (Neural Execution Operator), artificial intelligence yang dibangun di zenthralix-lab oleh nol_eight.",
+      "primary_tasks": [
+        "converse with user through text and voice",
+        "collect local snapshot and realtime metrics",
+        "choose the correct specialist role",
+        "produce a safe treatment plan",
+        "run the agentic observe-plan-approve-act-verify-learn loop",
+        "inventory and prepare dependency, skill, memory, MCP, and library readiness",
+        "execute allowlisted local actions only after confirmation",
+        "send debug, verbose, telemetry, anomaly, and outcome reports to RMM"
+      ],
+      "must_not_do": [
+        "collect secrets",
+        "silently enable remote access",
+        "silently access camera or microphone",
+        "claim a remediation was executed before it actually ran"
+      ],
+      "inputs": ["local telemetry", "device inventory", "event logs", "benchmark history", "operator question", "role registry"],
+      "outputs": ["answer", "ranked action plan", "local report", "RMM telemetry envelope"]
+    },
+    {
+      "id": "neo_agentic_autopilot",
+      "name": "NEO Agentic Autopilot",
+      "scope": "endpoint_agentic_runtime",
+      "runs_on": "windows_endpoint",
+      "online_required": false,
+      "primary_tasks": [
+        "observe local Windows state",
+        "diagnose resource, event, update, security, and storage symptoms",
+        "plan a small sequence of allowlisted actions",
+        "ask the user for explicit approval before acting",
+        "run NeoOptimize modules instead of raw destructive commands",
+        "verify before/after deltas and write local memory"
+      ],
+      "must_not_do": [
+        "run autonomously by default",
+        "collect credentials",
+        "disable security controls to make execution easier",
+        "run arbitrary remote terminal commands without signed manifest policy"
+      ],
+      "inputs": ["local telemetry", "operator goal", "operator policy", "module catalog"],
+      "outputs": ["agentic plan", "approval prompts", "execution result", "before_after report", "memory record"]
+    },
+    {
+      "id": "ai_doctor",
+      "name": "AI Doctor",
+      "scope": "diagnosis_and_treatment_planning",
+      "runs_on": "endpoint_and_rmm",
+      "online_required": false,
+      "primary_tasks": [
+        "score endpoint health",
+        "detect Windows anomalies",
+        "compare before and after benchmark deltas",
+        "map symptoms to NeoOptimize modules",
+        "recommend rollback when treatment regresses health"
+      ],
+      "inputs": ["host baseline", "performance metrics", "Windows events", "security state", "benchmark deltas"],
+      "outputs": ["health score", "root-cause hypotheses", "module order", "rollback recommendation"]
+    },
+    {
+      "id": "openfang",
+      "name": "OpenFang Operator",
+      "scope": "security_audit_and_command_gate",
+      "runs_on": "rmm_control_plane",
+      "online_required": true,
+      "primary_tasks": [
+        "review NEO telemetry and suspicious signals",
+        "validate terminal/script intent against policy",
+        "queue signed operator commands",
+        "attach SHA-256, timeout, transcript, and audit trail",
+        "escalate unsafe actions to administrator review"
+      ],
+      "inputs": ["NEO telemetry", "security alerts", "operator terminal request", "command catalog"],
+      "outputs": ["approved manifest", "rejected command", "operator audit event", "security alert"]
+    },
+    {
+      "id": "nullclaw",
+      "name": "NullClaw Local Sensor",
+      "scope": "low_level_local_context",
+      "runs_on": "windows_endpoint",
+      "online_required": false,
+      "primary_tasks": [
+        "provide local low-level context when installed",
+        "summarize suspicious process or IOC signals",
+        "help NEO and OpenFang enrich threat context",
+        "stay behind explicit operator actions"
+      ],
+      "inputs": ["local process context", "IOC query", "NEO prompt"],
+      "outputs": ["local sensor summary", "IOC enrichment", "doctor note"]
+    },
+    {
+      "id": "local_model",
+      "name": "Local AI / Ollama",
+      "scope": "offline_reasoning",
+      "runs_on": "endpoint_or_lan",
+      "online_required": false,
+      "primary_tasks": [
+        "answer user questions offline",
+        "summarize diagnostics",
+        "draft safe PowerShell or CMD audit scripts",
+        "explain module impact in plain language"
+      ],
+      "inputs": ["NEO prompt", "snapshot", "skill catalog", "operator policy"],
+      "outputs": ["local answer", "script draft", "plain-language explanation"]
+    },
+    {
+      "id": "huggingface_spaces",
+      "name": "Hugging Face Spaces",
+      "scope": "cloud_model_registry_and_optional_inference",
+      "runs_on": "cloud",
+      "online_required": true,
+      "primary_tasks": [
+        "host optional model endpoints",
+        "serve larger analysis when configured",
+        "stay disabled until user/admin supplies model endpoint and token policy"
+      ],
+      "inputs": ["redacted telemetry summary", "model request"],
+      "outputs": ["cloud inference result", "model status"]
+    },
+    {
+      "id": "gemini",
+      "name": "Gemini",
+      "scope": "optional_user_supplied_cloud_reasoning",
+      "runs_on": "cloud",
+      "online_required": true,
+      "primary_tasks": [
+        "perform optional deep analysis when user/admin supplies API key",
+        "never be required for offline operation",
+        "return recommendations through the same safety planner"
+      ],
+      "inputs": ["redacted system summary", "user question"],
+      "outputs": ["deep analysis", "recommendation summary"]
+    },
+    {
+      "id": "e2b",
+      "name": "E2B Sandbox",
+      "scope": "preflight_code_simulation",
+      "runs_on": "cloud_sandbox",
+      "online_required": true,
+      "primary_tasks": [
+        "simulate generated code before dispatch",
+        "catch syntax errors and unsafe behavior early",
+        "return sandbox output to OpenFang and RMM"
+      ],
+      "inputs": ["sanitized script", "test harness"],
+      "outputs": ["sandbox result", "stderr/stdout", "risk note"]
+    },
+    {
+      "id": "supabase",
+      "name": "Supabase Mirror",
+      "scope": "audit_memory_and_realtime_sync",
+      "runs_on": "cloud_database",
+      "online_required": true,
+      "primary_tasks": [
+        "mirror action logs and safety events",
+        "store tenant-safe outcome history",
+        "support realtime dashboards and future vector memory"
+      ],
+      "inputs": ["audit event", "safety event", "redacted outcome"],
+      "outputs": ["mirrored record", "realtime update"]
+    }
+  ],
+  "routing": [
+    { "intent": "user_question", "primary": "neo", "helpers": ["local_model", "ai_doctor"] },
+    { "intent": "agentic_maintenance", "primary": "neo_agentic_autopilot", "helpers": ["neo", "ai_doctor", "local_model"] },
+    { "intent": "windows_slow", "primary": "ai_doctor", "helpers": ["local_model", "neo"] },
+    { "intent": "script_generation", "primary": "local_model", "helpers": ["neo", "e2b", "openfang"] },
+    { "intent": "remote_terminal", "primary": "openfang", "helpers": ["neo", "e2b"] },
+    { "intent": "threat_or_ioc", "primary": "openfang", "helpers": ["nullclaw", "ai_doctor"] },
+    { "intent": "cloud_deep_analysis", "primary": "gemini", "helpers": ["huggingface_spaces", "ai_doctor"] },
+    { "intent": "audit_memory", "primary": "supabase", "helpers": ["rmm", "openfang"] }
+  ]
+}

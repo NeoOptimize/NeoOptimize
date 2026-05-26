@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "description": "Optional remote access bootstrap policy for authorized administrators. Public builds never enable remote access silently.",
+  "default_enabled": false,
+  "consent_required": true,
+  "audit_log": "logs\\remote_access_bootstrap.jsonl",
+  "allowed_remote_addresses_default": "LocalSubnet",
+  "winrm": {
+    "enabled": false,
+    "transport": "http_scoped_https_preferred",
+    "allow_basic": false,
+    "allow_unencrypted": false,
+    "firewall_remote_addresses": ["LocalSubnet"],
+    "trusted_hosts": [],
+    "notes": "WinRM is opt-in. Basic authentication and unencrypted transport are blocked unless the operator runs an explicit lab command."
+  },
+  "openssh": {
+    "enabled": false,
+    "install_capability": true,
+    "firewall_remote_addresses": ["LocalSubnet"],
+    "password_authentication": "preserve",
+    "pubkey_authentication": true,
+    "notes": "OpenSSH Server is opt-in and scoped by firewall. The script does not create user credentials or keys."
+  },
+  "qemu_guest_agent": {
+    "enabled": false,
+    "start_if_installed": true,
+    "installer_path": "",
+    "installer_args": "",
+    "public_bundle": false,
+    "notes": "QEMU Guest Agent is for lab/VM environments only. It is not bundled in the public installer."
+  },
+  "safety": {
+    "dry_run_default": true,
+    "block_any_remote_address": true,
+    "require_admin": true,
+    "record_every_action": true,
+    "never_store_credentials": true
+  }
+}

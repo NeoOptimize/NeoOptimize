@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0",
+  "bundle_name": "NeoOptimize Public Runtime Bundle",
+  "public_distribution": true,
+  "include": [
+    "assets",
+    "config",
+    "datasets",
+    "docs",
+    "lib",
+    "mcp",
+    "models",
+    "modules",
+    "skills",
+    "tools"
+  ],
+  "exclude": [
+    "lab-artifacts",
+    "spice",
+    "vm-tools",
+    "private_keys",
+    "service_role_keys",
+    "tokens",
+    "local_admin_credentials"
+  ],
+  "runtime_tools": [
+    {
+      "id": "neo_agentic_autopilot",
+      "path": "NeoOptimize.AgenticRunner.ps1",
+      "public": true,
+      "mode": "human_confirmed_agentic_runtime",
+      "description": "NEO observe-plan-approve-act-verify-learn runtime. Autonomous execution is disabled; actions run only through allowlisted NeoOptimize modules."
+    },
+    {
+      "id": "nullclaw_bridge",
+      "path": "tools\\nullclaw.ps1",
+      "public": true,
+      "mode": "safe_bridge",
+      "description": "Compatibility bridge for local diagnostics. No kernel bypass or hidden driver actions are bundled."
+    },
+    {
+      "id": "nullclaw_setup",
+      "path": "tools\\Install-NeoOptimizeNullClaw.ps1",
+      "public": true,
+      "mode": "read_only_bridge_bootstrap",
+      "description": "Verifies the bundled NullClaw compatibility bridge and detects optional external NullClaw CLI."
+    },
+    {
+      "id": "ollama_local_ai_setup",
+      "path": "tools\\Install-NeoOptimizeOllama.ps1",
+      "public": true,
+      "mode": "operator_confirmed_install",
+      "description": "Configures Ollama for NEO, imports bundled neo-light:latest and neo:latest models when present, and can pull the required models after operator confirmation."
+    },
+    {
+      "id": "neo_mcp_bridge",
+      "path": "tools\\neo_mcp_bridge.ps1",
+      "public": true,
+      "mode": "read_only_status",
+      "description": "Reports safe connector status to NEO and RMM without exposing credentials."
+    },
+    {
+      "id": "remote_access_bootstrap",
+      "path": "tools\\Enable-NeoOptimizeRemoteAccess.ps1",
+      "public": true,
+      "mode": "admin_confirmed_opt_in",
+      "description": "Optional WinRM, OpenSSH, and lab QEMU Guest Agent bootstrap. Dry-run by default, scoped firewall, audited, and never silently enabled."
+    },
+    {
+      "id": "self_test",
+      "path": "tools\\Invoke-NeoOptimizeSelfTest.ps1",
+      "public": true,
+      "mode": "static_validation",
+      "description": "Validates required runtime files, script parsing, and UI action routing."
+    }
+  ],
+  "safety": {
+    "default_ai_mode": "advisory_only",
+    "neo_operator_policy": "config\\NeoOptimize.OperatorPolicy.json",
+    "remote_access_policy": "config\\NeoOptimize.RemoteAccess.json",
+    "windows_doctor_default": "scan_only",
+    "repair_requires_confirmation": true,
+    "update_requires_sha256": true,
+    "secrets_never_frontend": true
+  }
+}

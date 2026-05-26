@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "id": "neo_computer_use",
+  "name": "NEO Computer Use",
+  "action": "AIInteractive",
+  "type": "agentic_computer_use",
+  "risk": "human_confirmed",
+  "description": "Lets NEO read Windows state, write reports/scripts, and act through allowlisted NeoOptimize modules, signed RMM commands, and audited OpenFang context.",
+  "capabilities": [
+    {
+      "id": "read",
+      "name": "Read",
+      "scope": ["system snapshot", "telemetry", "event logs", "services", "scheduled tasks", "disk health", "security posture", "remote access readiness"],
+      "requires_confirmation": false
+    },
+    {
+      "id": "write",
+      "name": "Write",
+      "scope": ["reports", "audit logs", "read-only scripts", "approved repair scripts", "benchmark history"],
+      "requires_confirmation": false
+    },
+    {
+      "id": "act",
+      "name": "Act",
+      "scope": ["NeoOptimize modules", "signed RMM commands", "OpenFang terminal with SHA-256 and denylist", "secure update manager", "remote access bootstrap with administrator consent"],
+      "requires_confirmation": true
+    },
+    {
+      "id": "learn",
+      "name": "Self Learning",
+      "scope": ["before/after benchmark deltas", "rollback outcomes", "local policy confidence"],
+      "requires_confirmation": false
+    }
+  ],
+  "guardrails": {
+    "default_mode": "advisory_then_confirmed_action",
+    "dry_run_first": true,
+    "remote_execution": "signed_manifest_only",
+    "terminal": "sha256_timeout_denylist_audited",
+    "remote_access": "disabled_by_default_dry_run_first_scoped_firewall_audited",
+    "update": "credential_gated_sha256_verified",
+    "secrets": "never_collect_or_print",
+    "camera": "disabled_by_default",
+    "microphone": "push_to_talk_only",
+    "self_development": "operator_confirmed_only"
+  }
+}

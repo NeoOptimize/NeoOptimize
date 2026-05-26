@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "name": "NEO Optional Tooling Skills",
+  "description": "Optional helper tools that NEO can recommend with operator consent. They are not required for NeoOptimize to run.",
+  "skills": [
+    {
+      "id": "microsoft_powertoys",
+      "name": "Microsoft PowerToys",
+      "install_command": "winget install --id Microsoft.PowerToys --source winget",
+      "risk": "operator_confirmed_install",
+      "required": false,
+      "use_cases": [
+        "technician productivity",
+        "window/process workflow support",
+        "advanced support utilities when user explicitly wants them"
+      ],
+      "policy": [
+        "never install silently",
+        "explain why it is useful before installation",
+        "verify winget source and publisher before execution"
+      ]
+    },
+    {
+      "id": "winbindex",
+      "name": "Winbindex Windows Binary Index",
+      "source": "https://github.com/m417z/winbindex",
+      "risk": "read_only_reference",
+      "required": false,
+      "use_cases": [
+        "Windows binary version intelligence",
+        "file hash and version comparison",
+        "integrity investigation support"
+      ],
+      "policy": [
+        "use as reference data only",
+        "do not replace local file integrity checks",
+        "do not download or replace system files automatically"
+      ]
+    }
+  ]
+}

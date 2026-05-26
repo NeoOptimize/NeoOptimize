@@ -1,0 +1,462 @@
+{
+  "schema_version": "2.0",
+  "model": {
+    "name": "NeoCore.ModulePolicy",
+    "version": "2.0",
+    "trained_at": "2026-05-19T16:10:00+07:00",
+    "trainer": "tools\\Train-NeoCore.ps1",
+    "objective": "Rank every NeoOptimize module from local endpoint telemetry, safety posture, and operational context."
+  },
+  "settings": {
+    "min_confidence": 0.25,
+    "recommendation_limit": 8,
+    "always_include": ["AgentAudit"],
+    "advisory_only": true
+  },
+  "weights": {
+    "disk_pressure": 20.0,
+    "memory_pressure": 12.0,
+    "startup_load": 8.0,
+    "process_load": 5.0,
+    "uptime_pressure": 6.0,
+    "firewall_risk": 15.0,
+    "defender_risk": 18.0,
+    "update_risk": 13.0,
+    "service_risk": 10.0,
+    "network_risk": 7.0,
+    "power_risk": 5.0,
+    "privacy_risk": 6.0,
+    "repair_risk": 16.0,
+    "inventory_gap": 9.0,
+    "baseline_need": 4.0
+  },
+  "modules": {
+    "Dashboard": {
+      "display": "System Dashboard",
+      "local_action": "Dashboard",
+      "rmm_command": "SYSINFO",
+      "risk": "read_only",
+      "automation": "safe",
+      "bias": 0.18,
+      "features": {
+        "baseline_need": 0.45,
+        "inventory_gap": 0.25
+      },
+      "reason": "Create a quick baseline before changing the endpoint."
+    },
+    "Cleaner": {
+      "display": "System Cleaner",
+      "local_action": "Cleaner",
+      "rmm_command": "CLEAN",
+      "risk": "low",
+      "automation": "safe",
+      "bias": 0.12,
+      "features": {
+        "disk_pressure": 1.25,
+        "memory_pressure": 0.15,
+        "uptime_pressure": 0.1,
+        "baseline_need": 0.08
+      },
+      "reason": "Remove temporary files and caches when disk pressure is visible."
+    },
+    "CleanAll": {
+      "display": "Clean All Junk",
+      "local_action": "CleanAll",
+      "rmm_command": "CLEAN",
+      "risk": "low",
+      "automation": "safe",
+      "bias": 0.1,
+      "features": {
+        "disk_pressure": 1.4,
+        "memory_pressure": 0.25,
+        "startup_load": 0.2,
+        "uptime_pressure": 0.12
+      },
+      "reason": "Use broad cleanup when disk pressure and cache churn are high."
+    },
+    "DeepScan": {
+      "display": "Deep Scan",
+      "local_action": "DeepScan",
+      "rmm_command": "DEEP_SCAN",
+      "risk": "read_only",
+      "automation": "safe",
+      "bias": 0.08,
+      "features": {
+        "disk_pressure": 0.75,
+        "repair_risk": 0.35,
+        "baseline_need": 0.2
+      },
+      "reason": "Map large junk and residual files before destructive cleanup."
+    },
+    "SystemDiagnostics": {
+      "display": "System Diagnostics",
+      "local_action": "SystemDiagnostics",
+      "rmm_command": "SYSTEM_DIAGNOSTICS",
+      "risk": "read_only",
+      "automation": "safe",
+      "bias": 0.12,
+      "features": {
+        "repair_risk": 0.8,
+        "update_risk": 0.5,
+        "service_risk": 0.4,
+        "baseline_need": 0.3
+      },
+      "reason": "Diagnose boot, service, event log, and component health before repair."
+    },
+    "WindowsDoctor": {
+      "display": "NEO Windows Doctor",
+      "local_action": "WindowsDoctor",
+      "rmm_command": "SYSTEM_DIAGNOSTICS",
+      "risk": "read_only",
+      "automation": "safe",
+      "bias": 0.22,
+      "features": {
+        "repair_risk": 1.05,
+        "update_risk": 0.65,
+        "service_risk": 0.6,
+        "defender_risk": 0.35,
+        "inventory_gap": 0.35,
+        "baseline_need": 0.45
+      },
+      "reason": "Correlate diagnostics, anomaly scoring, AI plan, MCP context, and NullClaw bridge before choosing treatment."
+    },
+    "WindowsErrorFix": {
+      "display": "Windows Error Fix",
+      "local_action": "WindowsErrorFix",
+      "rmm_command": "SYSTEM_REPAIR",
+      "risk": "high",
+      "automation": "confirm",
+      "bias": 0.02,
+      "features": {
+        "repair_risk": 1.45,
+        "update_risk": 0.7,
+        "service_risk": 0.55,
+        "defender_risk": 0.2
+      },
+      "reason": "Run the conservative repair lane only when NEO Doctor or SystemDiagnostics finds high-confidence Windows health issues."
+    },
+    "SystemRepair": {
+      "display": "System Repair",
+      "local_action": "SystemRepair",
+      "rmm_command": "SYSTEM_REPAIR",
+      "risk": "high",
+      "automation": "confirm",
+      "bias": 0.05,
+      "features": {
+        "repair_risk": 1.3,
+        "update_risk": 0.5,
+        "service_risk": 0.3,
+        "defender_risk": 0.15
+      },
+      "reason": "Repair Windows image, SFC, WinRE, and update components when integrity risk is high."
+    },
+    "SmartOptimize": {
+      "display": "Smart Optimize",
+      "local_action": "SmartOptimize",
+      "rmm_command": "OPTIMIZE",
+      "risk": "medium",
+      "automation": "confirm",
+      "bias": 0.16,
+      "features": {
+        "disk_pressure": 0.5,
+        "memory_pressure": 0.8,
+        "startup_load": 0.6,
+        "process_load": 0.55,
+        "uptime_pressure": 0.4,
+        "power_risk": 0.15
+      },
+      "reason": "Run a balanced optimization when multiple performance signals are elevated."
+    },
+    "ScheduleClean": {
+      "display": "Schedule Cleanup",
+      "local_action": "ScheduleClean",
+      "rmm_command": null,
+      "risk": "low",
+      "automation": "confirm",
+      "bias": 0.08,
+      "features": {
+        "disk_pressure": 0.6,
+        "baseline_need": 0.4
+      },
+      "reason": "Install scheduled cleanup when disk pressure is recurring."
+    },
+    "DiskStatus": {
+      "display": "Disk Status",
+      "local_action": "DiskStatus",
+      "rmm_command": "COLLECT",
+      "risk": "read_only",
+      "automation": "safe",
+      "bias": 0.14,
+      "features": {
+        "disk_pressure": 0.35,
+        "repair_risk": 0.15,
+        "baseline_need": 0.25
+      },
+      "reason": "Check volume and physical disk state before disk remediation."
+    },
+    "DiskScan": {
+      "display": "Scan Disk",
+      "local_action": "DiskScan",
+      "rmm_command": "SYSTEM_DIAGNOSTICS",
+      "risk": "read_only",
+      "automation": "safe",
+      "bias": 0.08,
+      "features": {
+        "disk_pressure": 0.65,
+        "repair_risk": 0.45
+      },
+      "reason": "Run online disk scan when storage pressure or repair signals are present."
+    },
+    "DiskRepair": {
+      "display": "Repair Disk",
+      "local_action": "DiskRepair",
+      "rmm_command": "SYSTEM_REPAIR",
+      "risk": "high",
+      "automation": "confirm",
+      "bias": 0.03,
+      "features": {
+        "disk_pressure": 0.35,
+        "repair_risk": 1.0
+      },
+      "reason": "Schedule or run disk repair only when diagnostics justify it."
+    },
+    "DiskOptimize": {
+      "display": "Defrag / TRIM",
+      "local_action": "DiskOptimize",
+      "rmm_command": "OPTIMIZE",
+      "risk": "medium",
+      "automation": "confirm",
+      "bias": 0.08,
+      "features": {
+        "disk_pressure": 0.55,
+        "uptime_pressure": 0.25,
+        "power_risk": 0.15
+      },
+      "reason": "Optimize fixed volumes with SSD-aware TRIM/defrag behavior."
+    },
+    "HealthRepair": {
+      "display": "Health Repair",
+      "local_action": "HealthRepair",
+      "rmm_command": "SYSTEM_REPAIR",
+      "risk": "medium",
+      "automation": "confirm",
+      "bias": 0.08,
+      "features": {
+        "repair_risk": 1.1,
+        "update_risk": 0.65,
+        "defender_risk": 0.2
+      },
+      "reason": "Use DISM/SFC style health repair when component or update state looks unhealthy."
+    },
+    "Performance": {
+      "display": "Performance Optimizer",
+      "local_action": "Performance",
+      "rmm_command": "PERFORMANCE",
+      "risk": "medium",
+      "automation": "confirm",
+      "bias": 0.1,
+      "features": {
+        "memory_pressure": 1.15,
+        "startup_load": 0.55,
+        "process_load": 0.55,
+        "disk_pressure": 0.25,
+        "power_risk": 0.2
+      },
+      "reason": "Tune memory, startup, NTFS, and responsiveness when resource pressure is high."
+    },
+    "Privacy": {
+      "display": "Privacy & Telemetry",
+      "local_action": "Privacy",
+      "rmm_command": "PRIVACY",
+      "risk": "medium",
+      "automation": "confirm",
+      "bias": 0.07,
+      "features": {
+        "privacy_risk": 1.1,
+        "startup_load": 0.25,
+        "process_load": 0.2
+      },
+      "reason": "Reduce diagnostics, suggestions, and tracking surfaces when privacy signals are high."
+    },
+    "Network": {
+      "display": "Network Optimizer",
+      "local_action": "Network",
+      "rmm_command": "NETWORK_TEST",
+      "risk": "medium",
+      "automation": "confirm",
+      "bias": 0.07,
+      "features": {
+        "network_risk": 1.1,
+        "uptime_pressure": 0.2,
+        "update_risk": 0.15
+      },
+      "reason": "Audit and tune TCP/DNS/network stack when connectivity risk is detected."
+    },
+    "Security": {
+      "display": "Security Audit / Hardening",
+      "local_action": "Security",
+      "rmm_command": "SECURITY_SCAN",
+      "risk": "confirm",
+      "automation": "confirm",
+      "bias": 0.1,
+      "features": {
+        "firewall_risk": 1.2,
+        "defender_risk": 1.4,
+        "privacy_risk": 0.25,
+        "repair_risk": 0.25
+      },
+      "reason": "Audit Defender, firewall, SMB, TLS, UAC, and exploit posture first. Hardening requires explicit ENFORCE."
+    },
+    "Services": {
+      "display": "Services Manager",
+      "local_action": "Services",
+      "rmm_command": "SERVICES",
+      "risk": "high",
+      "automation": "confirm",
+      "bias": 0.08,
+      "features": {
+        "service_risk": 1.1,
+        "startup_load": 0.9,
+        "process_load": 0.55,
+        "memory_pressure": 0.3
+      },
+      "reason": "Apply service profiles only after AI sees startup, process, or critical service pressure."
+    },
+    "Updates": {
+      "display": "Update & Driver Manager",
+      "local_action": "Updates",
+      "rmm_command": "UPDATES",
+      "risk": "medium",
+      "automation": "confirm",
+      "bias": 0.07,
+      "features": {
+        "update_risk": 1.25,
+        "uptime_pressure": 0.4,
+        "defender_risk": 0.25
+      },
+      "reason": "Check update and driver state when reboot, signature, or service signals are stale."
+    },
+    "Power": {
+      "display": "Power & Gaming Mode",
+      "local_action": "Power",
+      "rmm_command": "POWER",
+      "risk": "low",
+      "automation": "safe",
+      "bias": 0.07,
+      "features": {
+        "power_risk": 1.2,
+        "memory_pressure": 0.2,
+        "process_load": 0.2
+      },
+      "reason": "Tune power plan and latency when power profile limits performance."
+    },
+    "Profile": {
+      "display": "System Profile",
+      "local_action": "Profile",
+      "rmm_command": null,
+      "risk": "medium",
+      "automation": "confirm",
+      "bias": 0.05,
+      "features": {
+        "baseline_need": 0.8,
+        "power_risk": 0.4,
+        "startup_load": 0.25,
+        "memory_pressure": 0.2
+      },
+      "reason": "Select Work, Gaming, or General profile when endpoint purpose is not aligned."
+    },
+    "AgentAudit": {
+      "display": "NeoOptimize Agent Audit",
+      "local_action": "AgentAudit",
+      "rmm_command": "SYSINFO",
+      "risk": "read_only",
+      "automation": "safe",
+      "bias": 0.35,
+      "features": {
+        "inventory_gap": 1.1,
+        "baseline_need": 0.5,
+        "repair_risk": 0.15,
+        "defender_risk": 0.1
+      },
+      "reason": "Always keep an audit trail, health score, and remediation evidence."
+    },
+    "AgentStatus": {
+      "display": "RMM Agent Status",
+      "local_action": "AgentStatus",
+      "rmm_command": "PING",
+      "risk": "read_only",
+      "automation": "safe",
+      "bias": 0.12,
+      "features": {
+        "inventory_gap": 0.9,
+        "baseline_need": 0.25
+      },
+      "reason": "Check whether local and RMM agent paths are online."
+    },
+    "AgentInstall": {
+      "display": "RMM Agent Install",
+      "local_action": "AgentInstall",
+      "rmm_command": null,
+      "risk": "medium",
+      "automation": "confirm",
+      "bias": 0.04,
+      "features": {
+        "inventory_gap": 1.4,
+        "baseline_need": 0.35
+      },
+      "reason": "Install the RMM agent when the endpoint is not enrolled."
+    },
+    "AgentRemediate": {
+      "display": "Agent Remediation",
+      "local_action": "AgentRemediate",
+      "rmm_command": "OPTIMIZE",
+      "risk": "high",
+      "automation": "confirm",
+      "bias": 0.02,
+      "features": {
+        "repair_risk": 0.9,
+        "service_risk": 0.4,
+        "defender_risk": 0.35
+      },
+      "reason": "Use only after audit findings require controlled remediation."
+    },
+    "CloudStatus": {
+      "display": "Cloud Integration Status",
+      "local_action": "CloudStatus",
+      "rmm_command": null,
+      "risk": "read_only",
+      "automation": "safe",
+      "bias": 0.05,
+      "features": {
+        "inventory_gap": 0.75,
+        "baseline_need": 0.4
+      },
+      "reason": "Check Supabase, E2B, HF Space, local model, and RMM integration readiness."
+    },
+    "Maintenance": {
+      "display": "Maintenance Manager",
+      "local_action": "Maintenance",
+      "rmm_command": null,
+      "risk": "medium",
+      "automation": "confirm",
+      "bias": 0.08,
+      "features": {
+        "disk_pressure": 0.5,
+        "repair_risk": 0.45,
+        "update_risk": 0.25,
+        "baseline_need": 0.25
+      },
+      "reason": "Open the consolidated maintenance flow when multiple maintenance submodules are relevant."
+    }
+  },
+  "safety": {
+    "allow_remote_execution": false,
+    "allow_secret_collection": false,
+    "allow_camera_capture": false,
+    "allow_microphone_capture": false,
+    "allow_biometric_collection": false,
+    "require_human_confirmation_for_remediation": true,
+    "require_restore_point_for_risk": ["medium", "high"],
+    "never_auto_execute": ["DiskRepair", "WindowsErrorFix", "SystemRepair", "Services", "AgentRemediate"]
+  }
+}

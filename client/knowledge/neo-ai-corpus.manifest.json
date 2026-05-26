@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "corpus": "neo-ai-windows-admin",
+  "generated_at": "2026-05-23T17:21:27.420Z",
+  "record_count": 1412,
+  "corpus_sha256": "933f2cdc4bdbdcd3072bc6997b1bbb1ea56cbf7c345dec48fae19b026a980428",
+  "chunking": {
+    "max_chars": 1600,
+    "overlap_chars": 180
+  },
+  "categories": {
+    "registry": 359,
+    "security": 175,
+    "storage": 290,
+    "wmi-cim": 75,
+    "powershell": 920,
+    "network": 262,
+    "optimization": 403,
+    "cmd": 267,
+    "general": 156
+  },
+  "sources": [
+    {
+      "name": "Corpus database.txt",
+      "path": "corpus-sources/Corpus database.txt",
+      "ext": ".txt",
+      "bytes": 1046210,
+      "sha256": "9c14de3ea5dd34e83a64cb1fd8d93adbbf9328f32369fcc7cecf9258b962a9b6",
+      "extracted_chars": 1026888
+    },
+    {
+      "name": "iLoveMerge.pdf",
+      "path": "corpus-sources/iLoveMerge.pdf",
+      "ext": ".pdf",
+      "bytes": 3640275,
+      "sha256": "b449091829ae02e34dc7e6232cf0a564911fcca7017f123a0879810683999882",
+      "extracted_chars": 1030222
+    }
+  ]
+}

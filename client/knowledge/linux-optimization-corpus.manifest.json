@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0",
+  "corpus": "neo-ai-linux-admin",
+  "generated_at": "2026-05-24T09:12:53.055193+00:00",
+  "record_count": 5000,
+  "corpus_sha256": "84d3a6cb7fe3db7aa6ffcb122bab643630be62fa23b33177de635adeff777d1e",
+  "risk_counts": {
+    "high": 2756,
+    "deny": 340,
+    "read_only": 456,
+    "medium": 1448
+  },
+  "categories": {
+    "linux": 5000,
+    "memory": 572,
+    "optimization": 5000,
+    "high": 2756,
+    "deny": 340,
+    "read_only": 456,
+    "cpu": 416,
+    "medium": 1448,
+    "disk": 728,
+    "network": 520,
+    "services": 624,
+    "cleanup": 1516,
+    "boot": 336,
+    "power": 96,
+    "filesystem": 192
+  },
+  "policy": {
+    "raw_command_corpus": false,
+    "auto_execute": false,
+    "deny_records_are_for_detection_and_explanation_only": true,
+    "requires_signed_manifest_for_write_actions": true
+  }
+}
