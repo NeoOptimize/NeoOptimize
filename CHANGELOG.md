@@ -1,5 +1,30 @@
 # Changelog
 
+## 1.0.6 NEO Mini Local AI & Background Ollama Setup
+
+Release date: 2026-05-27
+
+### Fixed
+
+- NEO Mini now returns useful local guidance when the provider is offline, times out, or returns an empty response.
+- Local AI setup now launches through a hidden background worker, avoiding visible CMD/PowerShell popups during Ollama bootstrap.
+- Ollama setup is downloaded on the endpoint instead of being bundled directly into the public installer, keeping the release asset small and update-friendly.
+
+### Added
+
+- NEO Mini quick prompts for status, anomaly scan, code repair guidance, and Local AI setup.
+- Corpus-aware local code repair guidance for NeoOptimize modules, worker logs, installer scripts, and AI provider setup.
+- Local anomaly and notification explanations for CPU, memory, disk, Ollama, provider, and maintenance-worker conditions.
+
+### Verification
+
+- Server Jest suite passed: `69/69` tests across `21` suites.
+- NEO Mini local AI tests passed for Ollama setup, anomaly scan, and code repair fallback behavior.
+- Client-nextgen production build passed.
+- Rust/Tauri Windows build and NSIS installer rebuild passed.
+- Public bundle verifier passed.
+- Installer rebuilt and verified with SHA-256 `9a1060bdab1ea370e7820ecdd1376134dd68b24a01fe7d93d1f3ea5731ee8bb5`.
+
 ## 1.0.5 Fixed-Scale UI, Single Instance & Voice Label
 
 Release date: 2026-05-26

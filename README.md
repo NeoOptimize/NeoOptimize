@@ -8,18 +8,18 @@ The public release focuses on the NeoOptimize desktop application, local safety
 workflow, mini tray companion, update manager, NEO local assistant features, and
 RMM release-gate validation.
 
-![NeoOptimize running in a Windows VM with RMM connected](assets/neooptimize-screenshot-v1.0.5-current-vm.png)
+![NeoOptimize NEO Mini local AI validation](assets/neooptimize-screenshot-v1.0.6-neo-mini.png)
 
-_Latest release-gate screenshot captured from the Windows VM validation run._
+_Latest release-gate screenshot captured from the NEO Mini local AI smoke validation._
 
 ## Download
 
 | Item | Value |
 | --- | --- |
-| Version | `1.0.5` |
+| Version | `1.0.6` |
 | Installer | `NeoOptimize.exe` |
-| SHA-256 | `7432e2bb2bacb82215e58967b21a09938ca1c9919f5daeda1bc154d097f5d3f4` |
-| Release | https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.0.5 |
+| SHA-256 | `9a1060bdab1ea370e7820ecdd1376134dd68b24a01fe7d93d1f3ea5731ee8bb5` |
+| Release | https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.0.6 |
 
 Verify the installer before running it:
 
@@ -30,7 +30,7 @@ Get-FileHash .\NeoOptimize.exe -Algorithm SHA256
 The hash must match:
 
 ```text
-7432e2bb2bacb82215e58967b21a09938ca1c9919f5daeda1bc154d097f5d3f4
+9a1060bdab1ea370e7820ecdd1376134dd68b24a01fe7d93d1f3ea5731ee8bb5
 ```
 
 ## What NeoOptimize Does
@@ -177,14 +177,16 @@ cannot be silently replaced without detection.
 
 ## Release Validation
 
-The `1.0.5` release gate completed with:
+The `1.0.6` release gate completed with:
 
 - Fixed-scale desktop UI validation at `1024x680` from the current Windows VM screenshot.
 - Single-instance desktop guard validation for NeoOptimize startup.
 - NEO Mini voice command label and tooltip validation.
+- NEO Mini local AI fallback validation for status, anomaly scan, code repair guidance, corpus-aware suggestions, and Local AI setup prompts.
+- Hidden Ollama setup validation: installer starts the Local AI helper in a background worker with no visible CMD/PowerShell window.
 - RMM live endpoint smoke for `/health`, `/healthz`, `/readyz`, `/livez`, `/api/v1/health`, `/api/v1/metrics`, and `/downloads/NeoOptimize.exe`.
 - RMM browser smoke across dashboard routes with no console errors and no HTTP 4xx/5xx responses.
-- Server Jest suite: `57/57` tests across `17` suites.
+- Server Jest suite: `69/69` tests across `21` suites.
 - Python AI engine tests: `3/3`.
 - Client-nextgen production build, Rust/Tauri Windows build, public bundle verifier, static no-CMD-popup scan, and installer rebuild.
 

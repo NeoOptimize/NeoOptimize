@@ -1,7 +1,7 @@
-NeoOptimize v1.0.5
-Released: May 26, 2026
+NeoOptimize v1.0.6
+Released: May 27, 2026
 Package: NeoOptimize.exe
-SHA256: 7432e2bb2bacb82215e58967b21a09938ca1c9919f5daeda1bc154d097f5d3f4
+SHA256: 9a1060bdab1ea370e7820ecdd1376134dd68b24a01fe7d93d1f3ea5731ee8bb5
 Public Components:
 1. NeoOptimize Windows application
 2. NEO local advisory and agentic workflow

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
   <metadata>
     <id>neooptimize</id>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
     <packageSourceUrl>https://github.com/NeoOptimize/NeoOptimize</packageSourceUrl>
     <owners>Zenthralix-Lab</owners>
     <title>NeoOptimize</title>
@@ -23,7 +23,7 @@ NeoOptimize is a local Windows utility for diagnostics, safe cleanup, repair pla
 
 Maintenance actions are designed to be user-approved and executed through hidden workers behind the native UI. Administrator approval may be required for privileged Windows repair operations.
     </description>
-    <releaseNotes>https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.0.5</releaseNotes>
+    <releaseNotes>https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.0.6</releaseNotes>
   </metadata>
   <files>
     <file src="tools\**" target="tools" />
