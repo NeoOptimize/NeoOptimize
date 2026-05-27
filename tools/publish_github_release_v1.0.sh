@@ -177,7 +177,17 @@ export ROOT REPO TAG RELEASE_NAME INSTALLER UPLOAD_SHA_FILE NOTES_FILE PUBLISHED
 
 echo "[1/5] Pushing main and refreshing $TAG..."
 git -C "$WORKTREE" push origin main
-git -C "$WORKTREE" push --force-with-lease origin "$TAG"
+remote_tag="$(git ls-remote "https://github.com/$REPO.git" "refs/tags/$TAG^{}" | awk '{print $1}')"
+if [ -z "$remote_tag" ]; then
+  remote_tag="$(git ls-remote "https://github.com/$REPO.git" "refs/tags/$TAG" | awk '{print $1}')"
+fi
+if [ -n "$remote_tag" ]; then
+  git -C "$WORKTREE" push \
+    --force-with-lease="refs/tags/$TAG:$remote_tag" \
+    origin "refs/tags/$TAG:refs/tags/$TAG"
+else
+  git -C "$WORKTREE" push origin "refs/tags/$TAG:refs/tags/$TAG"
+fi
 
 echo "[2/5] Creating/updating GitHub release and assets..."
 python3 - <<'PY'
