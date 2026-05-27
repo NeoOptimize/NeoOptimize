@@ -177,9 +177,9 @@ export ROOT REPO TAG RELEASE_NAME INSTALLER UPLOAD_SHA_FILE NOTES_FILE PUBLISHED
 
 echo "[1/5] Pushing main and refreshing $TAG..."
 git -C "$WORKTREE" push origin main
-remote_tag="$(git ls-remote "https://github.com/$REPO.git" "refs/tags/$TAG^{}" | awk '{print $1}')"
+remote_tag="$(git ls-remote "https://github.com/$REPO.git" "refs/tags/$TAG" | awk '{print $1}')"
 if [ -z "$remote_tag" ]; then
-  remote_tag="$(git ls-remote "https://github.com/$REPO.git" "refs/tags/$TAG" | awk '{print $1}')"
+  remote_tag="$(git ls-remote "https://github.com/$REPO.git" "refs/tags/$TAG^{}" | awk '{print $1}')"
 fi
 if [ -n "$remote_tag" ]; then
   git -C "$WORKTREE" push \
