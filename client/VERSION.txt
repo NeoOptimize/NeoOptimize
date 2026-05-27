@@ -1,2 +1,2 @@
-NeoOptimize v1.0.0
+NeoOptimize v1.0
 Build: 20260522

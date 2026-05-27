@@ -24,7 +24,7 @@ VIAddVersionKey "ProductName"     "NeoOptimize"
 VIAddVersionKey "CompanyName"     "Zenthralix Technologies"
 VIAddVersionKey "LegalCopyright"  "© 2025 Zenthralix Technologies"
 VIAddVersionKey "FileDescription" "NeoOptimize System Optimizer"
-VIAddVersionKey "FileVersion"     "1.0.0"
+VIAddVersionKey "FileVersion"     "1.0"
 
 ; ─── MUI Configuration ────────────────────────────────────────────
 !define MUI_ABORTWARNING
@@ -214,7 +214,7 @@ Section "NeoOptimize Core" SEC01
   ${If} $ServerUrl != ""
     WriteRegStr HKLM "Software\NeoOptimize" "ServerUrl"  "$ServerUrl"
   ${EndIf}
-  WriteRegStr HKLM "Software\NeoOptimize" "Version"    "1.0.0"
+  WriteRegStr HKLM "Software\NeoOptimize" "Version"    "1.0"
 
   ; Add to Programs & Features
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NeoOptimize" \
@@ -222,7 +222,7 @@ Section "NeoOptimize Core" SEC01
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NeoOptimize" \
     "UninstallString" '"$INSTDIR\Uninstall.exe"'
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NeoOptimize" \
-    "DisplayVersion"  "1.0.0"
+    "DisplayVersion"  "1.0"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NeoOptimize" \
     "Publisher"       "Zenthralix Technologies"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NeoOptimize" \

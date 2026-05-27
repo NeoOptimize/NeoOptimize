@@ -412,7 +412,7 @@ function Ensure-RmmRegistration {
                 Invoke-RmmRequest -Method "Post" -Url "$base/api/v1/agent/check-in" -Headers @{ "x-api-key" = $Config.ApiKey } -Body @{
                     uuid = $Snapshot.BiosUUID
                     hostname = $Snapshot.ComputerName
-                    version = "1.0.0"
+                    version = $Global:PRODUCT_VERSION
                     meta = @{ cpu = $Snapshot.CPU; gpu = $Snapshot.GPU; ram_mb = [math]::Round($Snapshot.RAMTotalGB * 1024) }
                 } -TimeoutSec 5 | Out-Null
                 Save-EndpointSyncState -ServerUrl $base -ApiKey $Config.ApiKey -EnrollmentToken $Config.EnrollmentToken
@@ -430,7 +430,7 @@ function Ensure-RmmRegistration {
                 cpu = $Snapshot.CPU
                 gpu = $Snapshot.GPU
                 ram_mb = [math]::Round($Snapshot.RAMTotalGB * 1024)
-                version = "1.0.0"
+                version = $Global:PRODUCT_VERSION
             } -TimeoutSec 8
             if ($response.api_key) {
                 Save-EndpointSyncState -ServerUrl $base -ApiKey ([string]$response.api_key) -EnrollmentToken $Config.EnrollmentToken
@@ -763,7 +763,7 @@ function Invoke-RmmSyncOnce {
     $checkIn = Invoke-RmmRequest -Method "Post" -Url "$($connection.ServerUrl)/api/v1/agent/check-in" -Headers @{ "x-api-key" = $connection.ApiKey } -Body @{
         uuid = $snapshot.BiosUUID
         hostname = $snapshot.ComputerName
-        version = "1.0.0"
+        version = $Global:PRODUCT_VERSION
         meta = @{ cpu = $snapshot.CPU; gpu = $snapshot.GPU; ram_mb = [math]::Round($snapshot.RAMTotalGB * 1024) }
     } -TimeoutSec 8
 

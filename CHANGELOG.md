@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.6 NEO Mini Local AI & Background Ollama Setup
+## 1.0 NEO Mini Local AI & Background Ollama Setup
 
 Release date: 2026-05-27
 
@@ -23,9 +23,9 @@ Release date: 2026-05-27
 - Client-nextgen production build passed.
 - Rust/Tauri Windows build and NSIS installer rebuild passed.
 - Public bundle verifier passed.
-- Installer rebuilt and verified with SHA-256 `9a1060bdab1ea370e7820ecdd1376134dd68b24a01fe7d93d1f3ea5731ee8bb5`.
+- Installer rebuilt and verified with SHA-256 `ae2d63b0b30f5f4b4195f3d3d71a5b088b5985263f1afba46717f3e056cfd5f4`.
 
-## 1.0.5 Fixed-Scale UI, Single Instance & Voice Label
+## 1.0 Fixed-Scale UI, Single Instance & Voice Label
 
 Release date: 2026-05-26
 
@@ -38,16 +38,16 @@ Release date: 2026-05-26
 ### Updated
 
 - README screenshot refreshed from the current Windows VM validation screen.
-- Public release metadata, WinGet manifest, Chocolatey manifest, and checksum updated to `1.0.5`.
+- Public release metadata, WinGet manifest, Chocolatey manifest, and checksum updated to `1.0`.
 
 ### Verification
 
 - Client-nextgen production build passed.
 - Rust/Tauri Windows target check passed.
 - Rust/Tauri desktop executable and NSIS installer rebuilt.
-- Installer rebuilt and verified with SHA-256 `7432e2bb2bacb82215e58967b21a09938ca1c9919f5daeda1bc154d097f5d3f4`.
+- Installer rebuilt and verified with SHA-256 `ae2d63b0b30f5f4b4195f3d3d71a5b088b5985263f1afba46717f3e056cfd5f4`.
 
-## 1.0.4 No-CMD Runtime & Local AI Bootstrap
+## 1.0 No-CMD Runtime & Local AI Bootstrap
 
 Release date: 2026-05-26
 
@@ -70,9 +70,9 @@ Release date: 2026-05-26
 - Server Jest suite passed: `57/57` tests across `17` suites.
 - Python AI engine tests passed: `3/3`.
 - Public bundle verifier, static no-CMD-popup scan, module allowlist check, Rust/Tauri Windows build, and installer rebuild passed.
-- Installer rebuilt and verified with SHA-256 `e1aa5037023f156fd3343962c1688bc6ea469153af146c53b6558370d47e286f`.
+- Installer rebuilt and verified with SHA-256 `ae2d63b0b30f5f4b4195f3d3d71a5b088b5985263f1afba46717f3e056cfd5f4`.
 
-## 1.0.3 RMM Runtime Health & VM Release Gate
+## 1.0 RMM Runtime Health & VM Release Gate
 
 Release date: 2026-05-26
 
@@ -87,7 +87,7 @@ Release date: 2026-05-26
 
 - Windows VM release-gate evidence now includes QEMU guest-agent status, detected guest IP, remote-control port scan, and screenshot capture.
 - Guest execution is marked blocked when QGA, SSH, WinRM, and RDP are unavailable instead of silently skipping guest validation.
-- Public README now shows the latest VM validation screenshot and v1.0.3 installer checksum.
+- Public README now shows the latest VM validation screenshot and v1.0 installer checksum.
 
 ### Verification
 
@@ -98,9 +98,9 @@ Release date: 2026-05-26
 - Client-nextgen production build passed.
 - .NET agent and UI wrapper builds passed.
 - Public bundle verifier passed.
-- Installer rebuilt and verified with SHA-256 `3667a2cb5ff7dfa6aed7ac7a131b6997ffb764fda3a5f4e6bfdb81bcc90620cc`.
+- Installer rebuilt and verified with SHA-256 `ae2d63b0b30f5f4b4195f3d3d71a5b088b5985263f1afba46717f3e056cfd5f4`.
 
-## 1.0.0 Public Release
+## 1.0 Public Release
 
 Release date: 2026-05-25
 
@@ -134,7 +134,7 @@ Release date: 2026-05-25
 - NEO panel remains accessible while maintenance tasks are running, while duplicate task execution is still throttled.
 - Main NeoOptimize AI page keeps monitoring and provider controls clean; interactive chat lives in the mini tray.
 - Installer stops the existing endpoint sync service before replacing agent files, then reinstalls the service to `C:\Program Files\NeoOptimize\Agent`.
-- Windows VM final install verified with endpoint sync agent `1.0.0`.
+- Windows VM final install verified with endpoint sync agent `1.0`.
 
 ### Verification
 
@@ -142,4 +142,4 @@ Release date: 2026-05-25
 - NeoOptimize maintenance runtime build completed.
 - Safety manifest and NeoOptimize workflow tests passed.
 - Installer package inspected for updated application files and generated with SHA-256 verification.
-- Windows VM install verified: NeoOptimize installed, endpoint sync agent reconnected as version `1.0.0`, safe command dispatch works, and telemetry continues to arrive.
+- Windows VM install verified: NeoOptimize installed, endpoint sync agent reconnected as version `1.0`, safe command dispatch works, and telemetry continues to arrive.

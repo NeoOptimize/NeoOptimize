@@ -3,7 +3,7 @@
   "corpus": "neo-ai-windows-admin",
   "generated_at": "2026-05-23T17:21:27.420Z",
   "record_count": 1412,
-  "corpus_sha256": "933f2cdc4bdbdcd3072bc6997b1bbb1ea56cbf7c345dec48fae19b026a980428",
+  "corpus_sha256": "abddcc727e784feb69d97fdade2645c3fca3a428d6c3a7ae631bd2e7174815dd",
   "chunking": {
     "max_chars": 1600,
     "overlap_chars": 180

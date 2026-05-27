@@ -2,28 +2,33 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-WORKTREE="${WORKTREE:-$ROOT/.github-release-worktree}"
+if [ -d "$ROOT/.git" ]; then
+  DEFAULT_WORKTREE="$ROOT"
+else
+  DEFAULT_WORKTREE="$ROOT/.github-release-worktree"
+fi
+WORKTREE="${WORKTREE:-$DEFAULT_WORKTREE}"
 REPO="${GITHUB_REPOSITORY:-NeoOptimize/NeoOptimize}"
-TAG="${TAG:-v1.0.4}"
-RELEASE_NAME="${RELEASE_NAME:-NeoOptimize v1.0.4}"
+TAG="${TAG:-v1.0}"
+RELEASE_NAME="${RELEASE_NAME:-NeoOptimize v1.0}"
 INSTALLER="${INSTALLER:-$ROOT/release/windows/NeoOptimize.exe}"
 SOURCE_SHA_FILE="${SOURCE_SHA_FILE:-$ROOT/release/windows/NeoOptimize.exe.sha256}"
 UPLOAD_SHA_FILE="${UPLOAD_SHA_FILE:-$ROOT/release/github/NeoOptimize.exe.sha256}"
-NOTES_FILE="${NOTES_FILE:-$ROOT/release/github/v1.0.4-notes.md}"
-PUBLISHED_JSON="${PUBLISHED_JSON:-$ROOT/release/github/v1.0.4-published.json}"
+NOTES_FILE="${NOTES_FILE:-$ROOT/release/github/v1.0-notes.md}"
+PUBLISHED_JSON="${PUBLISHED_JSON:-$ROOT/release/github/v1.0-published.json}"
 CLEANUP_OLD=0
 DRY_RUN=0
 
 usage() {
   cat <<'EOF'
 Usage:
-  tools/publish_github_release_v1.0.4.sh [--cleanup-old] [--dry-run]
+  tools/publish_github_release_v1.0.sh [--cleanup-old] [--dry-run]
 
 What it does:
-  1. Verifies the local v1.0.4 commit/tag and installer checksum.
+  1. Verifies the local v1.0 commit/tag and installer checksum.
   2. Prompts for a GitHub token if GITHUB_TOKEN/GH_TOKEN is not set.
-  3. Pushes main and tag v1.0.4 to NeoOptimize/NeoOptimize.
-  4. Creates or updates GitHub Release v1.0.4.
+  3. Pushes main and tag v1.0 to NeoOptimize/NeoOptimize.
+  4. Creates or updates GitHub Release v1.0.
   5. Uploads NeoOptimize.exe and NeoOptimize.exe.sha256.
   6. Verifies the public release assets.
   7. Optionally removes conservative stale local release artifacts with --cleanup-old.
@@ -87,20 +92,6 @@ source_sha="$(awk '{print $1}' "$SOURCE_SHA_FILE")"
 mkdir -p "$(dirname "$UPLOAD_SHA_FILE")"
 printf '%s  NeoOptimize.exe\n' "$actual_sha" > "$UPLOAD_SHA_FILE"
 
-token="${GITHUB_TOKEN:-${GH_TOKEN:-}}"
-if [ -z "$token" ]; then
-  printf 'GitHub token for %s: ' "$REPO" >&2
-  if [ -t 0 ]; then
-    stty -echo
-    IFS= read -r token
-    stty echo
-  else
-    IFS= read -r token
-  fi
-  printf '\n' >&2
-fi
-[ -n "$token" ] || { echo "GitHub token is empty." >&2; exit 1; }
-
 if [ "$DRY_RUN" -eq 1 ]; then
   cat <<EOF
 Dry run OK.
@@ -114,6 +105,20 @@ Release:     https://github.com/$REPO/releases/tag/$TAG
 EOF
   exit 0
 fi
+
+token="${GITHUB_TOKEN:-${GH_TOKEN:-}}"
+if [ -z "$token" ]; then
+  printf 'GitHub token for %s: ' "$REPO" >&2
+  if [ -t 0 ]; then
+    stty -echo
+    IFS= read -r token
+    stty echo
+  else
+    IFS= read -r token
+  fi
+  printf '\n' >&2
+fi
+[ -n "$token" ] || { echo "GitHub token is empty." >&2; exit 1; }
 
 askpass="$(mktemp)"
 cleanup_secret() {
@@ -147,14 +152,15 @@ import json
 import mimetypes
 import os
 import pathlib
+import sys
 import urllib.error
 import urllib.parse
 import urllib.request
 
 token = os.environ["GITHUB_TOKEN"]
 repo = os.environ.get("REPO", "NeoOptimize/NeoOptimize")
-tag = os.environ.get("TAG", "v1.0.4")
-release_name = os.environ.get("RELEASE_NAME", "NeoOptimize v1.0.4")
+tag = os.environ.get("TAG", "v1.0")
+release_name = os.environ.get("RELEASE_NAME", "NeoOptimize v1.0")
 root = pathlib.Path(os.environ.get("ROOT", ".")).resolve()
 notes_file = pathlib.Path(os.environ["NOTES_FILE"])
 published_json = pathlib.Path(os.environ["PUBLISHED_JSON"])
@@ -235,6 +241,13 @@ for asset in assets:
         "Content-Type": ctype,
         "Content-Length": str(len(blob)),
     })
+
+try:
+    request("PATCH", f"{api}/repos/{repo}", {
+        "homepage": f"https://github.com/{repo}/releases/latest",
+    })
+except SystemExit as exc:
+    print(f"[WARN] Could not update repository homepage: {exc}", file=sys.stderr)
 
 verified = request("GET", f"{api}/repos/{repo}/releases/tags/{tag}")
 asset_summary = [(asset["name"], asset["size"], asset["browser_download_url"]) for asset in verified.get("assets", [])]

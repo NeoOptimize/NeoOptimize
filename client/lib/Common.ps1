@@ -47,7 +47,7 @@ $Global:BG_BLACK = ansi 40
 #   BRANDING
 # 
 $Global:PRODUCT_NAME    = "NeoOptimize"
-$Global:PRODUCT_VERSION = "1.0.0"
+$Global:PRODUCT_VERSION = "1.0"
 $Global:PRODUCT_TAGLINE = "Windows Optimizer & Agent"
 
 # 

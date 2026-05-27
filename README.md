@@ -8,7 +8,7 @@ The public release focuses on the NeoOptimize desktop application, local safety
 workflow, mini tray companion, update manager, NEO local assistant features, and
 RMM release-gate validation.
 
-![NeoOptimize running in a Windows VM with RMM connected](assets/neooptimize-screenshot-v1.0.5-current-vm.png)
+![NeoOptimize running in a Windows VM with RMM connected](assets/neooptimize-screenshot.png)
 
 _Latest release-gate screenshot captured from the Windows VM validation run._
 
@@ -16,10 +16,10 @@ _Latest release-gate screenshot captured from the Windows VM validation run._
 
 | Item | Value |
 | --- | --- |
-| Version | `1.0.6` |
+| Version | `1.0` |
 | Installer | `NeoOptimize.exe` |
-| SHA-256 | `9a1060bdab1ea370e7820ecdd1376134dd68b24a01fe7d93d1f3ea5731ee8bb5` |
-| Release | https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.0.6 |
+| SHA-256 | `ae2d63b0b30f5f4b4195f3d3d71a5b088b5985263f1afba46717f3e056cfd5f4` |
+| Release | https://github.com/NeoOptimize/NeoOptimize/releases/latest |
 
 Verify the installer before running it:
 
@@ -30,7 +30,7 @@ Get-FileHash .\NeoOptimize.exe -Algorithm SHA256
 The hash must match:
 
 ```text
-9a1060bdab1ea370e7820ecdd1376134dd68b24a01fe7d93d1f3ea5731ee8bb5
+ae2d63b0b30f5f4b4195f3d3d71a5b088b5985263f1afba46717f3e056cfd5f4
 ```
 
 ## What NeoOptimize Does
@@ -177,7 +177,7 @@ cannot be silently replaced without detection.
 
 ## Release Validation
 
-The `1.0.6` release gate completed with:
+The `1.0` release gate completed with:
 
 - Fixed-scale desktop UI validation at `1024x680` from the current Windows VM screenshot.
 - Single-instance desktop guard validation for NeoOptimize startup.

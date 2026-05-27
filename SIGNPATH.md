@@ -86,7 +86,7 @@ checksum. The artifact configuration should sign the executable inside that ZIP
 and enforce file metadata:
 
 - Product name: `NeoOptimize`
-- Product version: `1.0.0`
+- Product version: `1.0`
 - Company/publisher metadata: project-maintainer metadata accepted by SignPath
   for the approved project.
 

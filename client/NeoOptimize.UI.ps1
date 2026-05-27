@@ -3370,7 +3370,7 @@ function Show-NeoUpdateManagerDialog {
     }
 
     $left = [System.Windows.Controls.StackPanel]::new()
-    $left.Children.Add((New-UpdateInfoCard "Installed Version" $Global:PRODUCT_VERSION "This release remains version 1.0.0 to avoid confusing public users." "AccentBrush")) | Out-Null
+    $left.Children.Add((New-UpdateInfoCard "Installed Version" $Global:PRODUCT_VERSION "Public release metadata is synchronized with GitHub Releases." "AccentBrush")) | Out-Null
     $left.Children.Add((New-UpdateInfoCard "Integrity" "SHA-256 Required" "Every update package is verified before repair or installation." "GoodBrush")) | Out-Null
     $left.Children.Add((New-UpdateInfoCard "Policy" "Credential-Gated" "Update checks and repair actions require authorized update credentials." "WarnBrush")) | Out-Null
     [System.Windows.Controls.Grid]::SetColumn($left, 0)
@@ -3417,7 +3417,7 @@ function Show-NeoUpdateManagerDialog {
     $buttons.Children.Add((New-UpdateButton "Install Verified" { Invoke-UpdateManagerTask "Install Verified Update" "Update" })) | Out-Null
     $buttons.Children.Add((New-UpdateButton "Repair" { Invoke-UpdateManagerTask "Repair NeoOptimize" "Repair" -ForceRepair })) | Out-Null
     $buttons.Children.Add((New-UpdateButton "Integrity Scan" { Invoke-UpdateManagerTask "Integrity Scan" "Scan" })) | Out-Null
-    $buttons.Children.Add((New-UpdateButton "Release Page" { Open-NeoExternalLink "https://github.com/NeoOptimize/NeoOptimize/releases/tag/v1.0.0" })) | Out-Null
+    $buttons.Children.Add((New-UpdateButton "Release Page" { Open-NeoExternalLink "https://github.com/NeoOptimize/NeoOptimize/releases/latest" })) | Out-Null
     $buttons.Children.Add((New-UpdateButton "Close" { $dialog.Close() })) | Out-Null
     [System.Windows.Controls.Grid]::SetRow($buttons, 2)
     $root.Children.Add($buttons) | Out-Null

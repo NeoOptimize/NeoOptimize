@@ -12,7 +12,7 @@
 .NOTES
     Author  : NeoOptimize Team
     Email   : neooptimizeofficial@gmail.com
-    Version : 1.0.0
+    Version : 1.0
     Requires: PowerShell 5.1+, Windows 10/11, Run as Administrator
 #>
 

@@ -1,6 +1,6 @@
 # NeoOptimize Changelog
 
-## NeoOptimize Versi 1.0.3 - RMM Runtime Health, Hidden Workers & Local AI Bootstrap
+## NeoOptimize Versi 1.0 - RMM Runtime Health, Hidden Workers & Local AI Bootstrap
 
 ### Fixed
 - Runtime PowerShell, service checks, maintenance, update repair, uninstall, RMM bootstrap, and Ollama setup now use hidden workers instead of spawning visible CMD/PowerShell windows from the native UI.
@@ -16,7 +16,7 @@
 - Client-nextgen build, Rust/Tauri Windows build, public bundle verification, static no-CMD-popup scan, and installer rebuild passed.
 - Installer SHA-256 checksum file regenerated at `release/windows/NeoOptimize.exe.sha256`.
 
-## NeoOptimize Versi 1.0.3 - RMM Runtime Health & VM Release Gate
+## NeoOptimize Versi 1.0 - RMM Runtime Health & VM Release Gate
 
 ### Fixed
 - RMM health check uses V8 heap limit so small startup heaps do not trigger false degraded status.

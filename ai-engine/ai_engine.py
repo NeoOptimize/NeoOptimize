@@ -35,7 +35,7 @@ from predictive_models import PredictiveMaintenanceEngine
 # ═══════════════════════════════════════════════════════════════════════════════
 
 APP_NAME = "NeoOptimize"
-APP_VERSION = "1.0.0"
+APP_VERSION = "1.0"
 MIN_PYTHON_VERSION = (3, 9)
 LOG_DIR = os.path.join(os.path.dirname(__file__), "logs")
 CONFIG_FILE = os.path.join(os.path.dirname(__file__), "config", "neooptimize_ai.json")
