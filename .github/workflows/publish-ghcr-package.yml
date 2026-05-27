@@ -1,0 +1,79 @@
+name: Publish GHCR Package
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published, edited]
+  push:
+    tags:
+      - v1.0
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    name: Publish NeoOptimize v1.0 package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare package coordinates
+        shell: bash
+        run: |
+          set -euo pipefail
+          owner="${GITHUB_REPOSITORY_OWNER,,}"
+          echo "IMAGE_NAME=ghcr.io/$owner/neooptimize" >> "$GITHUB_ENV"
+
+      - name: Download v1.0 release installer
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release/windows
+          base="https://github.com/${GITHUB_REPOSITORY}/releases/download/v1.0"
+          curl -fsSL "$base/NeoOptimize.exe" -o release/windows/NeoOptimize.exe
+          curl -fsSL "$base/NeoOptimize.exe.sha256" -o release/windows/NeoOptimize.exe.sha256
+          (
+            cd release/windows
+            sha256sum -c NeoOptimize.exe.sha256
+          )
+          echo "NEOOPTIMIZE_SHA256=$(awk '{print $1}' release/windows/NeoOptimize.exe.sha256)" >> "$GITHUB_ENV"
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=1.0
+            type=raw,value=v1.0
+            type=raw,value=latest
+          labels: |
+            org.opencontainers.image.title=NeoOptimize
+            org.opencontainers.image.description=NeoOptimize v1.0 Windows installer package with checksum metadata.
+            org.opencontainers.image.version=1.0
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.url=https://github.com/${{ github.repository }}/releases/tag/v1.0
+
+      - name: Build and push package
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: distribution/ghcr/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            NEOOPTIMIZE_VERSION=1.0
+            NEOOPTIMIZE_SHA256=${{ env.NEOOPTIMIZE_SHA256 }}
+            NEOOPTIMIZE_RELEASE_URL=https://github.com/${{ github.repository }}/releases/tag/v1.0

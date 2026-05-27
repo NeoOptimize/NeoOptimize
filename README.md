@@ -18,8 +18,9 @@ _Latest release-gate screenshot captured from the Windows VM validation run._
 | --- | --- |
 | Version | `1.0` |
 | Installer | `NeoOptimize.exe` |
-| SHA-256 | `ae2d63b0b30f5f4b4195f3d3d71a5b088b5985263f1afba46717f3e056cfd5f4` |
+| SHA-256 | `7e397bea71eda8f2a6be465956174f63d4c130785eb0ad6912c9634114f264f7` |
 | Release | https://github.com/NeoOptimize/NeoOptimize/releases/latest |
+| GitHub Package | `ghcr.io/neooptimize/neooptimize:1.0` |
 
 Verify the installer before running it:
 
@@ -30,7 +31,16 @@ Get-FileHash .\NeoOptimize.exe -Algorithm SHA256
 The hash must match:
 
 ```text
-ae2d63b0b30f5f4b4195f3d3d71a5b088b5985263f1afba46717f3e056cfd5f4
+7e397bea71eda8f2a6be465956174f63d4c130785eb0ad6912c9634114f264f7
+```
+
+The installer is also published as a GitHub Container Registry package for
+automation:
+
+```bash
+docker pull ghcr.io/neooptimize/neooptimize:1.0
+docker run --rm ghcr.io/neooptimize/neooptimize:1.0 --sha256
+docker run --rm -v "$PWD:/out" ghcr.io/neooptimize/neooptimize:1.0 --copy /out
 ```
 
 ## What NeoOptimize Does

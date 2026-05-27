@@ -1,0 +1,40 @@
+#!/bin/sh
+set -eu
+
+INSTALLER="/opt/neooptimize/NeoOptimize.exe"
+CHECKSUM="/opt/neooptimize/NeoOptimize.exe.sha256"
+
+usage() {
+  cat <<'EOF'
+NeoOptimize v1.0 GHCR package
+
+Usage:
+  neooptimize-package --help
+  neooptimize-package --sha256
+  neooptimize-package --copy /out
+
+Examples:
+  docker run --rm ghcr.io/neooptimize/neooptimize:1.0 --sha256
+  docker run --rm -v "$PWD:/out" ghcr.io/neooptimize/neooptimize:1.0 --copy /out
+EOF
+}
+
+case "${1:---help}" in
+  --help|-h)
+    usage
+    ;;
+  --sha256)
+    cat "$CHECKSUM"
+    ;;
+  --copy)
+    dest="${2:-/out}"
+    mkdir -p "$dest"
+    cp "$INSTALLER" "$dest/NeoOptimize.exe"
+    cp "$CHECKSUM" "$dest/NeoOptimize.exe.sha256"
+    printf 'Copied NeoOptimize.exe and NeoOptimize.exe.sha256 to %s\n' "$dest"
+    ;;
+  *)
+    usage >&2
+    exit 2
+    ;;
+esac
