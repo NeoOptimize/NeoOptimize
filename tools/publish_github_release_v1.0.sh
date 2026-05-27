@@ -62,10 +62,43 @@ need_cmd git
 need_cmd python3
 need_cmd sha256sum
 
+load_env_file() {
+  local file="$1"
+  [ -f "$file" ] || return 0
+  while IFS= read -r line || [ -n "$line" ]; do
+    line="${line#"${line%%[![:space:]]*}"}"
+    line="${line%"${line##*[![:space:]]}"}"
+    [ -z "$line" ] && continue
+    case "$line" in \#*) continue ;; esac
+    case "$line" in export\ *) line="${line#export }" ;; esac
+    case "$line" in *=*) ;; *) continue ;; esac
+
+    local key="${line%%=*}"
+    local value="${line#*=}"
+    key="${key#"${key%%[![:space:]]*}"}"
+    key="${key%"${key##*[![:space:]]}"}"
+    [ "$key" = "GITHUB_TOKEN" ] || [ "$key" = "GH_TOKEN" ] || continue
+    [ -z "${!key:-}" ] || continue
+
+    value="${value#"${value%%[![:space:]]*}"}"
+    value="${value%"${value##*[![:space:]]}"}"
+    if [[ "$value" == \"*\" && "$value" == *\" ]]; then
+      value="${value:1:${#value}-2}"
+    elif [[ "$value" == \'*\' && "$value" == *\' ]]; then
+      value="${value:1:${#value}-2}"
+    fi
+    [ -n "$value" ] || continue
+    export "$key=$value"
+  done < "$file"
+}
+
 [ -d "$WORKTREE/.git" ] || { echo "GitHub worktree not found: $WORKTREE" >&2; exit 1; }
 [ -f "$INSTALLER" ] || { echo "Installer not found: $INSTALLER" >&2; exit 1; }
 [ -f "$SOURCE_SHA_FILE" ] || { echo "Checksum file not found: $SOURCE_SHA_FILE" >&2; exit 1; }
 [ -f "$NOTES_FILE" ] || { echo "Release notes not found: $NOTES_FILE" >&2; exit 1; }
+
+load_env_file "$ROOT/.env"
+load_env_file "$WORKTREE/.env"
 
 current_branch="$(git -C "$WORKTREE" branch --show-current)"
 [ "$current_branch" = "main" ] || { echo "Expected worktree branch main, got: $current_branch" >&2; exit 1; }
