@@ -16,7 +16,7 @@ from statistics import mean, stdev, median
 import math
 
 # Simple statistical models (no external ML libraries needed for v1.5)
-# For v2.0+, integrate TensorFlow/Scikit-learn
+# Future: integrate TensorFlow/Scikit-learn
 
 @dataclass
 class TimeSeriesPoint:
@@ -251,7 +251,7 @@ class FeatureImportanceCalculator:
         for feature, value in telemetry.items():
             if isinstance(value, (int, float)):
                 # Simplified: importance = correlation with health
-                # In v2.0: use proper feature importance (SHAP, permutation)
+                # In future: use proper feature importance (SHAP, permutation)
                 importance[feature] = abs(value) * 0.5 + health_score * 0.5
         
         # Normalize to 0-1

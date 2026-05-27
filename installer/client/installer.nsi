@@ -253,6 +253,11 @@ Section "NeoOptimize Core" SEC01
   nsExec::ExecToLog '"$WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File "$INSTDIR\program\tools\Install-NeoOptimizeOllama.ps1" -Ensure -Download -Install -ImportBundledModels -PullRequiredModels -Silent -Force -Background'
   Pop $0
 
+  ; Endpoint sync worker: installs the hidden local scheduled task that links
+  ; NeoOptimize to a reachable authorized RMM server when config/token exist.
+  nsExec::ExecToLog '"$WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File "$INSTDIR\program\NeoOptimizeAgent.ps1" -Mode Install -Quiet -NoOpen -AssumeYes'
+  Pop $0
+
 SectionEnd
 
 ; ─── Enterprise Endpoint Sync Add-on Placeholder ──────────────────

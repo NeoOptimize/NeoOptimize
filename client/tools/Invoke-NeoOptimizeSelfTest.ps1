@@ -21,6 +21,7 @@ $required = @(
     "config\NeoOptimize.AgenticPolicy.json",
     "config\NeoOptimize.RemoteAccess.json",
     "config\NeoOptimize.Bundle.json",
+    "config\NeoOptimize.RMM.json",
     "knowledge\neo-ai-corpus.jsonl",
     "knowledge\neo-ai-corpus.manifest.json",
     "docs\ROADMAP_ALGORITMA.md",

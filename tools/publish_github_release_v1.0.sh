@@ -142,9 +142,9 @@ export GIT_ASKPASS="$askpass"
 export GIT_TERMINAL_PROMPT=0
 export ROOT REPO TAG RELEASE_NAME INSTALLER UPLOAD_SHA_FILE NOTES_FILE PUBLISHED_JSON
 
-echo "[1/5] Pushing main and $TAG..."
+echo "[1/5] Pushing main and refreshing $TAG..."
 git -C "$WORKTREE" push origin main
-git -C "$WORKTREE" push origin "$TAG"
+git -C "$WORKTREE" push --force-with-lease origin "$TAG"
 
 echo "[2/5] Creating/updating GitHub release and assets..."
 python3 - <<'PY'

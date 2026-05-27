@@ -1,6 +1,6 @@
 #Requires -RunAsAdministrator
 <#
-.SYNOPSIS  NeoOptimize - Automated Registry & Network Backup v4.0
+.SYNOPSIS  NeoOptimize - Automated Registry & Network Backup v1.0
 .DESCRIPTION
     Silently backs up system registry, Wi-Fi profiles, and third-party drivers
     to a secure local directory to protect against failure.
@@ -8,7 +8,7 @@
 
 $ErrorActionPreference = "SilentlyContinue"
 Write-Host "`n[BACKUP] ==================================================" -ForegroundColor Cyan
-Write-Host "[BACKUP]  Automated System Backup v4.0                   " -ForegroundColor Cyan
+Write-Host "[BACKUP]  Automated System Backup v1.0                   " -ForegroundColor Cyan
 Write-Host "[BACKUP] ==================================================`n" -ForegroundColor Cyan
 
 $backupRoot = "$env:SystemDrive\NeoOptimize_Backups\$(Get-Date -Format 'yyyyMMdd_HHmm')"

@@ -820,6 +820,10 @@ fn detect_rmm_connected() -> bool {
 
 #[cfg(windows)]
 fn detect_rmm_connected_uncached() -> bool {
+    if endpoint_sync_state_present() || rmm_health_probe_from_config() {
+        return true;
+    }
+
     for name in ["NeoOptimize RMM Agent", "NeoOptimize Endpoint Sync Agent"] {
         let mut command = Command::new("sc.exe");
         command
@@ -837,6 +841,90 @@ fn detect_rmm_connected_uncached() -> bool {
         }
     }
     false
+}
+
+#[cfg(windows)]
+fn endpoint_sync_state_present() -> bool {
+    let Some(program_data) = std::env::var_os("ProgramData") else {
+        return false;
+    };
+    let state_path = PathBuf::from(program_data)
+        .join("NeoOptimize")
+        .join("EndpointSync.json");
+    let Ok(content) = fs::read_to_string(state_path) else {
+        return false;
+    };
+    let Ok(value) = serde_json::from_str::<serde_json::Value>(&content) else {
+        return false;
+    };
+    let server_url = value
+        .get("ServerUrl")
+        .and_then(|item| item.as_str())
+        .unwrap_or("")
+        .trim();
+    let api_key = value
+        .get("ApiKey")
+        .and_then(|item| item.as_str())
+        .unwrap_or("")
+        .trim();
+    !server_url.is_empty() && !api_key.is_empty()
+}
+
+#[cfg(windows)]
+fn rmm_health_probe_from_config() -> bool {
+    let Ok(root) = resolve_program_root() else {
+        return false;
+    };
+    let config_path = root.join("config").join("NeoOptimize.RMM.json");
+    let Ok(content) = fs::read_to_string(config_path) else {
+        return false;
+    };
+    let Ok(value) = serde_json::from_str::<serde_json::Value>(&content) else {
+        return false;
+    };
+
+    let mut urls = Vec::new();
+    if let Ok(env_url) = std::env::var("NEOOPTIMIZE_RMM_URL") {
+        if !env_url.trim().is_empty() {
+            urls.push(env_url);
+        }
+    }
+    if let Some(items) = value.get("candidate_server_urls").and_then(|item| item.as_array()) {
+        for item in items {
+            if let Some(url) = item.as_str() {
+                if !url.trim().is_empty() {
+                    urls.push(url.to_string());
+                }
+            }
+        }
+    }
+
+    urls.into_iter().take(6).any(|url| rmm_health_probe(&root, &url))
+}
+
+#[cfg(windows)]
+fn rmm_health_probe(root: &PathBuf, url: &str) -> bool {
+    let script = format!(
+        "$ErrorActionPreference='Stop'; $u={url}.TrimEnd('/'); try {{ $r=Invoke-RestMethod -Uri ($u + '/health') -Method Get -TimeoutSec 1; if ($r.status -eq 'ok') {{ exit 0 }} }} catch {{ }}; exit 1",
+        url = ps_single_quote(url),
+    );
+    let Ok(mut command) = powershell_command() else {
+        return false;
+    };
+    command
+        .arg("-NoProfile")
+        .arg("-WindowStyle")
+        .arg("Hidden")
+        .arg("-ExecutionPolicy")
+        .arg("Bypass")
+        .arg("-Command")
+        .arg(script)
+        .current_dir(root)
+        .stdin(Stdio::null())
+        .stdout(Stdio::null())
+        .stderr(Stdio::null());
+    apply_no_window(&mut command);
+    command.status().map(|status| status.success()).unwrap_or(false)
 }
 
 #[cfg(not(windows))]

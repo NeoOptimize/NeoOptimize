@@ -104,6 +104,7 @@ function validateRuntimeTree (root, label, failures, warnings) {
     'assets/NeoOptimize.png',
     'config/NeoOptimize.ModelAgent.json',
     'config/NeoOptimize.Bundle.json',
+    'config/NeoOptimize.RMM.json',
     'lib/Common.ps1',
     'lib/NeoCapabilityCatalog.ps1',
     'models/NeoCore.Policy.json',

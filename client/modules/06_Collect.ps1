@@ -1,6 +1,6 @@
 #Requires -RunAsAdministrator
 <#
-.SYNOPSIS  NeoOptimize - Hardware Telemetry & Device Info Collector v4.0
+.SYNOPSIS  NeoOptimize - Hardware Telemetry & Device Info Collector v1.0
 .DESCRIPTION
     Deep system telemetry and hardware profiling:
     - Complete hardware inventory (CPU/GPU/RAM/Disk/NIC)
@@ -16,7 +16,7 @@ $ErrorActionPreference = "SilentlyContinue"
 $ProgressPreference    = "SilentlyContinue"
 
 Write-Host "`n[COLLECT] =================================================" -ForegroundColor Cyan
-Write-Host "[COLLECT]  Hardware Telemetry & Device Info Collector v4.0 " -ForegroundColor Cyan
+Write-Host "[COLLECT]  Hardware Telemetry & Device Info Collector v1.0 " -ForegroundColor Cyan
 Write-Host "[COLLECT] =================================================`n" -ForegroundColor Cyan
 
 $report = [ordered]@{ timestamp = (Get-Date).ToString("o") }

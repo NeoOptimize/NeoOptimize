@@ -33,7 +33,7 @@
 - Client-nextgen build, .NET builds, public bundle verification, RMM browser smoke, live endpoint smoke, and installer rebuild passed.
 - Installer SHA-256 checksum file regenerated at `release/windows/NeoOptimize.exe.sha256`.
 
-## NeoOptimize Versi 1.0.2 - Safe Windows Maintenance Expansion
+## NeoOptimize Versi 1.0 - Safe Windows Maintenance Expansion
 
 ### Added
 - Selectable Debloater with audit-first inventory, manual selection, protected core apps, and optional OneDrive autostart disable.
